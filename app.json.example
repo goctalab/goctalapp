@@ -17,7 +17,11 @@
       "**/*"
     ],
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.goctalab.goctalapp",
+      "config": {
+        "googleMapsApiKey": ""
+      }
     },
     "web": {
       "favicon": "./assets/favicon.png"
