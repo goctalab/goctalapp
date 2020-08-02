@@ -17,5 +17,6 @@ Vamos a construir con expo y React Native.
 Ahora vamos a ver como implementar un map basico.
 https://www.pubnub.com/blog/realtime-geo-tracking-app-react-native/
 https://docs.expo.io/versions/latest/sdk/map-view/
+https://docs.expo.io/workflow/debugging/
 
 Y despues importar nuestra puntos de GPS.

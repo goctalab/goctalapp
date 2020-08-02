@@ -1,8 +1,9 @@
 import { StatusBar } from 'expo-status-bar';
 import React, { Component } from 'react';
 import { Dimensions, Platform, StyleSheet, Text, View, TouchableOpacity, Switch, Image } from 'react-native';
-import MapView, { PROVIDER_GOOGLE, Marker, Polyline, AnimatedRegion } from 'react-native-maps';
-import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
+import * as Permissions from 'expo-permissions';
+import MapView, { PROVIDER_GOOGLE, Marker, Polyline, Animated, AnimatedRegion } from 'react-native-maps';
+// import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
 import haversine from 'haversine';
 
 export default class App extends Component  {
@@ -10,15 +11,19 @@ export default class App extends Component  {
     super(props);
 
     this.state = {
-      latitude: 0, // LATITUDE,
-      longitude: 0, // LONGITUDE,
+      latitude: 0,
+      longitude: 0,
       routeCoordinates: [],
       distanceTravelled: 0,
       prevLatLon: {},
-      coordinate: new AnimatedRegion({
-        latitude: 0, // LATITUDE
-        longitude: 0, // LONGITUDE
-      })
+      // coordinate: new AnimatedRegion({
+      //   latitude: 0,
+      //   longitude: 0,
+      // })
+      coordinate: {
+        latitude: 0,
+        longitude: 0,
+      }
     }
   }
 
@@ -26,15 +31,29 @@ export default class App extends Component  {
     return haversine(this.state.prevLatLon, newLatLon) || 0;
   }
 
-  getMapRegion = () => ({
-    latitude: this.state.latitude,
-    longitude: this.state.longitude,
-    latitudeDelta: 0, // LATITUDE_DELTA,
-    longitudeDelta: 0, // LONGITUDE_DELTA
-  })
+  getMapRegion = () => {
+    console.log(this.state);
+    return new AnimatedRegion({
+      latitude: this.state.latitude,
+      longitude: this.state.longitude,
+      latitudeDelta: 0.01,
+      longitudeDelta: 0.01
+    })
+  }
+
+  async askPermissions() {
+    const { status, expires, permissions } = await Permissions.askAsync(
+      Permissions.LOCATION
+    );
+    if (status !== 'granted') {
+      alert('Hey! You have not enabled selected permissions');
+    }
+  }
 
   //https://medium.com/quick-code/react-native-location-tracking-14ab2c9e2db8
   componentDidMount() {
+    this.askPermissions();
+
     this.watchId = navigator.geolocation.watchPosition(
       (position) => {
         const {
@@ -42,24 +61,28 @@ export default class App extends Component  {
           routeCoordinates,
           distanceTravelled
         } = this.state;
+
         const {
           latitude,
           longitude
         } = position.coords;
+
         const newCoordinate = {
           latitude,
           longitude
         };
+
         if (Platform.OS === "android") {
           if (this.marker) {
-            this.marker._component.animateMarkerToCoordinate(
-              newCoordinate,
-              500
-            );
+            // this.marker._component.animateMarkerToCoordinate(
+            //   newCoordinate,
+            //   500
+            // );
           } 
         } else {
-          coordinate.timing(newCoordinate).start();
+          // coordinate.timing(newCoordinate).start();
         }
+
         this.setState({
           latitude,
           longitude,
@@ -74,23 +97,30 @@ export default class App extends Component  {
   }
 
   render() {
+    console.log("yoooo", this.state.coordinate);
     return (
       <View style={styles.container}>
         <Text>GoctaLapp</Text>
         <StatusBar style="auto" />
-        <MapView
-          showUserLocation
-          followUserLocation
+        <MapView.Animated
+          showsUserLocation
+          followsUserLocation
           loadingEnabled
-          // region={this.getMapRegion()}
+          mapType="hybrid"
+          // or initialRegion?
+          region={this.getMapRegion()}
           provider={PROVIDER_GOOGLE}
           style={styles.mapStyle} 
         >
-          {/* <Marker.Animated
-            ref={ (marker) => { this.marker = marker; } }
+          <Polyline
+            coordinates={this.state.routeCoordinates}
+            strokeWidth={5}
+            strokeColor="#FFF" />
+          <Marker.Animated ref={ marker => { this.marker = marker; } }
+            // coordinate={{ latitude: -16, longitude: -70 }}
             coordinate={ this.state.coordinate }
-          /> */}
-        </MapView>
+          />
+        </MapView.Animated>
       </View>
     );
   }
