@@ -12,9 +12,11 @@ export default class App extends Component  {
   }
 
   async askPermissions() {
-    const { status, expires, permissions } = await Permissions.askAsync(
+    console.log("asking");
+    const { status } = await Permissions.askAsync(
       Permissions.LOCATION
     );
+    console.log(status);
     if (status !== 'granted') {
       alert('Hey! You have not enabled selected permissions');
     }

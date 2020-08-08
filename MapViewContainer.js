@@ -1,32 +1,59 @@
 import React, { Component } from 'react';
 import { Dimensions, Platform, StyleSheet } from 'react-native';
   
-import MapView, {
-  PROVIDER_GOOGLE,
-  UrlTile,
-  LocalTile,
-  Marker,
-  Polyline,
-  Animated,
-  AnimatedRegion,
-  Overlay } from 'react-native-maps';
+import MapView, { PROVIDER_GOOGLE } from 'react-native-maps';
 // import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
 import haversine from 'haversine';
 import { mapStyle1 } from './mapStyle';
 import { Asset } from 'expo-asset';
 
 //const tilesPath = `${docDir}/tiles/tiles/{z}_{x}_{y}.png`;
-const imageTileResource = require("./tiles/tile01.png")
+const imageTileResource = require("./tiles/tile01.png");
+// const kmlResource = require("./tiles/GLperimetro.kml");
 const imageURI = Asset.fromModule(imageTileResource).uri;
+// const kmlAsset = Asset.fromModule(kmlResource).uri;
 
+
+// const KML_FILE = 'file:///Users/ivy/Projects/Gocta/app/goctalapp/tiles/GLperimetro.kml';
+const KML_FILE = "./tiles/TNQ1alto2ha.kml";
+const KML_FILE_PERIMETRO = "./tiles/GLperimetro.kml";
+// const kmlPerimetro = Asset.fromModule(require(KML_FILE_PERIMETRO)).uri;
+
+// const KML_FILE = "https://pastebin.com/raw/2KqceR7N";
+// const KML_FILE = "https://pastebin.com/raw/heAadDRu"; //ptoagua
+// const KML_FILE = "https://pastebin.com/raw/Fq1SYnb4";
+
+const arrayPlaces = [
+  { name: "NE", coordinate: { latitude: -6.054429423257089, longitude: -77.89648004531624}},
+  { name: "NW", coordinate: { latitude: -6.054299248256771, longitude: -77.89811561864342}},
+  { name: "SW", coordinate: { latitude: -6.055420387530083, longitude: -77.89803066932026}},
+  { name: "SE", coordinate: { latitude: -6.055457543168768, longitude: -77.89663650604342}},
+];
+
+// const polygonCoords = arrayPlaces.map((p) => p.coordinate);
+const polygonCoords = [
+  { latitude: -6.05569, longitude: -77.8971846},
+  { latitude: -6.05559, longitude: -77.8971846},
+  { latitude: -6.05569, longitude: -77.8971846},
+  { latitude: -6.05559, longitude: -77.8971846},
+]
+const polygonCoordsLarge = [
+  { latitude: 0, longitude: 20},
+  { latitude: 0, longitude: 0},
+  { latitude: 20, longitude: 0},
+  { latitude: 20, longitude: 20},
+]
+console.log("yoyo", polygonCoords);
 
 export default class MapViewContainer extends Component {
   constructor(props) {
     super(props);
 
+    // this.onKmlReady = this.onKmlReady.bind(this);
+
     this.state = {
-      latitude: 0,
-      longitude: 0,
+      latitude: arrayPlaces[0].coordinate.latitude,
+      longitude: arrayPlaces[0].coordinate.longitude,
       routeCoordinates: [],
       distanceTravelled: 0,
       prevLatLon: {},
@@ -47,12 +74,21 @@ export default class MapViewContainer extends Component {
 
   getMapRegion = () => {
     // console.log(this.state);
-    return new AnimatedRegion({
+    return new MapView.AnimatedRegion({
       latitude: this.state.latitude,
       longitude: this.state.longitude,
+      latitudeDelta: -0.001,
+      longitudeDelta: -0.001
+    })
+  }
+
+  getInitialRegion = () => {
+    return {
+      latitude: -6.055,
+      longitude: -77.8971,
       latitudeDelta: 0.01,
       longitudeDelta: 0.01
-    })
+    }
   }
 
   //https://medium.com/quick-code/react-native-location-tracking-14ab2c9e2db8
@@ -99,37 +135,79 @@ export default class MapViewContainer extends Component {
     )
   }
 
+  //https://github.com/react-native-community/react-native-maps/pull/2011/files
+  adjustMap = (e) => {
+    console.log("on kml ready", e.nativeEvent);
+    this.map.fitToElements(true);
+    return e.nativeEvent;
+  }
+
+  mapMarkers() {
+    const pinColors = ["#FFC0C0", "#FF0000", "#00FF00", "#0000FF"];
+    const markers = (arrayPlaces).map((place, i) =>
+      <MapView.Marker
+        key={`${i}-${i}`}
+        pinColor={pinColors[i]}
+        coordinate={place.coordinate}
+        title={place.name}
+        description="Testing"
+      >
+      </MapView.Marker>
+    );
+    console.log(arrayPlaces, markers);
+    return markers;
+  }
+
   render() {
     return (
       <MapView.Animated
         showsUserLocation
         followsUserLocation
         loadingEnabled
-        // mapType="hybrid"
+        mapType="hybrid"
         // mapType={Platform.OS == "android" ? "none" : "standard"}
         // or initialRegion?
-        region={this.getMapRegion()}
+        ref={ref => {
+          this.map = ref;
+        }}
+        // region={this.getMapRegion()}
+        initialRegion={this.getInitialRegion()}
+        // kmlSrc={KML_FILE}
+        // onKmlReady={this.adjustMap}
         provider={ PROVIDER_GOOGLE }
         style={styles.mapStyle} 
         customMapStyle={mapStyle1}
+        maxZoomLevel={20}
       >
-
-      {/* <Polyline
+        {this.mapMarkers()}
+        <MapView.Polygon
+          coordinates={polygonCoords}
+          fillColor="rgba(0, 200, 0, 0.5)"
+          strokeColor="rgba(0,0,0,0.5)"
+          strokeWidth={2}
+        />
+         <MapView.Polygon
+          coordinates={polygonCoordsLarge}
+          fillColor="rgba(0, 200, 0, 0.5)"
+          strokeColor="rgba(0,0,0,0.5)"
+          strokeWidth={2}
+        />
+        {/* <MapView.Marker.Animated ref={ marker => { this.marker = marker; } }
+          // coordinate={{ latitude: -16, longitude: -70 }}
+          coordinate={ { latitude: -6.0, longitude: -77.89 } } /> */}
+        
+      {/* <MapView.Polyline
         coordinates={this.state.routeCoordinates}
         strokeWidth={5}
         strokeColor="#FFF" />
-      <Marker.Animated ref={ marker => { this.marker = marker; } }
-        // coordinate={{ latitude: -16, longitude: -70 }}
-        coordinate={ this.state.coordinate }
       /> */}
       {/* https://gitmemory.com/issue/react-native-community/react-native-maps/2088/471427151 */}
       {/* <UrlTile urlTemplate={imageURI} zIndex={-1}  /> */}
 
-      <Overlay 
+      {/* <MapView.Overlay 
         image={imageURI}
         //image="https://www.lib.utexas.edu/maps/historical/newark_nj_1922.jpg"
-        bounds={[[-6.05, -77.89],[-6.06, -77.92]]} />
-
+        bounds={[[-6.0, -77.89],[-6.06, -77.92]]} /> */}
     </MapView.Animated>
     );
   }
