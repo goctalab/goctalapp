@@ -1,27 +1,28 @@
 import React, { Component } from 'react';
 import { Dimensions, Platform, StyleSheet } from 'react-native';
-  
 import MapView, { PROVIDER_GOOGLE } from 'react-native-maps';
 // import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
-import haversine from 'haversine';
+
 import { mapStyle1 } from './mapStyle';
 import { Asset } from 'expo-asset';
 
-//const tilesPath = `${docDir}/tiles/tiles/{z}_{x}_{y}.png`;
-const imageTileResource = require("./tiles/tile01.png");
-// const kmlResource = require("./tiles/GLperimetro.kml");
-const imageURI = Asset.fromModule(imageTileResource).uri;
-// const kmlAsset = Asset.fromModule(kmlResource).uri;
+import haversine from 'haversine';
+import XMLParser from 'react-xml-parser';
+import xml2js from 'react-native-xml2js';
+import * as FileSystem from 'expo-file-system';
 
+//const tilesPath = `${docDir}/tiles/tiles/{z}_{x}_{y}.png`;
+const imageTileResource = require("./assets/tiles/tile01.png");
+const imageURI = Asset.fromModule(imageTileResource).uri;
+
+const kmlResource = require("./assets/kml/GLperimetro.kml");
+let kmlAsset = Asset.fromModule(kmlResource);
+
+// const parser = new xml2js.Parser();
 
 // const KML_FILE = 'file:///Users/ivy/Projects/Gocta/app/goctalapp/tiles/GLperimetro.kml';
-const KML_FILE = "./tiles/TNQ1alto2ha.kml";
-const KML_FILE_PERIMETRO = "./tiles/GLperimetro.kml";
-// const kmlPerimetro = Asset.fromModule(require(KML_FILE_PERIMETRO)).uri;
-
 // const KML_FILE = "https://pastebin.com/raw/2KqceR7N";
-// const KML_FILE = "https://pastebin.com/raw/heAadDRu"; //ptoagua
-// const KML_FILE = "https://pastebin.com/raw/Fq1SYnb4";
+
 
 const arrayPlaces = [
   { name: "NE", coordinate: { latitude: -6.054429423257089, longitude: -77.89648004531624}},
@@ -42,14 +43,14 @@ const polygonCoordsLarge = [
   { latitude: 0, longitude: 0},
   { latitude: 20, longitude: 0},
   { latitude: 20, longitude: 20},
-]
-console.log("yoyo", polygonCoords);
+];
 
 export default class MapViewContainer extends Component {
   constructor(props) {
     super(props);
 
     // this.onKmlReady = this.onKmlReady.bind(this);
+    // this.readXml = this.readXml.bind(this);
 
     this.state = {
       latitude: arrayPlaces[0].coordinate.latitude,
@@ -64,7 +65,8 @@ export default class MapViewContainer extends Component {
       coordinate: {
         latitude: 0,
         longitude: 0,
-      }
+      },
+      polygonCoords: []
     }
   }
 
@@ -91,8 +93,47 @@ export default class MapViewContainer extends Component {
     }
   }
 
+  readXml = (localUri) => {
+    FileSystem.readAsStringAsync(kmlAsset.localUri).then((data) => {
+      xml2js.parseString(data, (err, result) => {
+        if (!err) {
+          this.xmlJson = JSON.parse(JSON.stringify(result));
+          let coordsStr = this.xmlJson.kml.Document[0].Placemark[0].Polygon[0].outerBoundaryIs[0].LinearRing[0].coordinates;
+          if (!coordsStr) {
+            return;
+          }
+          coordsStr = coordsStr[0].trim().split(" ");
+          const polygonCoords = [];
+          for (let i = 0; i < coordsStr.length ; i++) {
+            const coords = coordsStr[i].split(",");
+            // ignore z coord.... 
+            polygonCoords.push({
+              latitude: coords[1],
+              longitude: coords[0]
+            })
+          }
+          this.setState({ polygonCoords });
+        }
+      });
+    });
+  }
+
   //https://medium.com/quick-code/react-native-location-tracking-14ab2c9e2db8
   componentDidMount() {
+    if (kmlAsset.localUri === null) {
+      Asset.loadAsync(require("./assets/kml/GLperimetro.kml")).then(() => {
+        kmlAsset = Asset.fromModule(require("./assets/kml/GLperimetro.kml"));
+        this.readXml(kmlAsset.localUri);
+      });
+    } else {
+      this.readXml(kmlAsset.localUri);
+    }
+    // const kml = reader.parseSync(kmlResource);
+    // const xq = XmlQuery(kml);
+    // const coordinates = xq.find('Placemark').find('Point').find('coordinates');
+    // console.log("coords xml", coordinates);
+    //const xml = new XMLParser().parseFromString(kmlAsset);
+
     this.watchId = navigator.geolocation.watchPosition(
       (position) => {
         const {
@@ -137,9 +178,14 @@ export default class MapViewContainer extends Component {
 
   //https://github.com/react-native-community/react-native-maps/pull/2011/files
   adjustMap = (e) => {
-    console.log("on kml ready", e.nativeEvent);
+    // console.log("on kml ready", e.nativeEvent);
     this.map.fitToElements(true);
     return e.nativeEvent;
+  }
+
+  getPolygonCoords() {
+    console.log(this.state.polygonCoords);
+    return this.state.polygonCoords;
   }
 
   mapMarkers() {
@@ -154,7 +200,6 @@ export default class MapViewContainer extends Component {
       >
       </MapView.Marker>
     );
-    console.log(arrayPlaces, markers);
     return markers;
   }
 
@@ -164,7 +209,7 @@ export default class MapViewContainer extends Component {
         showsUserLocation
         followsUserLocation
         loadingEnabled
-        mapType="hybrid"
+        // mapType="hybrid"
         // mapType={Platform.OS == "android" ? "none" : "standard"}
         // or initialRegion?
         ref={ref => {
@@ -181,7 +226,7 @@ export default class MapViewContainer extends Component {
       >
         {this.mapMarkers()}
         <MapView.Polygon
-          coordinates={polygonCoords}
+          coordinates={this.getPolygonCoords()}
           fillColor="rgba(0, 200, 0, 0.5)"
           strokeColor="rgba(0,0,0,0.5)"
           strokeWidth={2}
