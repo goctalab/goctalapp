@@ -7,16 +7,11 @@ import { mapStyle1 } from './mapStyle';
 import { Asset } from 'expo-asset';
 
 import haversine from 'haversine';
-import XMLParser from 'react-xml-parser';
-import xml2js from 'react-native-xml2js';
-import * as FileSystem from 'expo-file-system';
+import { getCoordinatesFromKMLPath } from './kmlUtils';
 
 //const tilesPath = `${docDir}/tiles/tiles/{z}_{x}_{y}.png`;
 const imageTileResource = require("./assets/tiles/tile01.png");
 const imageURI = Asset.fromModule(imageTileResource).uri;
-
-const kmlResource = require("./assets/kml/GLperimetro.kml");
-let kmlAsset = Asset.fromModule(kmlResource);
 
 // const parser = new xml2js.Parser();
 
@@ -93,41 +88,18 @@ export default class MapViewContainer extends Component {
     }
   }
 
-  readXml = (localUri) => {
-    FileSystem.readAsStringAsync(kmlAsset.localUri).then((data) => {
-      xml2js.parseString(data, (err, result) => {
-        if (!err) {
-          this.xmlJson = JSON.parse(JSON.stringify(result));
-          let coordsStr = this.xmlJson.kml.Document[0].Placemark[0].Polygon[0].outerBoundaryIs[0].LinearRing[0].coordinates;
-          if (!coordsStr) {
-            return;
-          }
-          coordsStr = coordsStr[0].trim().split(" ");
-          const polygonCoords = [];
-          for (let i = 0; i < coordsStr.length ; i++) {
-            const coords = coordsStr[i].split(",");
-            // ignore z coord.... 
-            polygonCoords.push({
-              latitude: coords[1],
-              longitude: coords[0]
-            })
-          }
-          this.setState({ polygonCoords });
-        }
-      });
-    });
+  async setPolygonCoordinates() {
+    const path = "./assets/kml/GLperimetro.kml";
+    const asset = Asset.fromModule(path);
+    const polygonCoords = await getCoordinatesFromKMLPath(asset, path);
+    this.setState({ polygonCoords });
   }
 
   //https://medium.com/quick-code/react-native-location-tracking-14ab2c9e2db8
   componentDidMount() {
-    if (kmlAsset.localUri === null) {
-      Asset.loadAsync(require("./assets/kml/GLperimetro.kml")).then(() => {
-        kmlAsset = Asset.fromModule(require("./assets/kml/GLperimetro.kml"));
-        this.readXml(kmlAsset.localUri);
-      });
-    } else {
-      this.readXml(kmlAsset.localUri);
-    }
+
+    this.setPolygonCoordinates();
+
     // const kml = reader.parseSync(kmlResource);
     // const xq = XmlQuery(kml);
     // const coordinates = xq.find('Placemark').find('Point').find('coordinates');
@@ -209,7 +181,7 @@ export default class MapViewContainer extends Component {
         showsUserLocation
         followsUserLocation
         loadingEnabled
-        // mapType="hybrid"
+        mapType="hybrid"
         // mapType={Platform.OS == "android" ? "none" : "standard"}
         // or initialRegion?
         ref={ref => {
