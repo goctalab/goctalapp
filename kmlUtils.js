@@ -1,19 +1,19 @@
 import { Asset } from 'expo-asset';
 import xml2js from 'react-native-xml2js';
 import * as FileSystem from 'expo-file-system';
+import KML_Data from './mapData_processed';
 
-const klms = {
-  "./assets/kml/GLperimetro.kml": require("./assets/kml/GLperimetro.kml")
-}
+export const KML_TYPES = {
+  Polygon: "Polygon",
+  Point: "Point"
+};
 
-const _findDoc = (xmlJson) => xmlJson.kml.Document[0];
-
-// const _localUri = (path) => Asset.fromModule(require(path)).localUri;
+const _findDoc = (kmlJson) => kmlJson.kml.Document[0];
 
 async function getLocalUri(path) {
   let localUri;
-  await Asset.loadAsync(klms[path]);
-  const asset = Asset.fromModule(klms[path]);
+  await Asset.loadAsync(KML_DATA[path]);
+  const asset = Asset.fromModule(KML_DATA[path]);
   localUri = asset.localUri;
   return localUri;
 };
@@ -31,25 +31,41 @@ async function getCoordinatesFromKMLAsset(localUri) {
   return readKML(data);
 }
 
+const getKMLType= (kmlJson) => {
+  if (!_findDoc(kmlJson).Placemark){
+    console.log("this wasnt valid", kmlJson);
+    return "NOPE";
+  }
+
+  return (_findDoc(kmlJson).Placemark && _findDoc(kmlJson).Placemark[0].Polygon) ? KML_TYPES.Polygon : KML_TYPES.Point;
+}
+
+const getCoordinatesField = (kmlJson) => _findDoc(kmlJson).Placemark[0].Polygon ?
+  _findDoc(kmlJson).Placemark[0].Polygon[0].outerBoundaryIs[0].LinearRing[0].coordinates[0] :
+  _findDoc(kmlJson).Placemark[0].Point[0].coordinates[0];
+
 export function readKML(data) {
-  let coordinates = [];
+  let coordinates = [], name, type;
   xml2js.parseString(data, (err, result) => {
     if (!err) {
       const kmlJson = JSON.parse(JSON.stringify(result));
-      coordinates = processCoordinates(kmlJson);
+      type = getKMLType(kmlJson); // yo
+      name =  _findDoc(kmlJson).Placemark[0].name[0];
+      coordinates = processCoordinates(getCoordinatesField(kmlJson));
     }
   });
-  return coordinates;
+  return {
+    name,
+    type,
+    coordinates: (type === KML_TYPES.Point) ? coordinates[0] : coordinates
+  }
 }
 
-function processCoordinates(xmlJson) {
-  let coordsStr = _findDoc(xmlJson).Placemark[0].Polygon[0].outerBoundaryIs[0].LinearRing[0].coordinates;
-  
-  if (!coordsStr) {
+function processCoordinates(coordinatesField) {
+  if (!coordinatesField) {
     return [];
   }
-
-  coordsStr = coordsStr[0].trim().split(" ");
+  coordsStr = coordinatesField.trim().split(" ");
 
   const c =  coordsStr.reduce((coordinatesArr, currentStr) => {
     const coords = currentStr.split(","); 
@@ -59,6 +75,5 @@ function processCoordinates(xmlJson) {
     });
     return coordinatesArr;
   }, []);
-  console.log(c);
   return c;
 }

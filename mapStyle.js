@@ -1,4 +1,4 @@
-export const mapStyle1 = [
+export const mapStyle_00 = [
   {
     "elementType": "geometry",
     "stylers": [
@@ -293,7 +293,7 @@ export const mapStyle1 = [
 ]
 
 
-export const mapStyle2 = [
+export const mapStyle_01 = [
   {
     "elementType": "geometry",
     "stylers": [

@@ -16,3 +16,5 @@ app.json
 
 *.code-workspace
 .vscode/*
+
+mapData_processed.js
