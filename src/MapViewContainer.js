@@ -11,7 +11,7 @@ import { getCoordinatesFromKMLPath, KML_TYPES } from './kmlUtils';
 import KML_DATA from './mapData_processed';
 
 //const tilesPath = `${docDir}/tiles/tiles/{z}_{x}_{y}.png`;
-const imageTileResource = require("./assets/tiles/tile01.png");
+const imageTileResource = require("../assets/tiles/tile01.png");
 const imageURI = Asset.fromModule(imageTileResource).uri;
 
 
@@ -35,10 +35,6 @@ export default class MapViewContainer extends Component {
       routeCoordinates: [],
       distanceTravelled: 0,
       prevLatLon: {},
-      // coordinate: new AnimatedRegion({
-      //   latitude: 0,
-      //   longitude: 0,
-      // })
       coordinate: {
         latitude: 0,
         longitude: 0,
