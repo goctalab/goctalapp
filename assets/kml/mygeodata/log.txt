@@ -1,1 +1,0 @@
-Warning 1: Layer name 'GL perimetro' adjusted to 'GL_perimetro' for XML validity.

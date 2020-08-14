@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<kml xmlns="http://www.opengis.net/kml/2.2" xmlns:gx="http://www.google.com/kml/ext/2.2" xmlns:kml="http://www.opengis.net/kml/2.2" xmlns:atom="http://www.w3.org/2005/Atom">
+<Document>
+	<name>LIM_SO.kml</name>
+	<Style id="waypoint_h50">
+		<IconStyle>
+			<scale>1.2</scale>
+			<Icon>
+				<href>http://maps.google.com/mapfiles/kml/pal4/icon61.png</href>
+			</Icon>
+		</IconStyle>
+	</Style>
+	<Style id="waypoint_n40">
+		<IconStyle>
+			<Icon>
+				<href>http://maps.google.com/mapfiles/kml/pal4/icon61.png</href>
+			</Icon>
+		</IconStyle>
+	</Style>
+	<StyleMap id="waypoint40">
+		<Pair>
+			<key>normal</key>
+			<styleUrl>#waypoint_n40</styleUrl>
+		</Pair>
+		<Pair>
+			<key>highlight</key>
+			<styleUrl>#waypoint_h50</styleUrl>
+		</Pair>
+	</StyleMap>
+	<Placemark>
+		<name>LIM SO***</name>
+		<TimeStamp><when>2019-04-11T16:58:45Z</when>
+</TimeStamp>
+		<styleUrl>#waypoint40</styleUrl>
+		<Point>
+			<coordinates>-77.897976,-6.054944,1715.55</coordinates>
+		</Point>
+	</Placemark>
+</Document>
+</kml>
