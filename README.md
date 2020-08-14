@@ -8,10 +8,10 @@ Por ejemplo, a cualquier punto, puede decirte informacion de puntos de interes q
 Quizas tambien podemos hacer un poco de juego con el app, secretos escondido o collecion de cosas como un concurso.
 Podemos usar QR codes por sitios tambien.
 
-## React Native
-Vamos a construir con expo y React Native.
 
-### dev
+## dev
+
+Vamos a construir con [Expo](https://docs.expo.io/) y React Native.
 
 Ahora vamos a ver como implementar un map basico.
 
