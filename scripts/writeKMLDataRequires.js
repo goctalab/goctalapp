@@ -12,7 +12,7 @@ const KMLS_OBJECT = () => (fs.readdirSync(__dirname + '/../assets/kml').reduce((
 const objectKmls = `export default KML_DATA = ${JSON.stringify(KMLS_OBJECT())}`;
 
 const parseFile = (filename) => {
-  fs.readFile(filename, 'utf8', function (err,data) {
+  fs.readFile(filename, 'utf8', function (err, data) {
     if (err) {
       return console.log(err);
     }
@@ -20,7 +20,7 @@ const parseFile = (filename) => {
     result = result.replace(/\)"/g, ')');
 
     fs.writeFile(filename, result, 'utf8', function (err) {
-       if (err) return console.log(err);
+      if (err) return console.log(err);
     });
   });
 }
