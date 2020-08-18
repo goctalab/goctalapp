@@ -11,6 +11,22 @@ import { getCoordinatesFromKMLPath, KML_TYPES } from './kmlUtils';
 import KML_DATA from './mapData_processed';
 
 //const tilesPath = `${docDir}/tiles/tiles/{z}_{x}_{y}.png`;
+import { mapOverlayCoordinates } from './mapData';
+
+const mapOverlayRegion = mapOverlayCoordinates.map((coordObject) => {
+  const { latitude, longitude } = coordObject;
+  return [ latitude, longitude ];
+});
+
+const dronePicOverlayResource = require("../assets/layers/rough_map_drone_foto_rotated-01.png");
+const droneImageOverlayURI = Asset.fromModule(dronePicOverlayResource).uri;
+
+const pathsOverlayResource = require("../assets/layers/rough_map_layer_paths-01.png");
+const pathsOverlayURI = Asset.fromModule(pathsOverlayResource).uri;
+
+const bldgOverlayResource = require("../assets/layers/rough_map_layer_edifcio-01.png");
+const bldgOverlayURI = Asset.fromModule(bldgOverlayResource).uri;
+
 const imageTileResource = require("../assets/tiles/tile01.png");
 const imageURI = Asset.fromModule(imageTileResource).uri;
 
@@ -219,6 +235,16 @@ export default class MapViewContainer extends Component {
           image={imageURI}
           //image="https://www.lib.utexas.edu/maps/historical/newark_nj_1922.jpg"
           bounds={[[-6.0, -77.89],[-6.06, -77.92]]} /> */}
+
+        {/* <MapView.Overlay 
+          image={droneImageOverlayURI}
+          bounds={mapOverlayRegion} /> */}
+        <MapView.Overlay 
+          image={pathsOverlayURI}
+          bounds={mapOverlayRegion} />
+        <MapView.Overlay 
+          image={bldgOverlayURI}
+          bounds={mapOverlayRegion} />
       </MapView.Animated>);
   }
 }
