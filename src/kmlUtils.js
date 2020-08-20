@@ -5,7 +5,8 @@ import KML_Data from './mapData_processed';
 
 export const KML_TYPES = {
   Polygon: "Polygon",
-  Point: "Point"
+  Point: "Point",
+  Polyline: "Polyine"
 };
 
 const _findDoc = (kmlJson) => kmlJson.kml.Document[0];
@@ -33,16 +34,16 @@ async function getCoordinatesFromKMLAsset(localUri) {
 
 const getKMLType= (kmlJson) => {
   if (!_findDoc(kmlJson).Placemark){
-    console.log("this wasnt valid", kmlJson);
+    console.log("ERROR: KML wasn't valid", kmlJson);
     return "NOPE";
   }
 
-  return (_findDoc(kmlJson).Placemark && _findDoc(kmlJson).Placemark[0].Polygon) ? KML_TYPES.Polygon : KML_TYPES.Point;
+  return (_findDoc(kmlJson).Placemark && _findDoc(kmlJson).Placemark[0].Polygon) ? KML_TYPES.Polygon :  (_findDoc(kmlJson).Placemark && _findDoc(kmlJson).Placemark[0].LineString) ? KML_TYPES.Polyline : KML_TYPES.Point;
 }
 
-const getCoordinatesField = (kmlJson) => _findDoc(kmlJson).Placemark[0].Polygon ?
+const getCoordinatesField = (kmlJson, type) => type === KML_TYPES.Polygon ?
   _findDoc(kmlJson).Placemark[0].Polygon[0].outerBoundaryIs[0].LinearRing[0].coordinates[0] :
-  _findDoc(kmlJson).Placemark[0].Point[0].coordinates[0];
+  type === KML_TYPES.Point ? _findDoc(kmlJson).Placemark[0].Point[0].coordinates[0] : _findDoc(kmlJson).Placemark[0].LineString[0].coordinates[0];
 
 export function readKML(data) {
   let coordinates = [], name, type;
@@ -51,7 +52,7 @@ export function readKML(data) {
       const kmlJson = JSON.parse(JSON.stringify(result));
       type = getKMLType(kmlJson); // yo
       name =  _findDoc(kmlJson).Placemark[0].name[0];
-      coordinates = processCoordinates(getCoordinatesField(kmlJson));
+      coordinates = processCoordinates(getCoordinatesField(kmlJson, type));
     }
   });
   return {

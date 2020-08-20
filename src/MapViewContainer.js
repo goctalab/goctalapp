@@ -56,7 +56,8 @@ export default class MapViewContainer extends Component {
         longitude: 0,
       },
       polygons: [],
-      markers: []
+      markers: [],
+      polylines: []
     }
   }
 
@@ -86,32 +87,43 @@ export default class MapViewContainer extends Component {
   async setKMLState() {
     const markerData = [],
       polygonData = [],
+      polylineData = [],
       filenames = Object.keys(KML_DATA);
 
     await Promise.all(filenames.map(async (path) => {
       const asset = Asset.fromModule(path);
       const data = await getCoordinatesFromKMLPath(asset, path);
-      data.type === KML_TYPES.Polygon ? polygonData.push(data) : markerData.push(data)
+      if (data.type === KML_TYPES.Polygon) {
+        polygonData.push(data);
+      } else if (data.type === KML_TYPES.Point) {
+         markerData.push(data);
+      } else {
+        polylineData.push(data);
+      }
     }));
 
-    this.setState({ markers: markerData, polygons: polygonData });
+    this.setState({ 
+      markers: markerData,
+      polygons: polygonData,
+      polylines: polylineData
+    });
   }
 
-  async setMarkers() {
-    // open asset directory and get files
-    // file by file
-    const path = "./assets/kml/TNQ1alto2ha.kml";
-    const asset = Asset.fromModule(path);
-    const markerData = await getCoordinatesFromKMLPath(asset, path);
-    this.setState({ markers: [ markerData ] });
-  }
+  // async setMarkers() {
+  //   // open asset directory and get files
+  //   // file by file
+  //   const path = "./assets/kml/TNQ1alto2ha.kml";
+  //   const asset = Asset.fromModule(path);
+  //   const markerData = await getCoordinatesFromKMLPath(asset, path);
+  //   this.setState({ markers: [ markerData ] });
+  // }
 
-  async setPolygons() {
-    const path = "./assets/kml/GLperimetro.kml";
-    const asset = Asset.fromModule(path);
-    const polygonData = await getCoordinatesFromKMLPath(asset, path);
-    this.setState({ polygons: [ polygonData ] });
-  }
+  // async setPolygons() {
+  //   const path = "./assets/kml/GLperimetro.kml";
+  //   const asset = Asset.fromModule(path);
+  //   const polygonData = await getCoordinatesFromKMLPath(asset, path);
+  //   this.setState({ polygons: [ polygonData ] });
+  // }
 
   //https://medium.com/quick-code/react-native-location-tracking-14ab2c9e2db8
   componentDidMount() {
@@ -201,6 +213,21 @@ export default class MapViewContainer extends Component {
     return polys;
   }
 
+  renderPolylines() {
+    const fillColors = ["rgba(0, 200, 0, 0.25)", "rgba(0, 0, 200, 0.25)", "rgba(100, 0, 100, 0.25)"];
+    
+    const polylines = (this.state.polylines).map((polylineObj, i) =>
+      <MapView.Polyline
+        key={`${i}-${i}`}
+        coordinates={polylineObj.coordinates}
+        fillColor={fillColors[i % fillColors.length]}
+        strokeColor="rgba(0,0,0,0.5)"
+        strokeWidth={3}
+      />
+    );
+    return polylines;
+  }
+
   render() {
     return (
       <MapView.Animated
@@ -221,6 +248,7 @@ export default class MapViewContainer extends Component {
       >
         {this.renderMarkers()}
         {this.renderPolygons()}
+        {this.renderPolylines()}
         {/* <MapView.Marker.Animated ref={ marker => { this.marker = marker; } }
           // coordinate={{ latitude: -16, longitude: -70 }}
           coordinate={ { latitude: -6.0, longitude: -77.89 } } /> */}
