@@ -4,9 +4,11 @@ import * as FileSystem from 'expo-file-system';
 import KML_Data from './mapData_processed';
 
 export const KML_TYPES = {
+  Invalid: "Invalid",
   Polygon: "Polygon",
   Point: "Point",
-  Polyline: "Polyine"
+  Polyline: "Polyine",
+  Track: "Track"
 };
 
 const _findDoc = (kmlJson) => kmlJson.kml.Document[0];
@@ -33,17 +35,42 @@ async function getCoordinatesFromKMLAsset(localUri) {
 }
 
 const getKMLType= (kmlJson) => {
-  if (!_findDoc(kmlJson).Placemark){
-    console.log("ERROR: KML wasn't valid", kmlJson);
-    return "NOPE";
-  }
+  const Document = _findDoc(kmlJson);
 
-  return (_findDoc(kmlJson).Placemark && _findDoc(kmlJson).Placemark[0].Polygon) ? KML_TYPES.Polygon :  (_findDoc(kmlJson).Placemark && _findDoc(kmlJson).Placemark[0].LineString) ? KML_TYPES.Polyline : KML_TYPES.Point;
+  let kmlType = KML_TYPES.Invalid;
+
+  if (Document.Placemark) {
+    if (Document.Placemark[0].Polygon) {
+      kmlType = KML_TYPES.Polygon;
+    } else if (Document.Placemark[0].LineString) {
+      kmlType = KML_TYPES.Polyline;
+    } else if (Document.Placemark[0].Point) {
+      kmlType = KML_TYPES.Point;
+    } else if (Document.Placemark[0]['gx:Track']) {
+      kmlType = KML_TYPES.Track;
+    }
+  } else {
+    console.log("no Placemark found in KML", kmlJson);
+  }
+  return kmlType;
 }
 
-const getCoordinatesField = (kmlJson, type) => type === KML_TYPES.Polygon ?
-  _findDoc(kmlJson).Placemark[0].Polygon[0].outerBoundaryIs[0].LinearRing[0].coordinates[0] :
-  type === KML_TYPES.Point ? _findDoc(kmlJson).Placemark[0].Point[0].coordinates[0] : _findDoc(kmlJson).Placemark[0].LineString[0].coordinates[0];
+const getCoordinatesField = (kmlJson, type) => {
+  const placemark = _findDoc(kmlJson).Placemark[0];
+  switch (type) {
+    case KML_TYPES.Polygon:
+      return placemark.Polygon[0].outerBoundaryIs[0].LinearRing[0].coordinates[0];
+    case KML_TYPES.Point:
+      return placemark.Point[0].coordinates[0];
+    case KML_TYPES.Polyline:
+      return placemark.LineString[0].coordinates[0];
+    case KML_TYPES.Track:
+      const gxCoordArray = placemark['gx:Track'][0]['gx:coord'];
+      return gxCoordArray.map((val) => val.split(" ").join(",")).join(" ");
+    default:
+      return "";
+  }
+}
 
 export function readKML(data) {
   let coordinates = [], name, type;

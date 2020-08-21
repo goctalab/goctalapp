@@ -215,7 +215,7 @@ export default class MapViewContainer extends Component {
 
   renderPolylines() {
     const fillColors = ["rgba(0, 200, 0, 0.25)", "rgba(0, 0, 200, 0.25)", "rgba(100, 0, 100, 0.25)"];
-    
+
     const polylines = (this.state.polylines).map((polylineObj, i) =>
       <MapView.Polyline
         key={`${i}-${i}`}
