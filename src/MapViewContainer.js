@@ -1,7 +1,8 @@
 import React, { Component } from 'react';
-import { Dimensions, Platform, StyleSheet } from 'react-native';
+import { Dimensions, Platform, StyleSheet, View } from 'react-native';
 import MapView, { PROVIDER_GOOGLE } from 'react-native-maps';
 // import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
+import MenuComponent from './MenuComponent';
 
 import { mapStyle_00 } from './mapStyle';
 import { Asset } from 'expo-asset';
@@ -46,6 +47,8 @@ export default class MapViewContainer extends Component {
     // this.readXml = this.readXml.bind(this);
 
     this.state = {
+      isNavOpen: false,
+      layersDeselected: [], 
       latitude: arrayPlaces[0].coordinates.latitude,
       longitude: arrayPlaces[0].coordinates.longitude,
       routeCoordinates: [],
@@ -59,6 +62,8 @@ export default class MapViewContainer extends Component {
       markers: [],
       polylines: []
     }
+    this.onNavClicked = this.onNavClicked.bind(this);
+    this.onNavItemClicked = this.onNavItemClicked.bind(this);
   }
 
   calcDistance(newLatLon) {
@@ -74,6 +79,21 @@ export default class MapViewContainer extends Component {
       longitudeDelta: -0.001
     })
   }
+
+  onNavClicked() {
+    const isNavOpen = !this.state.isNavOpen;
+    this.setState({ isNavOpen });
+  }
+
+  onNavItemClicked(kmlType) {
+    const layers = this.state.layersDeselected;
+    layers.push(kmlType);
+    const layersDeselected = Array.from(new Set(layers));
+    console.log(layersDeselected, layersDeselected.includes);
+    this.setState({ layersDeselected });
+  }
+
+  isLayerShown = (layerType) => !this.state.layersDeselected.includes(layerType);
 
   getInitialRegion = () => {
     return {
@@ -98,7 +118,7 @@ export default class MapViewContainer extends Component {
       } else if (data.type === KML_TYPES.Point) {
          markerData.push(data);
       } else {
-        polylineData.push(data);
+        polylineData.push(data); // KML_TYPE Polyline and Track
       }
     }));
 
@@ -214,7 +234,7 @@ export default class MapViewContainer extends Component {
   }
 
   renderPolylines() {
-    const fillColors = ["rgba(0, 200, 0, 0.25)", "rgba(0, 0, 200, 0.25)", "rgba(100, 0, 100, 0.25)"];
+    const fillColors = ["rgba(255, 255, 0, 0.85)", "rgba(173, 255, 47, 0.85)", "rgba(255, 255, 0, 0.85)"];
 
     const polylines = (this.state.polylines).map((polylineObj, i) =>
       <MapView.Polyline
@@ -230,50 +250,62 @@ export default class MapViewContainer extends Component {
 
   render() {
     return (
-      <MapView.Animated
-        showsUserLocation
-        followsUserLocation
-        loadingEnabled
-        provider={ PROVIDER_GOOGLE }
-        mapType="hybrid"
-        // mapType={Platform.OS == "android" ? "none" : "standard"}
-        initialRegion={this.getInitialRegion()}
-        region={this.getMapRegion()}
-        style={styles.mapStyle} 
-        customMapStyle={mapStyle_00}
-        maxZoomLevel={21} // docs say 20
-        ref={ref => {
-          this.map = ref;
-        }}
-      >
-        {this.renderMarkers()}
-        {this.renderPolygons()}
-        {this.renderPolylines()}
-        {/* <MapView.Marker.Animated ref={ marker => { this.marker = marker; } }
-          // coordinate={{ latitude: -16, longitude: -70 }}
-          coordinate={ { latitude: -6.0, longitude: -77.89 } } /> */}
-        {/* <MapView.Polyline
-          coordinates={this.state.routeCoordinates}
-          strokeWidth={5}
-          strokeColor="#FFF" />
-        /> */}
-        {/* https://gitmemory.com/issue/react-native-community/react-native-maps/2088/471427151 */}
-        {/* <UrlTile urlTemplate={imageURI} zIndex={-1}  /> */}
-        {/* <MapView.Overlay 
-          image={imageURI}
-          //image="https://www.lib.utexas.edu/maps/historical/newark_nj_1922.jpg"
-          bounds={[[-6.0, -77.89],[-6.06, -77.92]]} /> */}
+      <View>
+        <MapView.Animated
+          showsUserLocation
+          followsUserLocation
+          loadingEnabled
+          provider={ PROVIDER_GOOGLE }
+          mapType="hybrid"
+          // mapType={Platform.OS == "android" ? "none" : "standard"}
+          initialRegion={this.getInitialRegion()}
+          region={this.getMapRegion()}
+          style={styles.mapStyle} 
+          customMapStyle={mapStyle_00}
+          maxZoomLevel={21} // docs say 20
+          ref={ref => {
+            this.map = ref;
+          }}
+        >
+          { this.isLayerShown(KML_TYPES.Point) && 
+            this.renderMarkers() }
+          { this.isLayerShown(KML_TYPES.Polygon) && 
+            this.renderPolygons() }
+          { this.isLayerShown(KML_TYPES.Polyline) && 
+            this.renderPolylines() }
+          {/* <MapView.Marker.Animated ref={ marker => { this.marker = marker; } }
+            // coordinate={{ latitude: -16, longitude: -70 }}
+            coordinate={ { latitude: -6.0, longitude: -77.89 } } /> */}
+          {/* <MapView.Polyline
+            coordinates={this.state.routeCoordinates}
+            strokeWidth={5}
+            strokeColor="#FFF" />
+          /> */}
+          {/* https://gitmemory.com/issue/react-native-community/react-native-maps/2088/471427151 */}
+          {/* <UrlTile urlTemplate={imageURI} zIndex={-1}  /> */}
+          {/* <MapView.Overlay 
+            image={imageURI}
+            //image="https://www.lib.utexas.edu/maps/historical/newark_nj_1922.jpg"
+            bounds={[[-6.0, -77.89],[-6.06, -77.92]]} /> */}
 
-        {/* <MapView.Overlay 
-          image={droneImageOverlayURI}
-          bounds={mapOverlayRegion} /> */}
-        <MapView.Overlay 
-          image={pathsOverlayURI}
-          bounds={mapOverlayRegion} />
-        <MapView.Overlay 
-          image={bldgOverlayURI}
-          bounds={mapOverlayRegion} />
-      </MapView.Animated>);
+          {/* <MapView.Overlay 
+            image={droneImageOverlayURI}
+            bounds={mapOverlayRegion} /> */}
+          {/* <MapView.Overlay 
+            image={pathsOverlayURI}
+            bounds={mapOverlayRegion} /> */}
+          <MapView.Overlay 
+            image={bldgOverlayURI}
+            bounds={mapOverlayRegion} />
+        </MapView.Animated>
+
+        <MenuComponent
+          onClick={this.onNavClicked}
+          onItemClicked={this.onNavItemClicked}
+          isOpen={this.state.isNavOpen}
+        />
+      </View>
+    );
   }
 }
 

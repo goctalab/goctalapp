@@ -1,7 +1,6 @@
 import { Asset } from 'expo-asset';
 import xml2js from 'react-native-xml2js';
 import * as FileSystem from 'expo-file-system';
-import KML_Data from './mapData_processed';
 
 export const KML_TYPES = {
   Invalid: "Invalid",
