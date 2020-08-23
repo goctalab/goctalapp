@@ -136,21 +136,6 @@ export default class MapViewContainer extends Component {
     });
   }
 
-  // async setMarkers() {
-  //   // open asset directory and get files
-  //   // file by file
-  //   const path = "./assets/kml/TNQ1alto2ha.kml";
-  //   const asset = Asset.fromModule(path);
-  //   const markerData = await getCoordinatesFromKMLPath(asset, path);
-  //   this.setState({ markers: [ markerData ] });
-  // }
-
-  // async setPolygons() {
-  //   const path = "./assets/kml/GLperimetro.kml";
-  //   const asset = Asset.fromModule(path);
-  //   const polygonData = await getCoordinatesFromKMLPath(asset, path);
-  //   this.setState({ polygons: [ polygonData ] });
-  // }
 
   //https://medium.com/quick-code/react-native-location-tracking-14ab2c9e2db8
   componentDidMount() {
@@ -284,26 +269,7 @@ export default class MapViewContainer extends Component {
             this.renderPolygons() }
           { this.isLayerShown(KML_TYPES.Polyline) && 
             this.renderPolylines() }
-          {/* <MapView.Marker.Animated ref={ marker => { this.marker = marker; } }
-            // coordinate={{ latitude: -16, longitude: -70 }}
-            coordinate={ { latitude: -6.0, longitude: -77.89 } } />
-          <MapView.Polyline
-            coordinates={this.state.routeCoordinates}
-            strokeWidth={5}
-            strokeColor="#FFF" />
-          />*/}
-          {/* https://gitmemory.com/issue/react-native-community/react-native-maps/2088/471427151 */}
-          {/* <UrlTile urlTemplate={imageURI} zIndex={-1}  />
-          <MapView.Overlay 
-            image={imageURI}
-            //image="https://www.lib.utexas.edu/maps/historical/newark_nj_1922.jpg"
-            bounds={[[-6.0, -77.89],[-6.06, -77.92]]} />
-          <MapView.Overlay 
-            image={droneImageOverlayURI}
-            bounds={mapOverlayRegion} />
-          <MapView.Overlay 
-            image={pathsOverlayURI}
-            bounds={mapOverlayRegion} /> */}
+
           <MapView.Overlay 
             image={bldgOverlayURI}
             bounds={mapOverlayRegion} />
