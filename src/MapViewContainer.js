@@ -20,17 +20,16 @@ const mapOverlayRegion = mapOverlayCoordinates.map((coordObject) => {
   return [ latitude, longitude ];
 });
 
-const dronePicOverlayResource = require("../assets/layers/rough_map_drone_foto_rotated-01.png");
-const droneImageOverlayURI = Asset.fromModule(dronePicOverlayResource).uri;
-
-const pathsOverlayResource = require("../assets/layers/rough_map_layer_paths-01.png");
-const pathsOverlayURI = Asset.fromModule(pathsOverlayResource).uri;
+// const dronePicOverlayResource = require("../assets/layers/rough_map_drone_foto_rotated-01.png");
+// const droneImageOverlayURI = Asset.fromModule(dronePicOverlayResource).uri;
+// const pathsOverlayResource = require("../assets/layers/rough_map_layer_paths-01.png");
+// const pathsOverlayURI = Asset.fromModule(pathsOverlayResource).uri;
+// const imageTileResource = require("../assets/tiles/tile01.png");
+// const imageURI = Asset.fromModule(imageTileResource).uri;
 
 const bldgOverlayResource = require("../assets/layers/rough_map_layer_edifcio-01.png");
 const bldgOverlayURI = Asset.fromModule(bldgOverlayResource).uri;
 
-const imageTileResource = require("../assets/tiles/tile01.png");
-const imageURI = Asset.fromModule(imageTileResource).uri;
 
 const layerMenuItems = Object.keys(KML_TYPES);
 
@@ -61,7 +60,6 @@ export default class MapViewContainer extends Component {
       markers: [],
       polylines: []
     }
-    this.onNavClicked = this.onNavClicked.bind(this);
     this.onNavItemClicked = this.onNavItemClicked.bind(this);
   }
 
@@ -83,21 +81,18 @@ export default class MapViewContainer extends Component {
     console.log('marker press', e.target.title);
   }
 
-  onNavClicked() {
-    const isNavOpen = !this.state.isNavOpen;
-    this.setState({ isNavOpen });
-  }
 
-  onNavItemClicked(kmlType, shouldHide) {
-    const layers = this.state.layersDeselected;
-    if (!shouldHide) {
-      const index = layers.indexOf(kmlType);
-      layers.splice(index, 1);
-    } else {
-      layers.push(kmlType);
-    }
-    const layersDeselected = Array.from(new Set(layers));
-    this.setState({ layersDeselected });
+  onNavItemClicked(kmlType, allSelectedOptions) {
+    console.log(allSelectedOptions)
+    // const layers = this.state.layersDeselected;
+    // if (!shouldHide) {
+    //   const index = layers.indexOf(kmlType);
+    //   layers.splice(index, 1);
+    // } else {
+    //   layers.push(kmlType);
+    // }
+    // const layersDeselected = Array.from(new Set(layers));
+    this.setState({ layersDeselected: allSelectedOptions });
   }
 
   isLayerShown = (layerType) => !this.state.layersDeselected.includes(layerType);
@@ -204,7 +199,7 @@ export default class MapViewContainer extends Component {
         <MapView.Callout tooltip>
           <View style={styles.callout}>
             <Text>{place.name}</Text>
-            <Text>{ placeInformation[{place.name}]  Descriptions of some sort</Text>
+            <Text>{ placeInformation[place.name] || 'Descriptions of some sort' }</Text>
           </View>
         </MapView.Callout>
       </MapView.Marker>
@@ -261,7 +256,7 @@ export default class MapViewContainer extends Component {
           ref={ref => {
             this.map = ref;
           }}
-          onMarkerPress={this.markerPressed}
+          onMarkerPress={this.onMarkerPress}
         >
           { this.isLayerShown(KML_TYPES.Point) && 
             this.renderMarkers() }
@@ -276,11 +271,8 @@ export default class MapViewContainer extends Component {
         </MapView.Animated>
 
         <MenuComponent
-          onMenuClick={this.onNavClicked}
-          onItemClicked={this.onNavItemClicked}
-          selectedOptions={this.state.layersDeselected}
+          onMenuOptionClicked={this.onNavItemClicked}
           menuOptions={layerMenuItems}
-          isOpen={this.state.isNavOpen}
         />
       </View>
     );
