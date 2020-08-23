@@ -2,8 +2,9 @@ import { Asset } from 'expo-asset';
 import xml2js from 'react-native-xml2js';
 import * as FileSystem from 'expo-file-system';
 
+const KML_INVALID_TYPE = "Invalid";
+
 export const KML_TYPES = {
-  Invalid: "Invalid",
   Polygon: "Polygon",
   Point: "Point",
   Polyline: "Polyine",
@@ -36,7 +37,7 @@ async function getCoordinatesFromKMLAsset(localUri) {
 const getKMLType= (kmlJson) => {
   const Document = _findDoc(kmlJson);
 
-  let kmlType = KML_TYPES.Invalid;
+  let kmlType = KML_INVALID_TYPE;
 
   if (Document.Placemark) {
     if (Document.Placemark[0].Polygon) {

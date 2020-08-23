@@ -1,8 +1,9 @@
 import React, { Component } from 'react';
-import { Dimensions, Platform, StyleSheet, View } from 'react-native';
+import { Dimensions, Platform, StyleSheet, View, Text } from 'react-native';
 import MapView, { PROVIDER_GOOGLE } from 'react-native-maps';
 // import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
 import MenuComponent from './MenuComponent';
+import placeInformation from './placesOfInterest';
 
 import { mapStyle_00 } from './mapStyle';
 import { Asset } from 'expo-asset';
@@ -31,6 +32,7 @@ const bldgOverlayURI = Asset.fromModule(bldgOverlayResource).uri;
 const imageTileResource = require("../assets/tiles/tile01.png");
 const imageURI = Asset.fromModule(imageTileResource).uri;
 
+const layerMenuItems = Object.keys(KML_TYPES);
 
 const arrayPlaces = [
   { name: "NE", coordinates: { latitude: -6.054429423257089, longitude: -77.89648004531624}},
@@ -42,9 +44,6 @@ const arrayPlaces = [
 export default class MapViewContainer extends Component {
   constructor(props) {
     super(props);
-
-    // this.onKmlReady = this.onKmlReady.bind(this);
-    // this.readXml = this.readXml.bind(this);
 
     this.state = {
       isNavOpen: false,
@@ -80,16 +79,24 @@ export default class MapViewContainer extends Component {
     })
   }
 
+  onMarkerPress(e) {
+    console.log('marker press', e.target.title);
+  }
+
   onNavClicked() {
     const isNavOpen = !this.state.isNavOpen;
     this.setState({ isNavOpen });
   }
 
-  onNavItemClicked(kmlType) {
+  onNavItemClicked(kmlType, shouldHide) {
     const layers = this.state.layersDeselected;
-    layers.push(kmlType);
+    if (!shouldHide) {
+      const index = layers.indexOf(kmlType);
+      layers.splice(index, 1);
+    } else {
+      layers.push(kmlType);
+    }
     const layersDeselected = Array.from(new Set(layers));
-    console.log(layersDeselected, layersDeselected.includes);
     this.setState({ layersDeselected });
   }
 
@@ -147,9 +154,6 @@ export default class MapViewContainer extends Component {
 
   //https://medium.com/quick-code/react-native-location-tracking-14ab2c9e2db8
   componentDidMount() {
-
-    // this.setMarkers();
-    // this.setPolygons();
     this.setKMLState();
 
     this.watchId = navigator.geolocation.watchPosition(
@@ -212,6 +216,12 @@ export default class MapViewContainer extends Component {
         title={place.name}
         description="Testing"
       >
+        <MapView.Callout tooltip>
+          <View style={styles.callout}>
+            <Text>{place.name}</Text>
+            <Text>{ placeInformation[{place.name}]  Descriptions of some sort</Text>
+          </View>
+        </MapView.Callout>
       </MapView.Marker>
     );
     return markers;
@@ -266,6 +276,7 @@ export default class MapViewContainer extends Component {
           ref={ref => {
             this.map = ref;
           }}
+          onMarkerPress={this.markerPressed}
         >
           { this.isLayerShown(KML_TYPES.Point) && 
             this.renderMarkers() }
@@ -275,23 +286,22 @@ export default class MapViewContainer extends Component {
             this.renderPolylines() }
           {/* <MapView.Marker.Animated ref={ marker => { this.marker = marker; } }
             // coordinate={{ latitude: -16, longitude: -70 }}
-            coordinate={ { latitude: -6.0, longitude: -77.89 } } /> */}
-          {/* <MapView.Polyline
+            coordinate={ { latitude: -6.0, longitude: -77.89 } } />
+          <MapView.Polyline
             coordinates={this.state.routeCoordinates}
             strokeWidth={5}
             strokeColor="#FFF" />
-          /> */}
+          />*/}
           {/* https://gitmemory.com/issue/react-native-community/react-native-maps/2088/471427151 */}
-          {/* <UrlTile urlTemplate={imageURI} zIndex={-1}  /> */}
-          {/* <MapView.Overlay 
+          {/* <UrlTile urlTemplate={imageURI} zIndex={-1}  />
+          <MapView.Overlay 
             image={imageURI}
             //image="https://www.lib.utexas.edu/maps/historical/newark_nj_1922.jpg"
-            bounds={[[-6.0, -77.89],[-6.06, -77.92]]} /> */}
-
-          {/* <MapView.Overlay 
+            bounds={[[-6.0, -77.89],[-6.06, -77.92]]} />
+          <MapView.Overlay 
             image={droneImageOverlayURI}
-            bounds={mapOverlayRegion} /> */}
-          {/* <MapView.Overlay 
+            bounds={mapOverlayRegion} />
+          <MapView.Overlay 
             image={pathsOverlayURI}
             bounds={mapOverlayRegion} /> */}
           <MapView.Overlay 
@@ -300,8 +310,10 @@ export default class MapViewContainer extends Component {
         </MapView.Animated>
 
         <MenuComponent
-          onClick={this.onNavClicked}
+          onMenuClick={this.onNavClicked}
           onItemClicked={this.onNavItemClicked}
+          selectedOptions={this.state.layersDeselected}
+          menuOptions={layerMenuItems}
           isOpen={this.state.isNavOpen}
         />
       </View>
@@ -312,6 +324,14 @@ export default class MapViewContainer extends Component {
 const styles = StyleSheet.create({
   mapStyle: {
     width: Dimensions.get('window').width,
-    height: Dimensions.get('window').height - 100,
+    height: Dimensions.get('window').height - 50,
+  },
+  // noCallout: {
+  //   backgroundColor: "transparent"
+  // },
+  callout: {
+    backgroundColor: "white",
+    borderRadius: 5,
+    padding: 5
   }
 });
