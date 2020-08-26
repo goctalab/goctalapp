@@ -1,7 +1,7 @@
 import { StatusBar } from 'expo-status-bar';
 import React, { Component } from 'react';
 import { StyleSheet, Text, View} from 'react-native';
-import MapViewContainer from './MapViewContainer';
+import MapViewContainer from './components/MapViewContainer';
 import * as Permissions from 'expo-permissions';
 // import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
 

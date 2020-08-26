@@ -1,19 +1,21 @@
 import React, { Component } from 'react';
 import { Dimensions, Platform, StyleSheet, View, Text } from 'react-native';
 import MapView, { PROVIDER_GOOGLE } from 'react-native-maps';
-// import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
-import MenuComponent from './MenuComponent';
-import placeInformation from './placesOfInterest';
-
-import { mapStyle_00 } from './mapStyle';
 import { Asset } from 'expo-asset';
 
+// import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
+import MenuComponent from './MenuComponent';
+import MarkerComponent from './MarkerComponent';
+import { mapStyle_00 } from '../mapStyle';
+
+import { getCoordinatesFromKMLPath, KML_TYPES } from '../kmlUtils';
+import KML_DATA from '../data/mapData_processed';
+import { mapOverlayCoordinates } from '../data/mapData'
+
 import haversine from 'haversine';
-import { getCoordinatesFromKMLPath, KML_TYPES } from './kmlUtils';
-import KML_DATA from './mapData_processed';
 
 //const tilesPath = `${docDir}/tiles/tiles/{z}_{x}_{y}.png`;
-import { mapOverlayCoordinates } from './mapData';
+;
 
 const mapOverlayRegion = mapOverlayCoordinates.map((coordObject) => {
   const { latitude, longitude } = coordObject;
@@ -27,11 +29,19 @@ const mapOverlayRegion = mapOverlayCoordinates.map((coordObject) => {
 // const imageTileResource = require("../assets/tiles/tile01.png");
 // const imageURI = Asset.fromModule(imageTileResource).uri;
 
-const bldgOverlayResource = require("../assets/layers/rough_map_layer_edifcio-01.png");
+const bldgOverlayResource = require("../../assets/layers/rough_map_layer_edifcio-01.png");
 const bldgOverlayURI = Asset.fromModule(bldgOverlayResource).uri;
 
+// const layerMenuItems = Object.keys(KML_TYPES);
+// algo para traducir layer types to kml types
 
-const layerMenuItems = Object.keys(KML_TYPES);
+const LAYER_TYPES = {
+  Places: "Places", 
+  Regions: "Regions", 
+  Bldgs: "Bldgs",
+  Paths: "Paths"
+};
+const layerMenuItems = Object.keys(LAYER_TYPES);
 
 const arrayPlaces = [
   { name: "NE", coordinates: { latitude: -6.054429423257089, longitude: -77.89648004531624}},
@@ -80,7 +90,6 @@ export default class MapViewContainer extends Component {
   onMarkerPress(e) {
     console.log('marker press', e.target.title);
   }
-
 
   onNavItemClicked(kmlType, allSelectedOptions) {
     console.log(allSelectedOptions)
@@ -188,28 +197,29 @@ export default class MapViewContainer extends Component {
   renderMarkers() {
     const pinColors = ["#FFC0C0", "#FF0000", "#00FF00", "#0000FF","#FFC0C0", "#FF0000", "#00FF00", "#0000FF", ];
     const markerData = arrayPlaces.concat(this.state.markers);
-    const markers = (markerData).map((place, i) =>
-      <MapView.Marker
+    return (markerData).map((placeData, i) => {
+      let imageIcon;
+      if (placeData.name === "+ALTO GLAB") {
+        const assetResource = require("../../assets/img/BNGLW1.png");
+        imageIcon = Asset.fromModule(assetResource).uri;
+      } else if (placeData.name === "012") {
+        const assetResource = require("../../assets/img/WSHP.png");
+        imageIcon = Asset.fromModule(assetResource).uri;
+      }
+      if (imageIcon) {
+        debugger
+      }
+      return <MarkerComponent
         key={`${i}-${i}`}
         pinColor={pinColors[i % pinColors.length]}
-        coordinate={place.coordinates}
-        title={place.name}
-        description="Testing"
-      >
-        <MapView.Callout tooltip>
-          <View style={styles.callout}>
-            <Text>{place.name}</Text>
-            <Text>{ placeInformation[place.name] || 'Descriptions of some sort' }</Text>
-          </View>
-        </MapView.Callout>
-      </MapView.Marker>
-    );
-    return markers;
+        markerData={placeData}
+        imageIcon={imageIcon}
+      />
+    });
   }
 
   renderPolygons() {
     const fillColors = ["rgba(0, 200, 0, 0.25)", "rgba(0, 0, 200, 0.25)", "rgba(100, 0, 100, 0.25)"];
-    
     const polys = (this.state.polygons).map((polygonObj, i) =>
       <MapView.Polygon
         key={`${i}-${i}`}
@@ -256,18 +266,18 @@ export default class MapViewContainer extends Component {
           ref={ref => {
             this.map = ref;
           }}
-          onMarkerPress={this.onMarkerPress}
-        >
-          { this.isLayerShown(KML_TYPES.Point) && 
-            this.renderMarkers() }
-          { this.isLayerShown(KML_TYPES.Polygon) && 
-            this.renderPolygons() }
-          { this.isLayerShown(KML_TYPES.Polyline) && 
-            this.renderPolylines() }
+          onMarkerPress={this.onMarkerPress} >
 
-          <MapView.Overlay 
-            image={bldgOverlayURI}
-            bounds={mapOverlayRegion} />
+          { this.isLayerShown(LAYER_TYPES.Places) && 
+            this.renderMarkers() }
+          { this.isLayerShown(LAYER_TYPES.Regions) && 
+            this.renderPolygons() }
+          { this.isLayerShown(LAYER_TYPES.Paths) && 
+            this.renderPolylines() }
+          { this.isLayerShown(LAYER_TYPES.Bldgs) && 
+            <MapView.Overlay 
+              image={bldgOverlayURI}
+              bounds={mapOverlayRegion} /> }
         </MapView.Animated>
 
         <MenuComponent
@@ -286,10 +296,5 @@ const styles = StyleSheet.create({
   },
   // noCallout: {
   //   backgroundColor: "transparent"
-  // },
-  callout: {
-    backgroundColor: "white",
-    borderRadius: 5,
-    padding: 5
-  }
+  // }
 });

@@ -7,7 +7,7 @@ const KML_INVALID_TYPE = "Invalid";
 export const KML_TYPES = {
   Polygon: "Polygon",
   Point: "Point",
-  Polyline: "Polyine",
+  Polyline: "Polyline",
   Track: "Track"
 };
 
