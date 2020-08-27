@@ -32,9 +32,6 @@ const mapOverlayRegion = mapOverlayCoordinates.map((coordObject) => {
 const bldgOverlayResource = require("../../assets/layers/rough_map_layer_edifcio-01.png");
 const bldgOverlayURI = Asset.fromModule(bldgOverlayResource).uri;
 
-// const layerMenuItems = Object.keys(KML_TYPES);
-// algo para traducir layer types to kml types
-
 const LAYER_TYPES = {
   Places: "Places", 
   Regions: "Regions", 
@@ -88,19 +85,11 @@ export default class MapViewContainer extends Component {
   }
 
   onMarkerPress(e) {
-    console.log('marker press', e.target.title);
+    console.log('on marker press:', e.target.title);
   }
 
   onNavItemClicked(kmlType, allSelectedOptions) {
-    console.log(allSelectedOptions)
-    // const layers = this.state.layersDeselected;
-    // if (!shouldHide) {
-    //   const index = layers.indexOf(kmlType);
-    //   layers.splice(index, 1);
-    // } else {
-    //   layers.push(kmlType);
-    // }
-    // const layersDeselected = Array.from(new Set(layers));
+    // console.log(allSelectedOptions)
     this.setState({ layersDeselected: allSelectedOptions });
   }
 
