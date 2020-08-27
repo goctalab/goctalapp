@@ -1,9 +1,13 @@
 const fs = require('fs');
 
-const outputFile = __dirname + '/../src/' + 'mapData_processed.js';
+const outputFile = __dirname + '/../src/data/mapData_processed.js';
 
 const KMLS_OBJECT = () => (fs.readdirSync(__dirname + '/../assets/kml').reduce((kmlsObj, filename) => {
-  const fullFilename = `../assets/kml/${filename}`;
+  console.log(filename);
+  if (filename === '.DS_Store') {
+    return kmlsObj;
+  }
+  const fullFilename = `../../assets/kml/${filename}`;
   kmlsObj[fullFilename] = `require('${fullFilename}')`;
   // kmlsObj[filename] = require(__dirname + '/../assets/kml/' + filename);
   return kmlsObj;
