@@ -2,7 +2,7 @@ import React from 'react';
 import { StyleSheet, View, Text } from 'react-native';
 import { Marker, Callout } from 'react-native-maps';
 
-import placeInformation from '../data/placesOfInterest';
+import placeInformation from '@data/placesOfInterest';
 
 const defaultDescription = "need to add a description for this awesome place!";
 

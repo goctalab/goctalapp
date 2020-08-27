@@ -4,13 +4,13 @@ import MapView, { PROVIDER_GOOGLE } from 'react-native-maps';
 import { Asset } from 'expo-asset';
 
 // import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
-import MenuComponent from './MenuComponent';
-import MarkerComponent from './MarkerComponent';
+import MenuComponent from '@components/MenuComponent';
+import MarkerComponent from '@components/MarkerComponent';
 import { mapStyle_00 } from '../mapStyle';
 
 import { getCoordinatesFromKMLPath, KML_TYPES } from '../kmlUtils';
-import KML_DATA from '../data/mapData_processed';
-import { mapOverlayCoordinates } from '../data/mapData'
+import KML_DATA from '@data/mapData_processed';
+import { mapOverlayCoordinates } from '@data/mapData'
 
 import haversine from 'haversine';
 
