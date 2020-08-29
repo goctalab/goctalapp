@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Dimensions, Platform, StyleSheet, View, Button } from 'react-native';
+import { Dimensions, Platform, StyleSheet, View, Button, TouchableOpacity } from 'react-native';
 import MapView, { PROVIDER_GOOGLE } from 'react-native-maps';
 import { Asset } from 'expo-asset';
 
@@ -14,8 +14,11 @@ import { mapOverlayCoordinates } from '@data/mapData'
 
 import haversine from 'haversine';
 
+import * as RootNavigation from '/src/RootNavigation';
+import Icon from 'react-native-vector-icons/FontAwesome';
+const menuIcon = <Icon name="bars" size={30} color="#FFF" />;
 //const tilesPath = `${docDir}/tiles/tiles/{z}_{x}_{y}.png`;
-;
+
 
 const mapOverlayRegion = mapOverlayCoordinates.map((coordObject) => {
   const { latitude, longitude } = coordObject;
@@ -240,12 +243,16 @@ export default class MapViewContainer extends Component {
   render() {
     return (
       <View style={styles.viewContainer} >
-
-
+        {/* 
         <Button 
           title="Details woo" 
-          onPress={() => this.props.navigation.navigate("Details")} />
+          onPress={() => this.props.navigation.navigate("Details")} /> */}
 
+        <TouchableOpacity 
+            style={[ styles.flexRow, styles.menuControl ]}
+            onPress={() => RootNavigation.openDrawer()}>
+              { menuIcon }
+          </TouchableOpacity>
 
         <MenuComponent
           onMenuOptionClicked={this.onNavItemClicked}
@@ -280,8 +287,6 @@ export default class MapViewContainer extends Component {
               image={bldgOverlayURI}
               bounds={mapOverlayRegion} /> }
         </MapView.Animated>
-
-
       </View>
     );
   }
@@ -290,6 +295,13 @@ export default class MapViewContainer extends Component {
 const styles = StyleSheet.create({
   viewContainer: {
     flex: 1
+  },
+  menuControl: {
+    position: "absolute",
+    top: 20,
+    left: 15,
+    padding: 5,
+    zIndex: 2
   },
   map: {
     // flex: 1,

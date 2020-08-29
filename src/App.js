@@ -11,7 +11,11 @@ import * as RootNavigation from './RootNavigation';
 import MapViewContainer from '@components/MapViewContainer';
 
 import Icon from 'react-native-vector-icons/FontAwesome';
-const menuIcon = <Icon name="bars" size={30} color="#900" />;
+import PlacesofInterestScreen from '@components/PlacesOfInterestScreen';
+import ListViewComponent from '@components/ListViewComponent';
+
+const menuIcon = <Icon name="bars" size={30} color="#FFF" />;
+const layersIcon = <Icon name="layer-group" size={30} color="#900" />;
 
 // import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
 
@@ -25,7 +29,7 @@ function MapScreen(props) {
       <Stack.Screen name="Map" component={ MapViewContainer } />
       <Stack.Screen
         name="Details"
-        component={DetailsScreen}
+        component={ DetailsScreen }
         options={{ title: 'Location Deets' }} />
     </Stack.Navigator>
   );
@@ -68,13 +72,21 @@ export default class App extends Component  {
     return (
       <NavigationContainer initialRouteName="Details" ref={RootNavigation.navigationRef}>
         <View style={styles.container}>
-          <TouchableOpacity 
-            style={[ styles.flexRow, styles.menuControl ]}
-            onPress={ () => RootNavigation.openDrawer() }>
-              {menuIcon}
-          </TouchableOpacity>
-          <Drawer.Navigator initialRouteName="Home">
-            <Stack.Screen name="Home" component={ MapScreen } />
+          <Drawer.Navigator
+            initialRouteName="Home" 
+            screenOptions={({ navigation } ) => ({
+              headerLeft: () => (
+                <DrawerButton onPress={() => navigation.toggleDrawer()} />
+              )
+            })}>
+            <Stack.Screen name="Home" component={ MapViewContainer } />
+            <Stack.Screen name="📍 Places of Interest"
+              component={ PlacesofInterestScreen }
+            />
+            <Stack.Screen name="🥾 Treks" component={ DetailsScreen } />
+            <Stack.Screen name="🌺 Flora y Fauna" component={ DetailsScreen } />
+            <Stack.Screen name="🌱 Experimental Farm" component={ DetailsScreen } />
+            <Stack.Screen name="About" component={ DetailsScreen } />
           </Drawer.Navigator>
         </View>
       </NavigationContainer>
@@ -85,11 +97,6 @@ export default class App extends Component  {
 // console.log("width", Dimensions.get('window').width);
 
 const styles = StyleSheet.create({
-  menuControl: {
-    position: "absolute",
-    zIndex: 2,
-    top: 50,
-  },
   container: {
     flex: 1,
     // width: Dimensions.get('window').width,
