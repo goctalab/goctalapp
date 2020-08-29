@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Dimensions, Platform, StyleSheet, View, Text } from 'react-native';
+import { Dimensions, Platform, StyleSheet, View, Button } from 'react-native';
 import MapView, { PROVIDER_GOOGLE } from 'react-native-maps';
 import { Asset } from 'expo-asset';
 
@@ -196,7 +196,7 @@ export default class MapViewContainer extends Component {
         imageIcon = Asset.fromModule(assetResource).uri;
       }
       if (imageIcon) {
-        debugger
+        // debugger
       }
       return <MarkerComponent
         key={`${i}-${i}`}
@@ -239,7 +239,19 @@ export default class MapViewContainer extends Component {
 
   render() {
     return (
-      <View>
+      <View style={styles.viewContainer} >
+
+
+        <Button 
+          title="Details woo" 
+          onPress={() => this.props.navigation.navigate("Details")} />
+
+
+        <MenuComponent
+          onMenuOptionClicked={this.onNavItemClicked}
+          menuOptions={layerMenuItems}
+        />
+
         <MapView.Animated
           showsUserLocation
           followsUserLocation
@@ -249,7 +261,7 @@ export default class MapViewContainer extends Component {
           // mapType={Platform.OS == "android" ? "none" : "standard"}
           initialRegion={this.getInitialRegion()}
           region={this.getMapRegion()}
-          style={styles.mapStyle} 
+          style={styles.map} 
           customMapStyle={mapStyle_00}
           maxZoomLevel={21} // docs say 20
           ref={ref => {
@@ -269,17 +281,18 @@ export default class MapViewContainer extends Component {
               bounds={mapOverlayRegion} /> }
         </MapView.Animated>
 
-        <MenuComponent
-          onMenuOptionClicked={this.onNavItemClicked}
-          menuOptions={layerMenuItems}
-        />
+
       </View>
     );
   }
 }
 
 const styles = StyleSheet.create({
-  mapStyle: {
+  viewContainer: {
+    flex: 1
+  },
+  map: {
+    // flex: 1,
     width: Dimensions.get('window').width,
     height: Dimensions.get('window').height - 50,
   },

@@ -51,7 +51,9 @@ export default class MenuComponent extends Component {
     return (
       <View style={styles.menuContainer}>
         <View style={[ styles.flexRow, styles.justifyEnd ]}>
-          <TouchableOpacity style={[ styles.flexRow, styles.menuControl ]} onPress={this.onMenuButtonClicked}>
+          <TouchableOpacity
+            style={[ styles.flexRow, styles.menuControl ]}
+            onPress={this.onMenuButtonClicked}>
             { this.state.isMenuOpen ? closeIcon : openIcon }
           </TouchableOpacity>
         </View>
