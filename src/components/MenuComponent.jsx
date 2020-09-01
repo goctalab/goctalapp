@@ -3,9 +3,11 @@ import PropTypes from 'prop-types';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import MenuOptionComponent from './MenuOptionComponent';
 import Icon from 'react-native-vector-icons/FontAwesome';
+import FIcon from 'react-native-vector-icons/Feather';
 
 const openIcon = <Icon name="caret-down" size={30} color="#900" />;
-const closeIcon = <Icon name="caret-up" size={30} color="#900" />;
+const closeIcon = <FIcon name="chevrons-down" size={30} color="#FFF" />;
+const layerIcon = <FIcon name="layers" size={30} color="#FFF" />;
 
 export default class MenuComponent extends Component {
   constructor(props) {
@@ -52,9 +54,9 @@ export default class MenuComponent extends Component {
       <View style={styles.menuContainer}>
         <View style={[ styles.flexRow, styles.justifyEnd ]}>
           <TouchableOpacity
-            style={[ styles.flexRow, styles.menuControl, styles.menuOption ]}
+            style={[ styles.flexRow, styles.menuControl ]}
             onPress={this.onMenuButtonClicked}>
-            { this.state.isMenuOpen ? openIcon : <Text>Layers</Text> }
+            { this.state.isMenuOpen ? closeIcon : layerIcon }
           </TouchableOpacity>
         </View>
         { this.state.isMenuOpen &&
@@ -83,8 +85,8 @@ const styles = StyleSheet.create({
   menuContainer: {
     position: "absolute",
     zIndex: 2,
-    bottom: 0,
-    right: 0,
+    bottom:'2%',
+    right: '5%',
     //height: 200
   },
   menuOptionsContainer: {
@@ -97,10 +99,12 @@ const styles = StyleSheet.create({
     margin: 10
   },
   menuOption: {
-    marginTop: 1,
+    alignItems: 'center',
+    marginVertical: 4,
     backgroundColor: 'rgba(255, 255, 255, 0.8)',
-    padding: 16,
-    width: 100,
+    paddingHorizontal: 10,
+    paddingVertical: 12,
+    width: 140,
   },
   deselected: {
     color: 'black'

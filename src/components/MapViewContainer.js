@@ -205,7 +205,8 @@ export default class MapViewContainer extends Component {
       }
       return <MarkerComponent
         key={`${i}-${i}`}
-        pinColor={pinColors[i % pinColors.length]}
+        // pinColor={pinColors[i % pinColors.length]}
+        pinColor="#FFC0C0"
         markerData={placeData}
         imageIcon={imageIcon}
       />
