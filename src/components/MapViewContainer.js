@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Dimensions, Platform, StyleSheet, View, Button, TouchableOpacity } from 'react-native';
+import { Dimensions, Platform, StyleSheet, View, Image, TouchableOpacity } from 'react-native';
 import MapView, { PROVIDER_GOOGLE } from 'react-native-maps';
 import { Asset } from 'expo-asset';
 
@@ -19,6 +19,8 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 const menuIcon = <Icon name="bars" size={30} color="#FFF" />;
 //const tilesPath = `${docDir}/tiles/tiles/{z}_{x}_{y}.png`;
 
+const logoResource = require("@assets/img/logo.png");
+const logoURI = Asset.fromModule(logoResource).uri;
 
 const mapOverlayRegion = mapOverlayCoordinates.map((coordObject) => {
   const { latitude, longitude } = coordObject;
@@ -32,7 +34,7 @@ const mapOverlayRegion = mapOverlayCoordinates.map((coordObject) => {
 // const imageTileResource = require("../assets/tiles/tile01.png");
 // const imageURI = Asset.fromModule(imageTileResource).uri;
 
-const bldgOverlayResource = require("../../assets/layers/rough_map_layer_edifcio-01.png");
+const bldgOverlayResource = require("@assets/layers/rough_map_layer_edifcio-01.png");
 const bldgOverlayURI = Asset.fromModule(bldgOverlayResource).uri;
 
 const LAYER_TYPES = {
@@ -192,10 +194,10 @@ export default class MapViewContainer extends Component {
     return (markerData).map((placeData, i) => {
       let imageIcon;
       if (placeData.name === "+ALTO GLAB") {
-        const assetResource = require("../../assets/img/BNGLW1.png");
+        const assetResource = require("@assets/img/BNGLW1.png");
         imageIcon = Asset.fromModule(assetResource).uri;
       } else if (placeData.name === "012") {
-        const assetResource = require("../../assets/img/WSHP.png");
+        const assetResource = require("@assets/img/WSHP.png");
         imageIcon = Asset.fromModule(assetResource).uri;
       }
       if (imageIcon) {
@@ -211,17 +213,21 @@ export default class MapViewContainer extends Component {
   }
 
   renderPolygons() {
-    const fillColors = ["rgba(0, 200, 0, 0.25)", "rgba(0, 0, 200, 0.25)", "rgba(100, 0, 100, 0.25)"];
-    const polys = (this.state.polygons).map((polygonObj, i) =>
-      <MapView.Polygon
+    const fillColors = ["rgba(0, 200, 0, 0.25)", "rgba(0, 0, 200, 0.25)", "rgba(0, 0, 200, 0.25)", "rgba(100, 0, 100, 0.25)"];
+    const polys = (this.state.polygons).map((polygonObj, i) => {
+      if (i !== 1) { // TODO blocking other regions for now
+        return;
+      }
+      return <MapView.Polygon
         key={`${i}-${i}`}
         title={polygonObj.name}
         coordinates={polygonObj.coordinates}
-        fillColor={fillColors[i % fillColors.length]}
-        strokeColor="rgba(0,0,0,0.5)"
+        //fillColor={fillColors[i % fillColors.length]}
+        fillColor={"rgba(0, 200, 0, 0.0)"}
+        strokeColor="white"
         strokeWidth={2}
       />
-    );
+    });
     return polys;
   }
 
@@ -243,22 +249,19 @@ export default class MapViewContainer extends Component {
   render() {
     return (
       <View style={styles.viewContainer} >
-        {/* 
-        <Button 
-          title="Details woo" 
-          onPress={() => this.props.navigation.navigate("Details")} /> */}
+
+        <Image style={styles.logo} source={require('@assets/img/logo.png')} />
 
         <TouchableOpacity 
-            style={[ styles.flexRow, styles.menuControl ]}
-            onPress={() => RootNavigation.openDrawer()}>
-              { menuIcon }
-          </TouchableOpacity>
+          style={[ styles.flexRow, styles.menuControl ]}
+          onPress={() => RootNavigation.openDrawer()}>
+            { menuIcon }
+        </TouchableOpacity>
 
         <MenuComponent
           onMenuOptionClicked={this.onNavItemClicked}
           menuOptions={layerMenuItems}
         />
-
         <MapView.Animated
           showsUserLocation
           followsUserLocation
@@ -286,6 +289,7 @@ export default class MapViewContainer extends Component {
             <MapView.Overlay 
               image={bldgOverlayURI}
               bounds={mapOverlayRegion} /> }
+
         </MapView.Animated>
       </View>
     );
@@ -296,17 +300,27 @@ const styles = StyleSheet.create({
   viewContainer: {
     flex: 1
   },
+  logo: {
+    position: 'absolute',
+    backgroundColor: 'transparent',
+    top: 25,
+    right: 15,
+    zIndex: 2,
+    width: 50,
+    height: 50,
+    resizeMode: 'contain'
+  },
   menuControl: {
-    position: "absolute",
+    position: 'absolute',
     top: 20,
     left: 15,
     padding: 5,
     zIndex: 2
   },
   map: {
-    // flex: 1,
+    flex: 1,
     width: Dimensions.get('window').width,
-    height: Dimensions.get('window').height - 50,
+    height: Dimensions.get('window').height
   },
   // noCallout: {
   //   backgroundColor: "transparent"

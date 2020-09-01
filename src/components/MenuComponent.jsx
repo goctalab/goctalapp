@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { View, StyleSheet, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import MenuOptionComponent from './MenuOptionComponent';
 import Icon from 'react-native-vector-icons/FontAwesome';
 
@@ -52,9 +52,9 @@ export default class MenuComponent extends Component {
       <View style={styles.menuContainer}>
         <View style={[ styles.flexRow, styles.justifyEnd ]}>
           <TouchableOpacity
-            style={[ styles.flexRow, styles.menuControl ]}
+            style={[ styles.flexRow, styles.menuControl, styles.menuOption ]}
             onPress={this.onMenuButtonClicked}>
-            { this.state.isMenuOpen ? closeIcon : openIcon }
+            { this.state.isMenuOpen ? openIcon : <Text>Layers</Text> }
           </TouchableOpacity>
         </View>
         { this.state.isMenuOpen &&
@@ -83,29 +83,29 @@ const styles = StyleSheet.create({
   menuContainer: {
     position: "absolute",
     zIndex: 2,
-    top: 0,
+    bottom: 0,
     right: 0,
-    height: 200
-  },
-  menuControl: {
-    width: 40,
-    height: 40,
-    backgroundColor: '#FFF',
-    color: "black",
-    justifyContent: "center"
+    //height: 200
   },
   menuOptionsContainer: {
     display: "flex",
   },
+  menuControl: {
+    color: "black",
+    justifyContent: "center",
+    borderRadius: 8,
+    margin: 10
+  },
   menuOption: {
+    marginTop: 1,
+    backgroundColor: 'rgba(255, 255, 255, 0.8)',
     padding: 16,
-    width: 140,
+    width: 100,
   },
   deselected: {
-    backgroundColor: "#FFFFFF",
     color: 'black'
   },
   selected: {
-    backgroundColor: "#CCCCCC",
+    // backgroundColor: "#CCCCCC",
   }
 });
