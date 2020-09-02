@@ -5,6 +5,7 @@ import MenuOptionComponent from './MenuOptionComponent';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import FIcon from 'react-native-vector-icons/Feather';
 
+// https://github.com/oblador/react-native-vector-icons/issues/1215 ??
 const openIcon = <Icon name="caret-down" size={30} color="#900" />;
 const closeIcon = <FIcon name="chevrons-down" size={30} color="#FFF" />;
 const layerIcon = <FIcon name="layers" size={30} color="#FFF" />;

@@ -9,12 +9,12 @@ import * as RootNavigation from '../RootNavigation';
 
 const Stack = createStackNavigator();
 const listItems = [
-  { title: "Main House", component: DetailViewComponent },
-  { title: "Rock Garden", component: DetailViewComponent },
-  { title: "Batan Ruin", component: DetailViewComponent },
-  { title: "Tombo's Piscina", component: DetailViewComponent },
-  { title: "Taller", component: DetailViewComponent },
-  { title: "Coffee Farm", component: DetailViewComponent },
+  { route: "Main House", component: DetailViewComponent, params: { title: "Main House", id: 1} },
+  { route: "Rock Garden", component: DetailViewComponent, params: { title: "Rock Garden", id: 2} },
+  { route: "Batan Ruin", component: DetailViewComponent, params: { title: "Batan Ruin", id: 33} },
+  { route: "Tombo's Piscina", component: DetailViewComponent, params: { title: "🐕 Tombo's Piscina", id: 44}},
+  { route: "Taller", component: DetailViewComponent, params: { title: "Taller",id: 445} },
+  { route: "Coffee Farm", component: DetailViewComponent, params: { title: "Coffee Farm", id: 153} },
 ]; 
 
 export default function PlacesOfInterestScreen(props) {
@@ -33,15 +33,14 @@ export default function PlacesOfInterestScreen(props) {
         }}>
         { props =>  <ListViewComponent {...props} listItems={listItems} />}
         </Stack.Screen>
-        { listItems.map((item) => {
-          return (<Stack.Screen key={item.title} name={item.title} component={DetailViewComponent}>
-            {/* <TouchableWithoutFeedback
-              onPress={() => props.navigation.navigate('Home')}
-              {...props}>
-              <Text style={styles.item}>{item.title}</Text>
-            </TouchableWithoutFeedback> */}
-          </Stack.Screen>)}
-        )}
+        { listItems.map((item, index) => {
+            return (<Stack.Screen
+                      key={item.route}
+                      name={item.route}
+                      component={DetailViewComponent}>
+                    </Stack.Screen>)
+          })
+        }
       </Stack.Navigator>
   );
 }

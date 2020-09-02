@@ -15,7 +15,6 @@ import PlacesofInterestScreen from '@components/PlacesOfInterestScreen';
 import ListViewComponent from '@components/ListViewComponent';
 
 const menuIcon = <Icon name="bars" size={30} color="#FFF" />;
-const layersIcon = <Icon name="layer-group" size={30} color="#900" />;
 
 // import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
 

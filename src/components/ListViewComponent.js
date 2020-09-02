@@ -1,15 +1,17 @@
 
 import React from 'react';
-import { View, Text, Button, TouchableWithoutFeedback } from 'react-native';
+import { View, Text, TouchableWithoutFeedback } from 'react-native';
 import { StyleSheet } from 'react-native';
 
 function ListViewComponent(props) {
   const { navigation, listItems } = props;
-  const detailViewLinks = listItems.map((item, i) => (<TouchableWithoutFeedback
+  console.log("yo", listItems);
+  const detailViewLinks = listItems.map((item, i) => (
+    <TouchableWithoutFeedback
       key={i}
-      onPress={() => navigation.navigate(item.title)}
-    {...props}>
-      <Text style={styles.item}>{item.title}</Text>
+      onPress={() => navigation.navigate(item.route, item.params)}
+      {...props}>
+      <Text style={styles.item}>{item.params.title}</Text>
     </TouchableWithoutFeedback>)
   ); 
 
@@ -26,11 +28,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 25,
-    // width: Dimensions.get('window').width,
-    // height: Dimensions.get('window').height,
-    // backgroundColor: '#fff',
-    // alignItems: 'center',
-    // justifyContent: 'center',
   },
   item: {
     fontSize: 20,
