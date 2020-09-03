@@ -29,6 +29,11 @@ con `yarn start` corre este proceso y inicia el expo app.
 
 <img src="https://user-images.githubusercontent.com/92090/90290981-7af15480-de44-11ea-80a5-22e713e7f7ac.jpeg" width="200" />
 
+## database
+
+https://desktop.arcgis.com/en/arcmap/latest/manage-data/databases/spatially-enable-sqlilte.htm
+https://nozbe.github.io/WatermelonDB/Advanced/Sync.html
+
 ### Otros recursos por ahora
 https://www.pubnub.com/blog/realtime-geo-tracking-app-react-native/
 https://docs.expo.io/versions/latest/sdk/map-view/
