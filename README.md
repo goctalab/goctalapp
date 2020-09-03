@@ -31,6 +31,7 @@ con `yarn start` corre este proceso y inicia el expo app.
 
 ## database
 
+https://sqlite.org/index.html
 https://desktop.arcgis.com/en/arcmap/latest/manage-data/databases/spatially-enable-sqlilte.htm
 https://nozbe.github.io/WatermelonDB/Advanced/Sync.html
 
