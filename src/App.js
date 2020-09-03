@@ -13,6 +13,7 @@ import MapViewContainer from '@components/MapViewContainer';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import PlacesofInterestScreen from '@components/PlacesOfInterestScreen';
 import ListViewComponent from '@components/ListViewComponent';
+import FloraFaunaScreen from './components/FloraFaunaScreen';
 
 const menuIcon = <Icon name="bars" size={30} color="#FFF" />;
 
@@ -83,7 +84,7 @@ export default class App extends Component  {
               component={ PlacesofInterestScreen }
             />
             <Stack.Screen name="🥾 Treks" component={ DetailsScreen } />
-            <Stack.Screen name="🌺 Flora y Fauna" component={ DetailsScreen } />
+            <Stack.Screen name="🌺 Flora y Fauna" component={ FloraFaunaScreen } />
             <Stack.Screen name="🌱 Experimental Farm" component={ DetailsScreen } />
             <Stack.Screen name="About" component={ DetailsScreen } />
           </Drawer.Navigator>

@@ -268,8 +268,8 @@ export default class MapViewContainer extends Component {
           followsUserLocation
           loadingEnabled
           provider={ PROVIDER_GOOGLE }
-          mapType="hybrid"
-          // mapType={Platform.OS == "android" ? "none" : "standard"}
+          // mapType="hybrid"
+          mapType={Platform.OS == "android" ? "none" : "standard"}
           initialRegion={this.getInitialRegion()}
           region={this.getMapRegion()}
           style={styles.map} 
