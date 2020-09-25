@@ -16,7 +16,7 @@ export default function(props) {
   return (
     <Marker
       pinColor={pinColor}
-      coordinate={markerData.coordinates}
+      coordinate={markerData.coordinates[0]}
       title={markerData.name}
       description={markerData.description || defaultDescription }
       image={imageIcon}

@@ -89,19 +89,18 @@ export function readKML(data) {
   }
 }
 
-function processCoordinates(coordinatesField) {
-  if (!coordinatesField) {
-    return [];
-  }
-  coordsStr = coordinatesField.trim().split(" ");
-
-  const c =  coordsStr.reduce((coordinatesArr, currentStr) => {
-    const coords = currentStr.split(","); 
+export function processCoordinates(coordinatesString) {
+  const cArray = JSON.parse(coordinatesString);
+  const allCoordinatesObjects = cArray.reduce((coordinatesArr, el) => {
+    let coords = el;
+    if (typeof(el) !== typeof([])) {
+      coords = el.split(",");
+    }
     coordinatesArr.push({
       latitude: parseFloat(coords[1]),
       longitude: parseFloat(coords[0]) // ignore z coord...
     });
     return coordinatesArr;
   }, []);
-  return c;
+  return allCoordinatesObjects;
 }

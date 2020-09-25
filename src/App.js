@@ -1,8 +1,7 @@
-import * as Permissions from 'expo-permissions';
-import { StatusBar } from 'expo-status-bar';
 import React, { Component } from 'react';
 import { StyleSheet, View, Text, Button, TouchableOpacity } from 'react-native';
 import 'react-native-gesture-handler';
+import * as Permissions from 'expo-permissions';
 import { NavigationContainer } from '@react-navigation/native';
 import { createDrawerNavigator } from '@react-navigation/drawer';
 import { createStackNavigator } from '@react-navigation/stack';
@@ -14,6 +13,11 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 import PlacesofInterestScreen from '@components/PlacesOfInterestScreen';
 import ListViewComponent from '@components/ListViewComponent';
 import FloraFaunaScreen from './components/FloraFaunaScreen';
+
+import { MapContextProvider } from './MapContextProvider';
+
+
+import dbUtils from '@data/dbUtils';
 
 const menuIcon = <Icon name="bars" size={30} color="#FFF" />;
 
@@ -47,55 +51,69 @@ function DetailsScreen({ navigation }) {
 }
 
 export default class App extends Component  {
-  constructor(props) {
-    super(props);
+  constructor() {
+    super();
+    this.state = {
+      kmlData: []
+    }
   }
-
   async askPermissions() {
-    console.log("asking");
     const { status } = await Permissions.askAsync(
       Permissions.LOCATION
     );
-    console.log(status);
+    console.log("asked perms", status);
     if (status !== 'granted') {
       alert('Hey! You have not enabled selected permissions');
     }
   }
 
+  async initDb() {
+    await dbUtils.init();
+    dbUtils.getAllKML((kml) => {
+      console.log("calling all callbacks yo after fetching KML");
+      this.setState({ mapData: kml })
+    });
+      // .then(
+      //   (kml) => this.setState({ mapData: kml }),
+      //   (err) => {});
+    // const places = dbUtils.getAllPlaces();
+  }
+
   //https://medium.com/quick-code/react-native-location-tracking-14ab2c9e2db8
   componentDidMount() {
     this.askPermissions();
+    this.initDb();
   }
 
   render() {
-    console.log(RootNavigation);
     return (
-      <NavigationContainer initialRouteName="Details" ref={RootNavigation.navigationRef}>
-        <View style={styles.container}>
-          <Drawer.Navigator
-            initialRouteName="Home" 
-            screenOptions={({ navigation } ) => ({
-              headerLeft: () => (
-                <DrawerButton onPress={() => navigation.toggleDrawer()} />
-              )
-            })}>
-            <Stack.Screen name="Home" component={ MapViewContainer } />
-            <Stack.Screen name="📍 Places of Interest"
-              component={ PlacesofInterestScreen }
-            />
-            <Stack.Screen name="🥾 Treks" component={ DetailsScreen } />
-            <Stack.Screen name="🌺 Flora y Fauna" component={ FloraFaunaScreen } />
-            <Stack.Screen name="🌱 Experimental Farm" component={ DetailsScreen } />
-            <Stack.Screen name="About" component={ DetailsScreen } />
-          </Drawer.Navigator>
-        </View>
-      </NavigationContainer>
+      <MapContextProvider state={this.state.mapData}>
+        <NavigationContainer initialRouteName="Details" ref={RootNavigation.navigationRef}>
+          <View style={styles.container}>
+            <Drawer.Navigator
+              initialRouteName="Home" 
+              screenOptions={({ navigation } ) => ({
+                headerLeft: () => (
+                  <DrawerButton onPress={() => navigation.toggleDrawer()} />
+                )
+              })}>
+              <Stack.Screen name="Home" component={ MapViewContainer } />
+              <Stack.Screen name="📍 Places of Interest"
+                component={ PlacesofInterestScreen }
+              />
+              <Stack.Screen name="🥾 Treks" component={ DetailsScreen } />
+              <Stack.Screen name="🌺 Flora y Fauna" component={ FloraFaunaScreen } />
+              <Stack.Screen name="🌱 Experimental Farm" component={ DetailsScreen } />
+              <Stack.Screen name="About" component={ DetailsScreen } />
+            </Drawer.Navigator>
+          </View>
+        </NavigationContainer>
+      </MapContextProvider>
     );
   }
 }
 
 // console.log("width", Dimensions.get('window').width);
-
 const styles = StyleSheet.create({
   container: {
     flex: 1,
