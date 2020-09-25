@@ -63,7 +63,7 @@ export default class App extends Component  {
     );
     console.log("asked perms", status);
     if (status !== 'granted') {
-      alert('Hey! You have not enabled selected permissions');
+      alert('Hey! You have not enabled selected permissions!');
     }
   }
 
