@@ -6,6 +6,8 @@ import placesData from '@data/placesOfInterest';
 export default function DetailViewComponent({ route, navigation }) {
   const text = placesData[route.params.id] || placesData[0];
  
+  // db call
+
   return (
     <View style={{ flex: 1,
       alignItems: 'center',

@@ -1,11 +1,9 @@
 
 import React from 'react';
-// import ListViewComponent from '@components/ListViewComponent';
-import DetailViewComponent from '@components/DetailViewComponent';
 import { createStackNavigator } from '@react-navigation/stack';
 import { StyleSheet, Button } from 'react-native';
-import ListViewComponent from './ListViewComponent';
-import * as RootNavigation from '../RootNavigation';
+import ListViewComponent from '@components/ListViewComponent';
+import DetailViewComponent from '@components/DetailViewComponent';
 
 const Stack = createStackNavigator();
 const listItems = [
@@ -22,14 +20,14 @@ const listItems = [
   { route: "Terrace Pizza", component: DetailViewComponent, params: { title: "Terrace + Pizza Oven", id: 153} },
   { route: "Eliconias", component: DetailViewComponent, params: { title: "Eliconias", id: 153} },
   { route: "Pajuro Trees", component: DetailViewComponent, params: { title: "Pajuro Trees", id: 153} },
-
 ]; 
 
 export default function PlacesOfInterestScreen(props) {
-  const { navigation } = props;
+
+  const { navigation, route } = props;
   return (
     <Stack.Navigator>
-        <Stack.Screen name={props.route.name} options={{
+        <Stack.Screen name={route.name} options={{
           headerLeft: () => (
             <Button
               onPress={() => {
@@ -53,5 +51,4 @@ export default function PlacesOfInterestScreen(props) {
   );
 }
 
-const styles = StyleSheet.create({
-});
+const styles = StyleSheet.create({});

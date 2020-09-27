@@ -1,6 +1,6 @@
 import React from 'react';
 import { StyleSheet, View, Text } from 'react-native';
-import { Marker, Callout, TouchableHighlight } from 'react-native-maps';
+import { Marker, Callout } from 'react-native-maps';
 
 import placeInformation from '@data/placesOfInterest';
 

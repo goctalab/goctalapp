@@ -53,8 +53,8 @@ export default MapViewContainer = function(props) {
 
   const getMapRegion = () => {
     return new MapView.AnimatedRegion({
-      latitude: arrayPlaces[0].coordinates.latitude,
-      longitude: arrayPlaces[0].coordinates.longitude,
+      latitude: arrayPlaces[0].coordinates[0].latitude,
+      longitude: arrayPlaces[0].coordinates[0].longitude,
       latitudeDelta: -0.001,
       longitudeDelta: -0.001
     })
@@ -110,9 +110,8 @@ export default MapViewContainer = function(props) {
     });
   }
 
-  const renderMarkers = function(m) {
-    const markerData = arrayPlaces.concat(m);
-    return (markerData).map((placeData, i) => {
+  const renderMarkers = function(markerData=[]) {
+    return (arrayPlaces.concat(markerData)).map((placeData, i) => {
       let imageIcon;
       if (placeData.name === "+ALTO GLAB") {
         const assetResource = require("@assets/img/BNGLW1.png");
@@ -134,8 +133,8 @@ export default MapViewContainer = function(props) {
     });
   }
 
-  const renderPolygons = function(p) {
-    const polys = (p).map((polygonObj, i) => {
+  const renderPolygons = function(polygonData=[]) {
+    return (polygonData).map((polygonObj, i) => {
       if (i !== 1) { // TODO blocking other regions for now
         return;
       }
@@ -148,13 +147,12 @@ export default MapViewContainer = function(props) {
         strokeWidth={2}
       />
     });
-    return polys;
   }
 
-  const renderPolylines = function(p) {
+  const renderPolylines = function(polylinesData=[]) {
     const fillColors = ["rgba(255, 255, 0, 0.85)", "rgba(173, 255, 47, 0.85)", "rgba(255, 255, 0, 0.85)"];
 
-    const polylines = p.map((polylineObj, i) =>
+    return polylinesData.map((polylineObj, i) =>
       <MapView.Polyline
         key={`${i}-${i}`}
         coordinates={polylineObj.coordinates}
@@ -163,7 +161,6 @@ export default MapViewContainer = function(props) {
         strokeWidth={3}
       />
     );
-    return polylines;
   }
 
   return (

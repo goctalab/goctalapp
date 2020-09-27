@@ -2,8 +2,7 @@ import React from 'react';
 import { createStackNavigator } from '@react-navigation/stack';
 import { StyleSheet, Button } from 'react-native';
 import DetailViewComponent from '@components/DetailViewComponent';
-import ListViewComponent from './ListViewComponent';
-import * as RootNavigation from '../RootNavigation';
+import ListViewComponent from '@components/ListViewComponent';
 
 const Stack = createStackNavigator();
 
@@ -16,6 +15,7 @@ const listItems = [
 
 
 export default function FloraFaunaScreen(props) {
+  
   const { navigation } = props;
   return (
     <Stack.Navigator>
