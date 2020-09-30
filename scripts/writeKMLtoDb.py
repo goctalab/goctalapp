@@ -5,9 +5,11 @@ from pykml import parser
 import pdb
 import json
 
-x = "<Point><coordinates>-71.1663,42.2614,0</coordinates></Point>"
-y = "<LineString><coordinates>-71.1663,42.2614 -71.1667,42.2616</coordinates></LineString>"
-z = "<LineString><coordinates>-71.1663,42.2614 -71.1667,42.2616 -71.1663,42.2614 -71.1667,42.2616</coordinates></LineString>"
+# opens dir assets/kml and reads the files into the database
+# stores "INSERT INTO kml(filename, title, raw_kml, coordinates, kml_type) VALUES (?, ?, ?, ?, ?)"
+# x = "<Point><coordinates>-71.1663,42.2614,0</coordinates></Point>"
+# y = "<LineString><coordinates>-71.1663,42.2614 -71.1667,42.2616</coordinates></LineString>"
+# z = "<LineString><coordinates>-71.1663,42.2614 -71.1667,42.2616 -71.1663,42.2614 -71.1667,42.2616</coordinates></LineString>"
 
 gx_namespace = "{http://www.google.com/kml/ext/2.2}"
 kml_types = {
