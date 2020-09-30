@@ -11,8 +11,6 @@ export const MapContextProvider = (props) => {
     setState(initState);
   },[ props.state ]);
 
-  console.log(initState);
-
   return (
     <MapContext.Provider value={{ mapData: state }}>
       { props.children }

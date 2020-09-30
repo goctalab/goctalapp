@@ -5,7 +5,7 @@ import { AsyncStorage } from 'react-native';
 // SQLite.openDatabase(
 //   { name : "goctaTestDB", createFromLocation : '~db/gocta1'},
 //   () => console.log("ok db"),
-//   () => console.log("erroes db"));
+//   () => console.log("errors db"));
 const PLACES_DESCRIPTION_TABLE = "data2";
 const KML_TABLE = "kml";
 
@@ -14,15 +14,14 @@ export default {
   init: function() {
     FileSystem.getInfoAsync(FileSystem.documentDirectory + 'SQLite/goctaTest.db')
       .then(function(resp) {
-        console.log('yo does the db exist', resp.exists);
+        console.log('does the db exist?', resp.exists);
       });
 
     const callback = (function({ uri }) {
-      console.log('db is at this', uri);
       const db = SQLite.openDatabase('goctaTest.db', 0.1);
       // https://forums.expo.io/t/how-to-connect-to-an-existing-database/6154
       // const db = SQLite.openDatabase(uri, 0.1);
-      console.log("hello db", uri);
+      console.log('db is at this uri', uri, db);
       this.db = db;
       return this;
     }).bind(this);
@@ -37,13 +36,13 @@ export default {
     //return new Promise(function(resolve, reject) {
      
       return this.db.transaction(function (tx) {
-        console.log("executing sql");
+        // console.log("executing sql");
         tx.executeSql(
           `SELECT filename, coordinates, kml_type from ${KML_TABLE}`,
           [], 
           (tx, { rows }) => { 
-            console.log('success', rows.length);
-            console.table(rows._array);
+            // console.log('success', rows.length);
+            // console.table(rows._array);
             callback(rows._array);
           }, 
           function(err) {
@@ -63,7 +62,7 @@ export default {
         `SELECT * from ${PLACES_DESCRIPTION_TABLE}`,
         [], 
         (tx, { rows }) => { 
-          console.log('success', rows.length);
+          console.log("success", rows.length);
           console.table(rows._array);
           return rows._array;
         }, 
@@ -73,6 +72,6 @@ export default {
         });
       }, 
       this.error, 
-      () => { console.log('transaction completed'); })
+      () => { console.log("transaction completed"); })
   }
 }

@@ -61,7 +61,7 @@ export default MapViewContainer = function(props) {
   }
 
   const onMarkerPress = (e) => {
-    console.log('on marker press:', e.target.title);
+    console.log("on marker press:", e.target.title);
   }
 
   const onNavItemClicked = (kmlType, allSelectedOptions) => {
