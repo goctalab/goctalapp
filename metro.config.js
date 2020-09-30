@@ -6,7 +6,8 @@ module.exports = {
         assetExts: [
             ...defaultAssetExts,
             'kml',
-            'xml'
+            'xml',
+            'db'
         ]
     }
 };
