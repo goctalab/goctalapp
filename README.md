@@ -2,11 +2,9 @@
 
 Queremos construir un app que puede llevarte alrededor 
 el terreño y dar informacion al usuario en sitio.
-
 Por ejemplo, a cualquier punto, puede decirte informacion de puntos de interes que estan cerca.
 
-Quizas tambien podemos hacer un poco de juego con el app, secretos escondido o collecion de cosas como un concurso.
-Podemos usar QR codes por sitios tambien.
+Tambien el app tiene que ayudar los visitantes a ir al rio.
 
 ## Dev notes
 
@@ -15,10 +13,12 @@ Usamos [react-native-maps](https://github.com/react-native-community/react-nativ
 
 Descargar el source, corre `yarn install` y con `yarn start` corre este proceso y inicia el expo app.
 
-Importamos el data de kml con scripts. 
-Quieremos la habilidad a importar mas puntos de data y descripciones, independente a reescribir y redeplegar en app.
+Para debuggig, usa el console en google. https://docs.expo.io/workflow/debugging/
 
 ### scripts
+
+Importamos el data de kml con scripts.   
+Queremos la habilidad a importar mas puntos de data y descripciones, independente a reescribir y redeplegar en app.
 
 En el principio importamos nuestra puntos de GPS con un proceso de node con este script y los puntos en un carpeta:  
 https://github.com/goctalab/goctalapp/blob/master/scripts/writeKMLDataRequires.js 
@@ -40,28 +40,35 @@ lee un directorio de kml y saca el filename, title, raw_kml, coordinates, kml_ty
 agregar o limpiar...)
 
 
-### data y db
-Data models:
+### data y database
 
-Tables:
+Estamos usando sqlite para el db.
+https://sqlite.org/index.html
+https://desktop.arcgis.com/en/arcmap/latest/manage-data/databases/spatially-enable-sqlilte.htm
 
-Comandos utils:
+#### Data models:
+
+#### Tables:
+
+#### Comandos utils:
 
 <img src="https://user-images.githubusercontent.com/92090/90290981-7af15480-de44-11ea-80a5-22e713e7f7ac.jpeg" width="200" />
 
-## database
 
-https://sqlite.org/index.html
-https://desktop.arcgis.com/en/arcmap/latest/manage-data/databases/spatially-enable-sqlilte.htm
-https://nozbe.github.io/WatermelonDB/Advanced/Sync.html
+### Otros ideas y preguntas
 
-### Otros recursos por ahora
-https://www.pubnub.com/blog/realtime-geo-tracking-app-react-native/
-https://docs.expo.io/versions/latest/sdk/map-view/
-https://docs.expo.io/workflow/debugging/
+Quizas tambien podemos hacer un poco de juego con el app, secretos escondido o collecion de cosas como un concurso.
+Podemos usar QR codes por sitios tambien.
+
 
 ### Preguntas
 Seguimos usando Google o vendor diferente o custom tiles para permitirnos mas resolution?  
-Implementamos QR codes?  
+Implementamos QR codes? 
+
+### Otros recursos
+https://www.pubnub.com/blog/realtime-geo-tracking-app-react-native/
+https://docs.expo.io/versions/latest/sdk/map-view/
+
+ 
 
 
