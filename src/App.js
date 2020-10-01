@@ -49,9 +49,8 @@ export default function(props) {
   useEffect(() => {
     askPermissions();
     initDb();
-  });
+  }, [props]);
 
-  console.log("place types", placesData[PLACE_TYPES.pointsOfInterest]);
   return (
     <MapContextProvider state={ mapData }>
       <NavigationContainer initialRouteName="Details" ref={ RootNavigation.navigationRef }>

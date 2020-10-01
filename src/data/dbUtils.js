@@ -12,7 +12,10 @@ export default {
    * @description checks if the db exists and loads and opens the db file
    * @returns Promise
    */
-  init: function() {
+  init: async function() {
+    if (this.db) {
+      return;
+    }
     FileSystem.getInfoAsync(FileSystem.documentDirectory + 'SQLite/goctaTest.db')
       .then(function(resp) {
         console.log('does the db exist?', resp.exists);
@@ -27,28 +30,31 @@ export default {
       return this;
     }).bind(this);
 
-    return FileSystem.downloadAsync(
+    return await FileSystem.downloadAsync(
       Expo.Asset.fromModule(require('@assets/db/gocta1.db')).uri,
       `${FileSystem.documentDirectory}SQLite/goctaTest.db`
       ).then(callback);
   },
-  error: (err) => { console.log(`received db error ${err}`); },
+
+  error: (err) => console.log(`received db error ${err}`),
+
   getAllKML: function(callback) {
     return this.db.transaction(async function (tx) {
       // console.log("executing sql");
       await tx.executeSql(
         `SELECT filename, coordinates, kml_type from ${KML_TABLE}`,
         [], 
-        (_, { rows }) => { 
+        (_tx, { rows }) => { 
           callback(rows._array);
         }, 
-        (err) => {
+        (_tx, err) => {
           console.log(`error from getAllKML ${err}`); 
         });
       }, 
       this.error, 
       () => { console.log('transaction completed'); })
   },
+
   getAllPlaces: function(callback) {
     // data2 has kml_file title description type
     // also make call to kml to cross reference filename
@@ -56,12 +62,12 @@ export default {
       await tx.executeSql(
         `SELECT title, kml_file, type from ${PLACES_DESCRIPTION_TABLE}`,
         [], 
-        (_, { rows }) => { 
+        (_tx, { rows }) => { 
           // console.log("success", rows.length);
           // console.table(rows._array);
           callback(rows._array);
         }, 
-        (err) => {
+        (_tx, err) => {
           console.log(`error from places sql ${err}`); 
         });
       }, 
