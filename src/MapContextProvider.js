@@ -4,15 +4,15 @@ export const MapContext = React.createContext([{ testMarker: "testing" }])
 
 export const MapContextProvider = (props) => {
   const initState = props.state || [];
-  const [ state, setState ] = useState([]);
+  const [ mapData, setState ] = useState([]);
 
   // https://medium.com/@justintulk/react-anti-patterns-props-in-initial-state-28687846cc2e
   useEffect(() => {
     setState(initState);
-  },[ props.state ]);
+  }, [ props.state ]);
 
   return (
-    <MapContext.Provider value={{ mapData: state }}>
+    <MapContext.Provider value={{ mapData }}>
       { props.children }
     </MapContext.Provider>
   )

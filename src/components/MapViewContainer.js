@@ -2,7 +2,7 @@ import React, { useState, useContext, useEffect } from 'react';
 import { Dimensions, Platform, StyleSheet, View, Image, TouchableOpacity } from 'react-native';
 import MapView, { PROVIDER_GOOGLE } from 'react-native-maps';
 import { Asset } from 'expo-asset';
-import { MapContext } from "../MapContextProvider";
+import { MapContext } from "@src/MapContextProvider";
 
 import MenuComponent from '@components/MenuComponent';
 import MarkerComponent from '@components/MarkerComponent';
