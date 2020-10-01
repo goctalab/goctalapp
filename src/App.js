@@ -1,63 +1,30 @@
-import React, { Component } from 'react';
-import { StyleSheet, View, Text, Button, TouchableOpacity } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { StyleSheet, View } from 'react-native';
 import 'react-native-gesture-handler';
-import * as Permissions from 'expo-permissions';
 import { NavigationContainer } from '@react-navigation/native';
 import { createDrawerNavigator } from '@react-navigation/drawer';
 import { createStackNavigator } from '@react-navigation/stack';
 import * as RootNavigation from './RootNavigation';
+import * as Permissions from 'expo-permissions';
 
 import MapViewContainer from '@components/MapViewContainer';
-
-import Icon from 'react-native-vector-icons/FontAwesome';
-import PlacesofInterestScreen from '@components/PlacesOfInterestScreen';
-import ListViewComponent from '@components/ListViewComponent';
-import FloraFaunaScreen from './components/FloraFaunaScreen';
-
+import { FloraFaunaScreen, PointsOfInterestScreen } from '@components/ListScreens';
 import { MapContextProvider } from './MapContextProvider';
-
+import { PlacesContextProvider } from './PlacesContextProvider';
 
 import dbUtils from '@data/dbUtils';
-
-const menuIcon = <Icon name="bars" size={30} color="#FFF" />;
+import { PLACE_TYPES, groupPlacesByType } from './placesUtils';
 
 // import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
 
 const Stack = createStackNavigator();
 const Drawer = createDrawerNavigator();
 
-function MapScreen(props) {
-  return (
-    <Stack.Navigator>
-      {/* <Stack.Screen name="Home" component={HomeScreen} /> */}
-      <Stack.Screen name="Map" component={ MapViewContainer } />
-      <Stack.Screen
-        name="Details"
-        component={ DetailsScreen }
-        options={{ title: 'Location Deets' }} />
-    </Stack.Navigator>
-  );
-}
+export default function(props) {
+  const [ mapData, setMapData ] = useState([]);
+  const [ placesData, setPlacesData ] = useState({});
 
-function DetailsScreen({ navigation }) {
-  return (
-    <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-      <Text>Details Screen</Text>
-      <Button
-        title="Go to map view"
-        onPress={() => navigation.navigate('Home')} />
-    </View>
-  );
-}
-
-export default class App extends Component  {
-  constructor() {
-    super();
-    this.state = {
-      kmlData: []
-    }
-  }
-  async askPermissions() {
+  async function askPermissions() {
     const { status } = await Permissions.askAsync(
       Permissions.LOCATION
     );
@@ -67,29 +34,29 @@ export default class App extends Component  {
     }
   }
 
-  async initDb() {
+  async function initDb() {
     await dbUtils.init();
     dbUtils.getAllKML((kml) => {
-      console.log("calling all callbacks yo after fetching KML");
-      this.setState({ mapData: kml })
+      setMapData(kml);
     });
-      // .then(
-      //   (kml) => this.setState({ mapData: kml }),
-      //   (err) => {});
-    // const places = dbUtils.getAllPlaces();
+    dbUtils.getAllPlaces((places) => {
+      const groupedPlaces = groupPlacesByType(places);
+      setPlacesData(groupedPlaces);
+    });
   }
 
   //https://medium.com/quick-code/react-native-location-tracking-14ab2c9e2db8
-  componentDidMount() {
-    this.askPermissions();
-    this.initDb();
-  }
+  useEffect(() => {
+    askPermissions();
+    initDb();
+  });
 
-  render() {
-    return (
-      <MapContextProvider state={this.state.mapData}>
-        <NavigationContainer initialRouteName="Details" ref={RootNavigation.navigationRef}>
-          <View style={styles.container}>
+  console.log("place types", placesData[PLACE_TYPES.pointsOfInterest]);
+  return (
+    <MapContextProvider state={ mapData }>
+      <NavigationContainer initialRouteName="Details" ref={ RootNavigation.navigationRef }>
+        <View style={ styles.container }>
+          <PlacesContextProvider state={ placesData }>
             <Drawer.Navigator
               initialRouteName="Home" 
               screenOptions={({ navigation } ) => ({
@@ -98,19 +65,27 @@ export default class App extends Component  {
                 )
               })}>
               <Stack.Screen name="Home" component={ MapViewContainer } />
-              <Stack.Screen name="📍 Places of Interest"
-                component={ PlacesofInterestScreen }
+              <Stack.Screen name="📍 Points of Interest"
+                  component={ PointsOfInterestScreen }
               />
-              <Stack.Screen name="🥾 Treks" component={ DetailsScreen } />
-              <Stack.Screen name="🌺 Flora y Fauna" component={ FloraFaunaScreen } />
-              <Stack.Screen name="🌱 Experimental Farm" component={ DetailsScreen } />
-              <Stack.Screen name="About" component={ DetailsScreen } />
+              <Stack.Screen name="🥾 Treks" 
+                component={ PointsOfInterestScreen }
+              />
+              <Stack.Screen name="🌺 Flora y Fauna"
+                component={ FloraFaunaScreen }
+              />
+              <Stack.Screen name="🌱 Experimental Farm"
+                component={ FloraFaunaScreen }
+              />
+              {/* <Stack.Screen name="About"
+                component={ ListDetailNavComponent }
+                initialParams={{ listItems: trekListItems }} /> */}
             </Drawer.Navigator>
-          </View>
-        </NavigationContainer>
-      </MapContextProvider>
-    );
-  }
+          </PlacesContextProvider>
+        </View>
+      </NavigationContainer>
+    </MapContextProvider>
+  );
 }
 
 // console.log("width", Dimensions.get('window').width);

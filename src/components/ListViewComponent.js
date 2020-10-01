@@ -4,16 +4,18 @@ import { View, Text, TouchableWithoutFeedback } from 'react-native';
 import { StyleSheet } from 'react-native';
 
 function ListViewComponent(props) {
-  const { navigation, listItems } = props;
-  const detailViewLinks = listItems.map((item, i) => (
-    <TouchableWithoutFeedback
+  const { navigation, route, listItems } = props;
+
+  const detailViewLinks = listItems.map((item, i) => {
+    const params = { title: item.title, id: item.kml_file };
+    return (<TouchableWithoutFeedback
       style={styles.item}
       key={i}
-      onPress={() => navigation.navigate(item.route, item.params)}
+      onPress={() => navigation.navigate(route, params )}
       {...props}>
-      <Text style={[styles.item, styles.text]}>{item.params.title}</Text>
+      <Text style={[styles.item, styles.text]}>{item.title}</Text>
     </TouchableWithoutFeedback>)
-  ); 
+  }); 
 
   return (
     <View style={styles.container}>
