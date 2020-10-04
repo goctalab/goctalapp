@@ -7,11 +7,14 @@ function ListViewComponent(props) {
   const { navigation, route, listItems } = props;
 
   const detailViewLinks = listItems.map((item, i) => {
-    const params = { title: item.title, id: item.kml_file };
+    const params = { title: item.title, id: item.rowid };
     return (<TouchableWithoutFeedback
       style={styles.item}
       key={i}
-      onPress={() => navigation.navigate(route, params )}
+      onPress={() => {
+        console.log("navigating", route, params);
+        navigation.navigate(`${item.kml_file}_${item.rowid}`, params)
+      }}
       {...props}>
       <Text style={[styles.item, styles.text]}>{item.title}</Text>
     </TouchableWithoutFeedback>)
