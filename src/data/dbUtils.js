@@ -60,11 +60,11 @@ export default {
     // also make call to kml to cross reference filename
     return this.db.transaction(async function(tx) {
       await tx.executeSql(
-        `SELECT title, kml_file, type from ${PLACES_DESCRIPTION_TABLE}`,
+        `SELECT ROWID, title, kml_file, type from ${PLACES_DESCRIPTION_TABLE}`,
         [], 
         (_tx, { rows }) => { 
           // console.log("success", rows.length);
-          // console.table(rows._array);
+          console.table(rows._array);
           callback(rows._array);
         }, 
         (_tx, err) => {
@@ -73,5 +73,24 @@ export default {
       }, 
       this.error, 
       () => { console.log("transaction completed"); })
+  },
+
+  getDetailsForPlace: function(callback, id, language) {
+    return this.db.transaction(async function(tx) {
+      await tx.executeSql(
+        `SELECT title, description from ${PLACES_DESCRIPTION_TABLE} where ROWID = ?`,
+        [id], 
+        (_tx, { rows }) => { 
+          // console.log("success", rows.length);
+          // console.table(rows._array);
+          callback(rows._array[0]);
+        },
+        (_tx, err) => {
+          console.log(`error from places sql ${err}`); 
+        }
+      ); 
+    },
+    this.error, 
+    () => { console.log("transaction completed"); })
   }
 }

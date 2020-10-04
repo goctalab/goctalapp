@@ -13,11 +13,12 @@ import { MapContextProvider } from './MapContextProvider';
 import { PlacesContextProvider } from './PlacesContextProvider';
 
 import dbUtils from '@data/dbUtils';
-import { PLACE_TYPES, groupPlacesByType } from './placesUtils';
+import { groupPlacesByType } from '@src/placesUtils';
+import { HOME_ROUTE } from '@src/routeUtils';
 
 // import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
 
-const Stack = createStackNavigator();
+const DrawerNavStack = createStackNavigator();
 const Drawer = createDrawerNavigator();
 
 export default function(props) {
@@ -57,23 +58,33 @@ export default function(props) {
         <View style={ styles.container }>
           <PlacesContextProvider state={ placesData }>
             <Drawer.Navigator
-              initialRouteName="Home" 
+              initialRouteName={HOME_ROUTE}
               screenOptions={({ navigation } ) => ({
                 headerLeft: () => (
                   <DrawerButton onPress={() => navigation.toggleDrawer()} />
                 )
               })}>
-              <Stack.Screen name="Home" component={ MapViewContainer } />
-              <Stack.Screen name="📍 Points of Interest"
-                  component={ PointsOfInterestScreen }
-              />
-              <Stack.Screen name="🥾 Treks" 
+              <DrawerNavStack.Screen 
+                name={HOME_ROUTE}
+                options={{ title: "🗺️ Map" }}
+                component={ MapViewContainer } />
+              <DrawerNavStack.Screen
+                name="points_of_interest"
+                options={{ title: "📍 Points of Interest" }}
                 component={ PointsOfInterestScreen }
               />
-              <Stack.Screen name="🌺 Flora y Fauna"
+              <DrawerNavStack.Screen 
+                name="treks"
+                options={{ title: "🥾 Treks" }}
+                component={ PointsOfInterestScreen }
+              />
+              <DrawerNavStack.Screen name="flora_fauna"
+                options={{ title: "🌺 Flora y Fauna" }}
                 component={ FloraFaunaScreen }
               />
-              <Stack.Screen name="🌱 Experimental Farm"
+              <DrawerNavStack.Screen 
+                name="farm"
+                options={{ title: "🌱 Experimental Farm" }}
                 component={ FloraFaunaScreen }
               />
               {/* <Stack.Screen name="About"
