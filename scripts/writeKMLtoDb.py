@@ -1,22 +1,23 @@
-from os import listdir
-from os.path import isfile, join, abspath, dirname, expanduser
+#!/usr/bin/env python
+
+from os import listdir, path
+import sys
 import sqlite3
 from pykml import parser
-import pdb
 import json
 import argparse
 
-parser = argparse.ArgumentParser(description='Import csv data into the db.')
-parser.add_argument('kml_dirpath', metavar='D', type=str,
+aparser = argparse.ArgumentParser(description='Import csv data into the db.')
+aparser.add_argument('kml_dirpath', metavar='D', type=str,
                    help='a path to the folder with kml files')
-parser.add_argument('--db', type=str,
+aparser.add_argument('--db', type=str,
                    help='location of the db file')
 
-args = parser.parse_args()
+args = aparser.parse_args()
 
 DATA_TABLE = 'kml';
 dirpath = args.kml_dirpath;
-DB = args.db if args.db else expanduser('~/gocta1.db');
+DB = path.expanduser(args.db) if args.db else path.expanduser('~/gocta1.db');
 
 # opens dir assets/kml and reads the files into the database
 # stores "INSERT INTO kml(filename, title, raw_kml, coordinates, kml_type) VALUES (?, ?, ?, ?, ?)"
@@ -58,7 +59,7 @@ def get_coordinates(root, node):
   return json.dumps(coords)
 
 def parse_kml_file(filename):
-  f = open(join(abspath(dirpath), filename), "rb")
+  f = open(path.join(path.abspath(dirpath), filename), "rb")
   kml_data = f.read()
 
   root = parser.fromstring(kml_data)
@@ -75,11 +76,13 @@ def parse_kml_file(filename):
 def drop_create_table(cursor):
   stmt = "DROP TABLE IF EXISTS {}".format(DATA_TABLE)
   cursor.execute(stmt)
-  cursor.execute("CREATE TABLE kml(filename varchar(50), title varchar(100), raw_kml varchar(10000), coordinates varchar(10000), kml_type varchar(30));
+  cursor.execute("CREATE TABLE kml(filename varchar(50), title varchar(100), raw_kml varchar(10000), coordinates varchar(10000), kml_type varchar(30))")
 
 if not path.exists(dirpath):
   print("kml directory doesn't exist");
   sys.exit()
+
+resp = input("CREATE a new table with this data? This will CLEAR previous data if any exists. YES/n ")
 
 connection = sqlite3.connect(DB);
 # connection.enable_load_extension(True)
@@ -88,11 +91,15 @@ connection = sqlite3.connect(DB);
 connection.text_factory = str
 cursor = connection.cursor()
 
-resp = raw_input("Would you like to CLEAR ALL previous data in the table first? YES/n");
 if resp == "YES":
   drop_create_table(cursor)
+else:
+  confirm = input("OK then, ADD this kml data to the existing table? Proceed? YES/n ")
+  if confirm != "YES":
+    print("Aborting. Bye :)")
+    sys.exit()
 
-file_paths = [f for f in listdir(dirpath) if isfile(join(dirpath, f)) and ".kml" in f]
+file_paths = [f for f in listdir(dirpath) if path.isfile(path.join(dirpath, f)) and ".kml" in f]
 file_content_for_db = map(parse_kml_file, file_paths)
 # stmt = "INSERT INTO kml_data(kml_filename, kml_geometry) VALUES (?, GeomFromKML(?))"
 stmt = "INSERT INTO kml(filename, title, raw_kml, coordinates, kml_type) VALUES (?, ?, ?, ?, ?)"
@@ -102,5 +109,5 @@ cursor.executemany(stmt, file_content_for_db)
 
 connection.commit()
 connection.close()
-print("Done");
+print("Done.");
 sys.exit()

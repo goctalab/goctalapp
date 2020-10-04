@@ -42,7 +42,7 @@ def fill_db():
 
   print("Done.")
 
-resp = raw_input("Will drop data table and create new one from csv data. Proceed? Y/n : ") 
+resp = input("Will DROP the data table and create new one from csv data. Proceed? Y/n : ") 
 
 if resp != "Y":
   print("Will not proceed. Have a nice day :)");
