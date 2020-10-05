@@ -12,7 +12,8 @@ module.exports = function(api) {
             '@data': './src/data',
             '@components': './src/components'
           }
-        }
+        },
+        "transform-inline-environment-variables"
       ]
     ]
   };

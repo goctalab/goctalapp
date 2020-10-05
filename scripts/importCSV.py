@@ -4,7 +4,8 @@ import subprocess
 import sys
 import sqlite3
 import argparse
-from os import path
+from os import path, environ
+import pdb #, pdb.set_trace()
 
 parser = argparse.ArgumentParser(description='Import csv data into the db.')
 parser.add_argument('csv_file', metavar='F', type=str,
@@ -14,9 +15,12 @@ parser.add_argument('--db', type=str,
 
 args = parser.parse_args()
 
-DATA_TABLE = 'data3';
+DATA_TABLE = environ.get('SITES_TABLE', 'sites')
+DB_NAME = environ.get('DB_NAME', 'gocta')
+DB_PATH = '~/{}.db'.format(DB_NAME);
+
 csv_path = args.csv_file;
-DB = args.db if args.db else path.expanduser('~/gocta1.db');
+DB = args.db if args.db else path.expanduser(DB_PATH);
 
 if not path.exists(csv_path):
   print("csv file path doesn't exist");
@@ -32,8 +36,9 @@ def fill_db():
   cursor.execute(stmt)
 
   import_stmt = ".import {} {}".format(args.csv_file, DATA_TABLE)
-  
-  print("Importing with command: {}").format(import_stmt)
+  # pdb.set_trace()
+  print("Importing with command:")
+  print(import_stmt)
 
   output = subprocess.check_output(["sqlite3", DB, 
     ".mode csv", 

@@ -1,11 +1,12 @@
 #!/usr/bin/env python
 
-from os import listdir, path
+from os import listdir, path, environ
 import sys
 import sqlite3
 from pykml import parser
 import json
 import argparse
+# import pdb, pdb.set_trace()
 
 aparser = argparse.ArgumentParser(description='Import csv data into the db.')
 aparser.add_argument('kml_dirpath', metavar='D', type=str,
@@ -15,9 +16,12 @@ aparser.add_argument('--db', type=str,
 
 args = aparser.parse_args()
 
-DATA_TABLE = 'kml';
+DATA_TABLE = environ.get('KML_TABLE', 'kml');
+DB_NAME = environ.get('DB_NAME', 'gocta')
+DB_PATH = '~/{}.db'.format(DB_NAME);
+
 dirpath = args.kml_dirpath;
-DB = path.expanduser(args.db) if args.db else path.expanduser('~/gocta1.db');
+DB = path.expanduser(args.db) if args.db else path.expanduser(DB_PATH);
 
 # opens dir assets/kml and reads the files into the database
 # stores "INSERT INTO kml(filename, title, raw_kml, coordinates, kml_type) VALUES (?, ?, ?, ?, ?)"
@@ -75,6 +79,7 @@ def parse_kml_file(filename):
 
 def drop_create_table(cursor):
   stmt = "DROP TABLE IF EXISTS {}".format(DATA_TABLE)
+  print(DB_PATH, stmt)
   cursor.execute(stmt)
   cursor.execute("CREATE TABLE kml(filename varchar(50), title varchar(100), raw_kml varchar(10000), coordinates varchar(10000), kml_type varchar(30))")
 
