@@ -65,12 +65,36 @@ INNER JOIN B on B.f = A.f;
 Importamos el data de kml con un script python.   
 https://github.com/goctalab/goctalapp/blob/master/scripts/scripts/writeKMLtoDb.py
 
+El script usa los valores de .env para decidir cual DB y cual table.
+
+Los defaults son...
+
 Lee un directorio de kml y saca el filename, title, raw_kml, coordinates, kml_type, y guarda en el db
 
-(TODO: ahora usa './assets/kml'; necesitamos cambiar el script para cualquier dir.
-agregar o limpiar...
-tambien quiza usa nodejs https://stackoverflow.com/questions/46803558/get-data-from-kml-file-using-node-js)
+Syntax:  
+`./scripts/writeKMLtoDb.py DIRECTORY_WITH_KML`  
+`./scripts/writeKMLtoDb.py DIRECTORY_WITH_KML --db=gocta_db` _Tambien puedes pasar un db_  
 
+Example:  
+`./scripts/writeKMLtoDb.py /Users/ivy/Projects/Gocta/GoctaLab\ locations/FROM_SERGIO/ `
+
+#### Descripciones de puntos
+
+Las descripciones y titulos va a vivir en un excel, no importa donde -
+pero tiene que tener este estructura de columnas:  
+
+```filename	| title_ES	| title	| description_ES	| description	| category``` 
+
+para cargar cambios de data en el database:  
+
+1. Descarga el data de spreadsheet en un formato csv
+1. Corre el script para cargar el table con data de csv
+
+
+`./scripts/importCSV.py PATH_TO_CSV`  
+
+Ejemplo: 
+`./scripts/importCSV.py ~/Downloads/gocta.csv `
 ___
 
 _Antes:_  

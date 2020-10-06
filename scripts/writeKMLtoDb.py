@@ -1,9 +1,27 @@
-from os import listdir
-from os.path import isfile, join, abspath, dirname
+#!/usr/bin/env python
+
+from os import listdir, path, environ
+import sys
 import sqlite3
 from pykml import parser
-import pdb
 import json
+import argparse
+# import pdb, pdb.set_trace()
+
+aparser = argparse.ArgumentParser(description='Import csv data into the db.')
+aparser.add_argument('kml_dirpath', metavar='D', type=str,
+                   help='a path to the folder with kml files')
+aparser.add_argument('--db', type=str,
+                   help='location of the db file')
+
+args = aparser.parse_args()
+
+DATA_TABLE = environ.get('KML_TABLE', 'kml');
+DB_NAME = environ.get('DB_NAME', 'gocta')
+DB_PATH = '~/{}.db'.format(DB_NAME);
+
+dirpath = args.kml_dirpath;
+DB = path.expanduser(args.db) if args.db else path.expanduser(DB_PATH);
 
 # opens dir assets/kml and reads the files into the database
 # stores "INSERT INTO kml(filename, title, raw_kml, coordinates, kml_type) VALUES (?, ?, ?, ?, ?)"
@@ -45,7 +63,7 @@ def get_coordinates(root, node):
   return json.dumps(coords)
 
 def parse_kml_file(filename):
-  f = open(join(abspath(dirpath), filename), "rb")
+  f = open(path.join(path.abspath(dirpath), filename), "rb")
   kml_data = f.read()
 
   root = parser.fromstring(kml_data)
@@ -59,23 +77,42 @@ def parse_kml_file(filename):
   # print(data[0], data[1])
   return data
 
-dirpath = './assets/kml';
-file_paths = [f for f in listdir(dirpath) if isfile(join(dirpath, f)) and ".kml" in f]
+def drop_create_table(cursor):
+  stmt = "DROP TABLE IF EXISTS {}".format(DATA_TABLE)
+  print(DB_PATH, stmt)
+  cursor.execute(stmt)
+  cursor.execute("CREATE TABLE kml(filename varchar(50), title varchar(100), raw_kml varchar(10000), coordinates varchar(10000), kml_type varchar(30))")
 
-file_content_for_db = map(parse_kml_file, file_paths)
+if not path.exists(dirpath):
+  print("kml directory doesn't exist");
+  sys.exit()
 
-connection = sqlite3.connect("/Users/ivy/gocta1");
-connection.enable_load_extension(True)
-connection.load_extension("/usr/local/Cellar/libspatialite/4.3.0a_8/lib/mod_spatialite.dylib")
+resp = input("Clear previous kml data? Y/n ")
+
+connection = sqlite3.connect(DB);
+# connection.enable_load_extension(True)
+# connection.load_extension("/usr/local/Cellar/libspatialite/4.3.0a_8/lib/mod_spatialite.dylib")
 
 connection.text_factory = str
 cursor = connection.cursor()
 
+if resp == "Y":
+  drop_create_table(cursor)
+else:
+  confirm = input("OK then, will ADD this kml data to the existing table. Proceed? Y/n ")
+  if confirm != "Y":
+    print("Aborting. Bye :)")
+    sys.exit()
 
+file_paths = [f for f in listdir(dirpath) if path.isfile(path.join(dirpath, f)) and ".kml" in f]
+file_content_for_db = map(parse_kml_file, file_paths)
 # stmt = "INSERT INTO kml_data(kml_filename, kml_geometry) VALUES (?, GeomFromKML(?))"
 stmt = "INSERT INTO kml(filename, title, raw_kml, coordinates, kml_type) VALUES (?, ?, ?, ?, ?)"
 cursor.executemany(stmt, file_content_for_db)
 # https://postgis.net/docs/ST_GeomFromKML.html
 # https://stackoverflow.com/questions/26074069/using-pykml-to-parse-kml-document
+
 connection.commit()
 connection.close()
+print("Done.");
+sys.exit()

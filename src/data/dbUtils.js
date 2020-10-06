@@ -6,8 +6,9 @@ import { AsyncStorage } from 'react-native';
 //   { name : "goctaTestDB", createFromLocation : '~db/gocta1'},
 //   () => console.log("ok db"),
 //   () => console.log("errors db"));
-const PLACES_DESCRIPTION_TABLE = "data2";
-const KML_TABLE = "kml";
+const DB_NAME = process.env.DB_NAME || 'gocta';
+const PLACES_DESCRIPTION_TABLE = process.env.SITES_TABLE || 'sites';
+const KML_TABLE = process.env.KML_TABLE || 'kml ';
 
 export default {
   db: null,
@@ -27,7 +28,7 @@ export default {
     }).bind(this);
 
     return FileSystem.downloadAsync(
-      Expo.Asset.fromModule(require('@assets/db/gocta1.db')).uri,
+      Expo.Asset.fromModule(require('@assets/db/gocta_test.db')).uri,
       `${FileSystem.documentDirectory}SQLite/goctaTest.db`
       ).then(callback);
   },
@@ -67,7 +68,6 @@ export default {
           return rows._array;
         }, 
         function(err) {
-          debugger
           console.log(`some error ${err}`); 
         });
       }, 
