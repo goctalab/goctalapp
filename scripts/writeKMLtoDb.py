@@ -12,7 +12,7 @@ aparser = argparse.ArgumentParser(description='Import csv data into the db.')
 aparser.add_argument('kml_dirpath', metavar='D', type=str,
                    help='a path to the folder with kml files')
 aparser.add_argument('--db', type=str,
-                   help='location of the db file')
+                   help='path location of the db file')
 
 args = aparser.parse_args()
 
