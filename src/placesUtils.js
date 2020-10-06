@@ -1,12 +1,14 @@
 import { PLACE_FIELDS } from '@data/dbUtils';
 
+/**
+ * @description categories that map to category in the db
+ */
 export const PLACE_CATEGORIES = {
-  pointsOfInterest : "point_of_interest",
+  pointOfInterest : "point_of_interest",
   path: "path",
   trek: "trek",
   flora: "flora",
-  fauna: "fauna",
-  floraFauna: "floraFauna" // maybe unnecesary
+  fauna: "fauna"
 };
 
 export const groupPlacesByType = (places) => places.reduce((grpData, place) => {
@@ -15,8 +17,8 @@ export const groupPlacesByType = (places) => places.reduce((grpData, place) => {
   }
 
   switch(place[PLACE_FIELDS.category]) {
-    case PLACE_CATEGORIES.pointsOfInterest:
-      grpData[PLACE_CATEGORIES.pointsOfInterest].push(place);
+    case PLACE_CATEGORIES.pointOfInterest:
+      grpData[PLACE_CATEGORIES.pointOfInterest].push(place);
       break;
     case PLACE_CATEGORIES.flora:
       grpData[PLACE_CATEGORIES.flora].push(place);

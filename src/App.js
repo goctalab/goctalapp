@@ -4,17 +4,22 @@ import 'react-native-gesture-handler';
 import { NavigationContainer } from '@react-navigation/native';
 import { createDrawerNavigator } from '@react-navigation/drawer';
 import { createStackNavigator } from '@react-navigation/stack';
-import * as RootNavigation from './RootNavigation';
+import * as RootNavigation from '@src/RootNavigation';
 import * as Permissions from 'expo-permissions';
 
 import MapViewContainer from '@components/MapViewContainer';
-import { FloraFaunaScreen, PointsOfInterestScreen } from '@components/ListScreens';
+import { FloraFaunaScreen,
+  PointsOfInterestScreen,
+  TreksScreen,
+  FarmScreen
+} from '@components/ListScreens';
+
 import { MapContextProvider } from './MapContextProvider';
 import { PlacesContextProvider } from './PlacesContextProvider';
 
 import dbUtils from '@data/dbUtils';
 import { groupPlacesByType } from '@src/placesUtils';
-import { HOME_ROUTE } from '@src/routeUtils';
+import * as ROUTES from '@src/routeUtils';
 
 // import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
 
@@ -41,8 +46,6 @@ export default function(props) {
       setMapData(kml);
     });
     dbUtils.getAllPlaces((places) => {
-      debugger
-  
       const groupedPlaces = groupPlacesByType(places);
       setPlacesData(groupedPlaces);
     });
@@ -60,34 +63,35 @@ export default function(props) {
         <View style={ styles.container }>
           <PlacesContextProvider state={ placesData }>
             <Drawer.Navigator
-              initialRouteName={HOME_ROUTE}
+              initialRouteName={ROUTES.HOME_ROUTE}
               screenOptions={({ navigation } ) => ({
                 headerLeft: () => (
                   <DrawerButton onPress={() => navigation.toggleDrawer()} />
                 )
               })}>
               <DrawerNavStack.Screen 
-                name={HOME_ROUTE}
+                name={ROUTES.HOME_ROUTE}
                 options={{ title: "🗺️ Map" }}
                 component={ MapViewContainer } />
               <DrawerNavStack.Screen
-                name="points_of_interest"
+                name={ROUTES.POI_ROUTE}
                 options={{ title: "📍 Points of Interest" }}
                 component={ PointsOfInterestScreen }
               />
               <DrawerNavStack.Screen 
-                name="treks"
+                name={ROUTES.TREKS_ROUTE}
                 options={{ title: "🥾 Treks" }}
-                component={ PointsOfInterestScreen }
+                component={ TreksScreen }
               />
-              <DrawerNavStack.Screen name="flora_fauna"
+              <DrawerNavStack.Screen 
+                name={ROUTES.FLORA_FAUNA_ROUTE}
                 options={{ title: "🌺 Flora y Fauna" }}
                 component={ FloraFaunaScreen }
               />
               <DrawerNavStack.Screen 
-                name="farm"
+                name={ROUTES.FARM_ROUTE}
                 options={{ title: "🌱 Experimental Farm" }}
-                component={ FloraFaunaScreen }
+                component={ FarmScreen }
               />
               {/* <Stack.Screen name="About"
                 component={ ListDetailNavComponent }
