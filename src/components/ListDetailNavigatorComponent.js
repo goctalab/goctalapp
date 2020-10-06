@@ -3,19 +3,18 @@ import { createStackNavigator } from '@react-navigation/stack';
 import { StyleSheet, Button } from 'react-native';
 import DetailViewComponent from '@components/DetailViewComponent';
 import ListViewComponent from '@components/ListViewComponent';
-import { HOME_ROUTE, getRouteNameFromKMLItem } from '@src/routeUtils';
+import { HOME_ROUTE, getRouteNameFromKMLItem, getListViewTitle } from '@src/routeUtils';
 import { PLACE_FIELDS } from '@data/dbUtils';
 
 const ListDetailsStack = createStackNavigator();
 
-export default function ({ navigation, route, listItems=[] }) {
-  console.log("route name", navigation); // category como flora y fauna, points of interest
+export default function({ navigation, route, listItems=[] }) {
   return (
     <ListDetailsStack.Navigator>
         <ListDetailsStack.Screen 
           name={route.name} 
           options={{
-            // title: "HOLA",  // TODO: title
+            title: getListViewTitle(route),  // TODO: title
             headerLeft: () => (
               <Button
                 onPress={() => {
@@ -44,3 +43,7 @@ export default function ({ navigation, route, listItems=[] }) {
 }
 
 const styles = StyleSheet.create({});
+
+// https://reactnavigation.org/docs/hello-react-navigation/#passing-additional-props
+// const memoized =  React.memo(ListDetailNavigatorComponent);
+///export default memoized;

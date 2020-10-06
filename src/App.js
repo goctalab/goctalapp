@@ -19,7 +19,8 @@ import { PlacesContextProvider } from './PlacesContextProvider';
 
 import dbUtils from '@data/dbUtils';
 import { groupPlacesByType } from '@src/placesUtils';
-import * as ROUTES from '@src/routeUtils';
+import * as ROUTES  from '@src/routeUtils';
+import { getListViewTitle } from '@src/routeUtils';
 
 // import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
 
@@ -71,26 +72,26 @@ export default function(props) {
               })}>
               <DrawerNavStack.Screen 
                 name={ROUTES.HOME_ROUTE}
-                options={{ title: "🗺️ Map" }}
+                options={({ route }) => ({ title: getListViewTitle(route) })}
                 component={ MapViewContainer } />
               <DrawerNavStack.Screen
                 name={ROUTES.POI_ROUTE}
-                options={{ title: "📍 Points of Interest" }}
+                options={({ route }) => ({ title: getListViewTitle(route) })}
                 component={ PointsOfInterestScreen }
               />
               <DrawerNavStack.Screen 
                 name={ROUTES.TREKS_ROUTE}
-                options={{ title: "🥾 Treks" }}
+                options={({ route }) => ({ title: getListViewTitle(route) })}
                 component={ TreksScreen }
               />
               <DrawerNavStack.Screen 
                 name={ROUTES.FLORA_FAUNA_ROUTE}
-                options={{ title: "🌺 Flora y Fauna" }}
+                options={({ route }) => ({ title: getListViewTitle(route) })}
                 component={ FloraFaunaScreen }
               />
               <DrawerNavStack.Screen 
                 name={ROUTES.FARM_ROUTE}
-                options={{ title: "🌱 Experimental Farm" }}
+                options={({ route }) => ({ title: getListViewTitle(route) })}
                 component={ FarmScreen }
               />
               {/* <Stack.Screen name="About"

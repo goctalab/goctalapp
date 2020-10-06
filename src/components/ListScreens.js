@@ -13,7 +13,6 @@ import ListDetailNavigatorComponent from '@components/ListDetailNavigatorCompone
  * @returns the screen component which is List with Detail
  */
 const getScreen = (placeCategoriesForScreen, props) => {
-  console.log("props", props, placeCategoriesForScreen);
   const { placesData } = useContext(PlacesContext);
 
   if (!Array.isArray(placeCategoriesForScreen)) {
@@ -22,17 +21,13 @@ const getScreen = (placeCategoriesForScreen, props) => {
   const listItems = placeCategoriesForScreen.reduce((data, key) =>
     placesData[key] ? data.concat(placesData[key]) : data, []
   );
-
   return ListDetailNavigatorComponent({ listItems, ...props});
 }
 
 /**
  * @description named screen exports
  */
-export const PointsOfInterestScreen = (props) => {
-  debugger
-  return getScreen(PLACE_CATEGORIES.pointOfInterest, props);
-}
+export const PointsOfInterestScreen = (props) => getScreen(PLACE_CATEGORIES.pointOfInterest, props);
 export const FloraFaunaScreen = (props) => getScreen([PLACE_CATEGORIES.flora, PLACE_CATEGORIES.fauna], props);
 export const TreksScreen = (props) => getScreen([PLACE_CATEGORIES.trek, PLACE_CATEGORIES.fauna], props);
 export const FarmScreen = (props) => getScreen(PLACE_CATEGORIES.pointOfInterest, props);
