@@ -32,6 +32,7 @@ def fill_db():
   connection.text_factory = str
   cursor = connection.cursor()
 
+  # TODO not dropping table
   stmt = "DROP TABLE IF EXISTS {}".format(DATA_TABLE)
   cursor.execute(stmt)
 

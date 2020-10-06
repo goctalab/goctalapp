@@ -2,21 +2,25 @@
 import React from 'react';
 import { View, Text, TouchableWithoutFeedback } from 'react-native';
 import { StyleSheet } from 'react-native';
+import { getRouteNameFromKMLItem } from '@src/routeUtils';
+import { PLACE_FIELDS } from '@data/dbUtils';
 
 function ListViewComponent(props) {
   const { navigation, route, listItems } = props;
 
   const detailViewLinks = listItems.map((item, i) => {
-    const params = { title: item.title, id: item.rowid };
+    const params = { title: item[PLACE_FIELDS.title], id: item.rowid };
+    const routeName = getRouteNameFromKMLItem(item);
+    
     return (<TouchableWithoutFeedback
       style={styles.item}
       key={i}
       onPress={() => {
         console.log("navigating", route, params);
-        navigation.navigate(`${item.kml_file}_${item.rowid}`, params)
+        navigation.navigate(routeName, params)
       }}
       {...props}>
-      <Text style={[styles.item, styles.text]}>{item.title}</Text>
+      <Text style={[styles.item, styles.text]}>{item[PLACE_FIELDS.title]}</Text>
     </TouchableWithoutFeedback>)
   }); 
 

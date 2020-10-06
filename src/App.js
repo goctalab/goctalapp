@@ -41,6 +41,8 @@ export default function(props) {
       setMapData(kml);
     });
     dbUtils.getAllPlaces((places) => {
+      debugger
+  
       const groupedPlaces = groupPlacesByType(places);
       setPlacesData(groupedPlaces);
     });

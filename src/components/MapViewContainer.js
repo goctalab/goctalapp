@@ -3,12 +3,13 @@ import { Dimensions, Platform, StyleSheet, View, Image, TouchableOpacity } from 
 import MapView, { PROVIDER_GOOGLE } from 'react-native-maps';
 import { Asset } from 'expo-asset';
 import { MapContext } from "@src/MapContextProvider";
+import { KML_FIELDS } from "@data/dbUtils";
 
 import MenuComponent from '@components/MenuComponent';
 import MarkerComponent from '@components/MarkerComponent';
 import { mapStyle_00 } from '../mapStyle';
 
-import { processCoordinates, KML_TYPES } from '../kmlUtils';
+import { processCoordinates, KML_TYPES } from '@src/kmlUtils';
 import { mapOverlayCoordinates } from '@data/mapData'
 
 import * as RootNavigation from '/src/RootNavigation';
@@ -90,14 +91,14 @@ export default MapViewContainer = function(props) {
 
     mapData.forEach((data, i) => {
       const object = { 
-        name: data.filename,
-        coordinates: processCoordinates(data.coordinates),
-        type: data.kml_type
+        name: data[KML_FIELDS.filename],
+        coordinates: processCoordinates(data[KML_FIELDS.coordinates]),
+        type: data[KML_FIELDS.type]
       };
       // const coords = JSON.parse(data.coordinates);
-      if (data.kml_type === KML_TYPES.Polygon) {
+      if (data[KML_FIELDS.type] === KML_TYPES.Polygon) {
         polygonData.push(object);
-      } else if (data.kml_type === KML_TYPES.Point) {
+      } else if (data[KML_FIELDS.type] === KML_TYPES.Point) {
          markerData.push(object);
       } else {
         polylineData.push(object); // KML_TYPE Polyline and Track
@@ -111,8 +112,11 @@ export default MapViewContainer = function(props) {
   }
 
   const renderMarkers = function(markerData=[]) {
-    return (arrayPlaces.concat(markerData)).map((placeData, i) => {
+    // arrayPlaces.concat(markerData)
+    debugger
+    return (markerData).map((placeData, i) => {
       let imageIcon;
+      // TODO redo marker images
       if (placeData.name === "+ALTO GLAB") {
         const assetResource = require("@assets/img/BNGLW1.png");
         imageIcon = Asset.fromModule(assetResource).uri;

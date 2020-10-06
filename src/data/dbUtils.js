@@ -10,6 +10,26 @@ const DB_NAME = process.env.DB_NAME || 'gocta';
 const PLACES_DESCRIPTION_TABLE = process.env.SITES_TABLE || 'sites';
 const KML_TABLE = process.env.KML_TABLE || 'kml ';
 
+export const PLACE_FIELDS = {
+  filename: "filename",
+  title: "title",
+  description: "description",
+  category: "category"
+}
+
+const ES = {
+  title: "title_ES",
+  description: "description_ES",
+}
+
+export const PLACE_FIELDS_ES = { ...PLACE_FIELDS, ...ES };
+
+export const KML_FIELDS = {
+  filename: "filename",
+  coordinates: "coordinates",
+  type: "kml_type"
+}
+
 export default {
   db: null,
   /**
@@ -47,7 +67,7 @@ export default {
     return this.db.transaction(async function (tx) {
       // console.log("executing sql");
       await tx.executeSql(
-        `SELECT filename, coordinates, kml_type from ${KML_TABLE}`,
+        `SELECT ${KML_FIELDS.filename}, ${KML_FIELDS.coordinates}, ${KML_FIELDS.type} from ${KML_TABLE}`,
         [], 
         (_tx, { rows }) => { 
           callback(rows._array);
@@ -65,7 +85,7 @@ export default {
     // also make call to kml to cross reference filename
     return this.db.transaction(async function(tx) {
       await tx.executeSql(
-        `SELECT ROWID, title, kml_file, type from ${PLACES_DESCRIPTION_TABLE}`,
+        `SELECT rowid, ${PLACE_FIELDS.title}, ${PLACE_FIELDS.filename}, ${PLACE_FIELDS.category} from ${PLACES_DESCRIPTION_TABLE}`,
         [], 
         (_tx, { rows }) => { 
           // console.log("success", rows.length);
@@ -83,7 +103,7 @@ export default {
   getDetailsForPlace: function(callback, id, language) {
     return this.db.transaction(async function(tx) {
       await tx.executeSql(
-        `SELECT title, description from ${PLACES_DESCRIPTION_TABLE} where ROWID = ?`,
+        `SELECT ${PLACE_FIELDS.title}, ${PLACE_FIELDS.description} from ${PLACES_DESCRIPTION_TABLE} where rowid = ?`,
         [id], 
         (_tx, { rows }) => { 
           // console.log("success", rows.length);
