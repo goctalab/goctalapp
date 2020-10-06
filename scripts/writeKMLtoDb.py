@@ -87,7 +87,7 @@ if not path.exists(dirpath):
   print("kml directory doesn't exist");
   sys.exit()
 
-resp = input("CREATE a new table with this data? This will CLEAR previous data if any exists. YES/n ")
+resp = input("Clear previous kml data? Y/n ")
 
 connection = sqlite3.connect(DB);
 # connection.enable_load_extension(True)
@@ -96,11 +96,11 @@ connection = sqlite3.connect(DB);
 connection.text_factory = str
 cursor = connection.cursor()
 
-if resp == "YES":
+if resp == "Y":
   drop_create_table(cursor)
 else:
-  confirm = input("OK then, ADD this kml data to the existing table? Proceed? YES/n ")
-  if confirm != "YES":
+  confirm = input("OK then, will ADD this kml data to the existing table. Proceed? Y/n ")
+  if confirm != "Y":
     print("Aborting. Bye :)")
     sys.exit()
 

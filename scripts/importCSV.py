@@ -16,7 +16,7 @@ parser.add_argument('--db', type=str,
 args = parser.parse_args()
 
 DATA_TABLE = environ.get('SITES_TABLE', 'sites')
-DB_NAME = environ.get('DB_NAME', 'gocta')
+DB_NAME = environ.get('DB_NAME', 'gocta_test')
 DB_PATH = '~/{}.db'.format(DB_NAME);
 
 csv_path = args.csv_file;
@@ -47,7 +47,7 @@ def fill_db():
 
   print("Done.")
 
-resp = input("Will DROP the data table and create new one from csv data. Proceed? Y/n : ") 
+resp = input("Will delete the old data and create new data from csv. Proceed? Y/n : ") 
 
 if resp != "Y":
   print("Will not proceed. Have a nice day :)");
