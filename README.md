@@ -72,17 +72,29 @@ Los defaults son...
 Lee un directorio de kml y saca el filename, title, raw_kml, coordinates, kml_type, y guarda en el db
 
 Syntax:  
-`./scripts/writeKMLtoDb.py DIRECTORY_WITH_KML`
-`./scripts/writeKMLtoDb.py DIRECTORY_WITH_KML --db=gocta_db` _Tambien puedes pasar un db_
+`./scripts/writeKMLtoDb.py DIRECTORY_WITH_KML`  
+`./scripts/writeKMLtoDb.py DIRECTORY_WITH_KML --db=gocta_db` _Tambien puedes pasar un db_  
 
 Example:  
 `./scripts/writeKMLtoDb.py /Users/ivy/Projects/Gocta/GoctaLab\ locations/FROM_SERGIO/ `
 
-#### descripciones de puntos
+#### Descripciones de puntos
 
-```filename	| title_ES	| title	| description_ES	| description	| category```
-1. Descarga el data de spreadsheet en us csv
+Las descripciones y titulos va a vivir en un excel, no importa donde -
+pero tiene que tener este estructura de columnas:  
+
+```filename	| title_ES	| title	| description_ES	| description	| category``` 
+
+para cargar cambios de data en el database:  
+
+1. Descarga el data de spreadsheet en un formato csv
 1. Corre el script para cargar el table con data de csv
+
+
+`./scripts/importCSV.py PATH_TO_CSV`  
+
+Ejemplo: 
+`./scripts/importCSV.py ~/Downloads/gocta.csv `
 ___
 
 _Antes:_  
