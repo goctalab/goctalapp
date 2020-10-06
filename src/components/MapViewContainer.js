@@ -113,7 +113,7 @@ export default MapViewContainer = function(props) {
 
   const renderMarkers = function(markerData=[]) {
     // arrayPlaces.concat(markerData)
-    debugger
+
     return (markerData).map((placeData, i) => {
       let imageIcon;
       // TODO redo marker images
