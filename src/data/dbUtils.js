@@ -1,6 +1,5 @@
 import * as FileSystem from 'expo-file-system';
 import * as SQLite from 'expo-sqlite';
-// import { AsyncStorage } from 'react-native';
 
 // const DB_NAME = process.env.DB_NAME || 'gocta';
 const PLACES_DESCRIPTION_TABLE = process.env.SITES_TABLE || 'sites';
@@ -67,6 +66,7 @@ export default {
         [], 
         (_tx, { rows }) => { 
           callback(rows._array);
+          console.table(rows._array);
         }, 
         (_tx, err) => {
           console.log(`error from getAllKML ${err}`); 
@@ -81,11 +81,11 @@ export default {
     // also make call to kml to cross reference filename
     return this.db.transaction(async function(tx) {
       await tx.executeSql(
-        `SELECT rowid, ${PLACE_FIELDS.title}, ${PLACE_FIELDS.description}, ${PLACE_FIELDS.filename}, ${PLACE_FIELDS.category} from ${PLACES_DESCRIPTION_TABLE}`,
+        `SELECT rowid, ${PLACE_FIELDS.title}, ${PLACE_FIELDS.title}, ${PLACE_FIELDS.description}, ${PLACE_FIELDS.filename}, ${PLACE_FIELDS.category} from ${PLACES_DESCRIPTION_TABLE}`,
         [], 
         (_tx, { rows }) => { 
           // console.log("success", rows.length);
-          console.table(rows._array);
+          // console.table(rows._array);
           callback(rows._array);
         }, 
         (_tx, err) => {

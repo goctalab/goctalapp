@@ -1,19 +1,19 @@
-import React, { useState, useContext, useEffect } from 'react';
+import React, { useState, useContext, useEffect, useRef } from 'react';
 import { Dimensions, Platform, StyleSheet, View, Image, TouchableOpacity } from 'react-native';
 import MapView, { PROVIDER_GOOGLE } from 'react-native-maps';
 import { Asset } from 'expo-asset';
 import { MapContext } from "@components/MapContextProvider";
 import { PlacesContext } from "@components/PlacesContextProvider";
-import { KML_FIELDS, PLACE_FIELDS } from "@data/dbUtils";
+import * as RootNavigation from '@components/RootNavigation';
 
 import MenuComponent from '@components/MenuComponent';
 import MarkerComponent from '@components/MarkerComponent';
+
+import { KML_FIELDS, PLACE_FIELDS } from "@data/dbUtils";
+import { processCoordinates, KML_TYPES } from '@utils/kmlUtils';
 import { mapStyle_00, mapStyle_01 } from '../mapStyle';
 import markerAssetsURI from '@src/mapMarkerAssetsURI';
 
-import { processCoordinates, KML_TYPES } from '@utils/kmlUtils';
-
-import * as RootNavigation from '@components/RootNavigation';
 import Icon from 'react-native-vector-icons/FontAwesome';
 const menuIcon = <Icon name="bars" size={30} color="#FFF" />;
 
@@ -47,36 +47,68 @@ const LAYER_TYPES = {
 };
 const layerMenuItems = Object.keys(LAYER_TYPES);
 
-const arrayPlaces = [
-  { name: "NE", coordinates: [{ latitude: -6.054429423257089, longitude: -77.89648004531624}]},
-  { name: "NW", coordinates: [{ latitude: -6.054299248256771, longitude: -77.89811561864342}]},
-  { name: "SW", coordinates: [{ latitude: -6.055420387530083, longitude: -77.89803066932026}]},
-  { name: "SE", coordinates: [{ latitude: -6.055457543168768, longitude: -77.89663650604342}]},
-];
+const START_COORDINATES = { latitude: -6.054429423257089, longitude: -77.89648004531624 };
+const DELTA = -0.001;
 
-export default MapViewContainer = function(props) {
+export default MapViewContainer = function({ navigator, route }) {
+
+  const params = route.params;
 
   const [ layersDeselected, setLayersDeselected ] = useState([]);
   const [ mapData, setMapData ] = useState({ markers: [], polygons: [], polylines: []});
+  const [ markerComponents, setMarkerComponents ] = useState([]);
   const { mapData: mapContextData } = useContext(MapContext);
   const { placesData: placesContextData } = useContext(PlacesContext);
+  
+
+  const mapRef = useRef(null);
 
   useEffect(() => {
     parseMapData(mapContextData, placesContextData);
   }, [ mapContextData, placesContextData ]);
 
+  useEffect(() => {
+    if (params && params.selected_marker) {
+      console.log('select this marker');
+      // find marker
+      // open callout
+      // animate
+    }
+  }, [ params ]);
+
   const getMapRegion = () => {
     return new MapView.AnimatedRegion({
-      latitude: arrayPlaces[0].coordinates[0].latitude,
-      longitude: arrayPlaces[0].coordinates[0].longitude,
-      latitudeDelta: -0.001,
-      longitudeDelta: -0.001
+      latitude: START_COORDINATES.latitude,
+      longitude: START_COORDINATES.longitude,
+      latitudeDelta: DELTA,
+      longitudeDelta: DELTA
     })
   }
 
-  const onMarkerPress = (e) => {
-    console.log("on marker press:", e.target.title);
+  const onMarkerClick = (e) => {
+    console.log("hello", e, e.nativeEvent);
+    const item = e.nativeEvent;
+
+    const markerRegion = {
+      latitude: item.coordinate.latitude,
+      longitude: item.coordinate.longitude,
+      latitudeDelta: DELTA,
+      longitudeDelta: DELTA,
+    }
+    //   // animate camera to that region over 500 ms
+    //   this.map.animateToRegion(newRegion, 500)
+    centerMap(markerRegion);
   }
+
+  openMarker = (selectedMarker) => {
+    debugger
+    const marker = markerComponents.find((m) => m.filename === selectedMarker);
+    marker.showCallout();
+  }
+
+  const centerMap = (region) => {
+    mapRef.current.animateToRegion(region, 300);
+  } 
 
   const onNavItemClicked = (kmlType, allSelectedOptions) => {
     // console.log(allSelectedOptions)
@@ -89,8 +121,8 @@ export default MapViewContainer = function(props) {
     return {
       latitude: -6.055,
       longitude: -77.8971,
-      latitudeDelta: 0.01,
-      longitudeDelta: 0.01
+      latitudeDelta: DELTA,
+      longitudeDelta: DELTA
     }
   }
 
@@ -101,7 +133,7 @@ export default MapViewContainer = function(props) {
 
     mapData.forEach((data) => {
       const mapObject = { 
-        name: data[KML_FIELDS.filename],
+        [KML_FIELDS.filename]: data[KML_FIELDS.filename],
         coordinates: processCoordinates(data[KML_FIELDS.coordinates]),
         type: data[KML_FIELDS.type]
       };
@@ -109,7 +141,7 @@ export default MapViewContainer = function(props) {
       if (data[KML_FIELDS.type] === KML_TYPES.Polygon) {
         polygonData.push(mapObject);
       } else if (data[KML_FIELDS.type] === KML_TYPES.Point) {
-        const placeData = (placesData.find((place) => place[PLACE_FIELDS.filename] === mapObject.name));
+        const placeData = (placesData.find((place) => place[PLACE_FIELDS.filename] === mapObject[KML_FIELDS.filename]));
         const markerObject = { ...mapObject, ...placeData }; 
         markerData.push(markerObject);
       } else {
@@ -124,30 +156,25 @@ export default MapViewContainer = function(props) {
   }
 
   const renderMarkers = function(markerData=[]) {
-    // arrayPlaces.concat(markerData)
+    return (markerData).map((data, i) => {
 
-    return (markerData).map((placeData, i) => {
-      const placename = placeData.name;
-      console.log(placename, "well?");
-      const getImageIcon = markerAssetsURI[placename] || markerAssetsURI.defaultMarker;
-      // const getImageIcon = markerAssetsURI.defaultMarker;
-      
-      const imageIcon = getImageIcon();
-      return <MarkerComponent
+      const filename = data[KML_FIELDS.filename];
+      const getIcon = markerAssetsURI[filename] || markerAssetsURI.defaultMarker;
+      const icon = getIcon();
+     
+      <MarkerComponent
         key={`${i}-${i}`}
         // pinColor={pinColors[i % pinColors.length]}
         pinColor="#FFC0C0"
-        markerData={placeData}
-        imageIcon={imageIcon}
+        markerData={data}
+        imageIcon={icon}
       />
     });
+    
   }
 
   const renderPolygons = function(polygonData=[]) {
     return (polygonData).map((polygonObj, i) => {
-      if (i !== 1) { // TODO blocking other regions for now
-        return;
-      }
       return <MapView.Polygon
         key={`${i}-${i}`}
         title={polygonObj.name}
@@ -200,10 +227,8 @@ export default MapViewContainer = function(props) {
         style={styles.map} 
         customMapStyle={mapStyle_00}
         maxZoomLevel={21} // docs say 20
-        ref={ref => {
-          mapRef = ref;
-        }}
-        onMarkerPress={onMarkerPress} >
+        ref={mapRef}
+        onMarkerPress={onMarkerClick} >
 
         { isLayerShown(LAYER_TYPES.Places) && 
           renderMarkers(mapData.markers) }

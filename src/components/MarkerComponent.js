@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useRef } from 'react';
 import { StyleSheet, View, Text } from 'react-native';
 import { Marker, Callout } from 'react-native-maps';
 
@@ -13,6 +13,7 @@ export default function(props) {
 
   return (
     <Marker
+      id={markerData.filename}
       pinColor={pinColor}
       coordinate={markerData.coordinates[0]}
       title={markerData.title}

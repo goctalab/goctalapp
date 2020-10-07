@@ -7,7 +7,7 @@ import { HOME_ROUTE } from '@utils/routeUtils';
 export default function DetailViewComponent({ route, navigation }) {
 
   const [ description, setDescription ] = useState("Loading...");
-  const { id, title } = route.params;
+  const { id, title, filename } = route.params;
  
   // db call
   useEffect(() => {
@@ -27,7 +27,7 @@ export default function DetailViewComponent({ route, navigation }) {
       <Text style={{ fontSize: 18,  textAlign: 'justify' }}>{description}</Text>
       <Button
         title="Go to map view"
-        onPress={() => navigation.navigate(HOME_ROUTE)} />
+        onPress={() => navigation.navigate(HOME_ROUTE, { selected_marker: filename } )} />
     </View>
   );
 }

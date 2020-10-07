@@ -34,7 +34,7 @@ export default function({ navigation, route, listItems=[] }) {
                       name={routeName}
                       component={DetailViewComponent}
                       options={{ title: item[PLACE_FIELDS.title] }}
-                      initialParams={{ id: item.rowid }} >
+                      initialParams={{ id: item.rowid, filename: item[PLACE_FIELDS.filename] }} >
                     </ListDetailsStack.Screen>)
           })
         }
