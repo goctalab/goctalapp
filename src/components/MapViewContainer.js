@@ -2,8 +2,8 @@ import React, { useState, useContext, useEffect } from 'react';
 import { Dimensions, Platform, StyleSheet, View, Image, TouchableOpacity } from 'react-native';
 import MapView, { PROVIDER_GOOGLE } from 'react-native-maps';
 import { Asset } from 'expo-asset';
-import { MapContext } from "@src/MapContextProvider";
-import { PlacesContext } from "@src/PlacesContextProvider";
+import { MapContext } from "@components/MapContextProvider";
+import { PlacesContext } from "@components/PlacesContextProvider";
 import { KML_FIELDS, PLACE_FIELDS } from "@data/dbUtils";
 
 import MenuComponent from '@components/MenuComponent';
@@ -11,9 +11,9 @@ import MarkerComponent from '@components/MarkerComponent';
 import { mapStyle_00, mapStyle_01 } from '../mapStyle';
 import markerAssetsURI from '@src/mapMarkerAssetsURI';
 
-import { processCoordinates, KML_TYPES } from '@src/kmlUtils';
+import { processCoordinates, KML_TYPES } from '@utils/kmlUtils';
 
-import * as RootNavigation from '/src/RootNavigation';
+import * as RootNavigation from '@components/RootNavigation';
 import Icon from 'react-native-vector-icons/FontAwesome';
 const menuIcon = <Icon name="bars" size={30} color="#FFF" />;
 

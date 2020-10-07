@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, Button } from 'react-native';
 import dbUtils from '@data/dbUtils';
-import { HOME_ROUTE } from '@src/routeUtils';
+import { HOME_ROUTE } from '@utils/routeUtils';
 
 export default function DetailViewComponent({ route, navigation }) {
 

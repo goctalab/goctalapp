@@ -2,7 +2,7 @@
 import React from 'react';
 import { ScrollView, Text, TouchableWithoutFeedback } from 'react-native';
 import { StyleSheet } from 'react-native';
-import { getRouteNameFromKMLItem } from '@src/routeUtils';
+import { getRouteNameFromKMLItem } from '@utils/routeUtils';
 import { PLACE_FIELDS } from '@data/dbUtils';
 
 function ListViewComponent(props) {

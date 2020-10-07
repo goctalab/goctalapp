@@ -4,7 +4,7 @@ import 'react-native-gesture-handler';
 import { NavigationContainer } from '@react-navigation/native';
 import { createDrawerNavigator } from '@react-navigation/drawer';
 import { createStackNavigator } from '@react-navigation/stack';
-import * as RootNavigation from '@src/RootNavigation';
+import * as RootNavigation from '@components/RootNavigation';
 import * as Permissions from 'expo-permissions';
 
 import MapViewContainer from '@components/MapViewContainer';
@@ -14,12 +14,12 @@ import { FloraFaunaScreen,
   FarmScreen
 } from '@components/ListScreens';
 
-import { MapContextProvider } from './MapContextProvider';
-import { PlacesContextProvider } from './PlacesContextProvider';
+import { MapContextProvider } from '@components/MapContextProvider';
+import { PlacesContextProvider } from '@components/PlacesContextProvider';
 
 import dbUtils from '@data/dbUtils';
-import * as ROUTES  from '@src/routeUtils';
-import { getListViewTitle } from '@src/routeUtils';
+import * as ROUTES  from '@utils/routeUtils';
+import { getListViewTitle } from '@utils/routeUtils';
 
 // import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
 

@@ -1,7 +1,7 @@
 
-import { useContext, useEffect } from 'react';
-import { PlacesContext } from '@src/PlacesContextProvider';
-import { PLACE_CATEGORIES, groupPlacesByType } from '@src/placesUtils';
+import { useContext } from 'react';
+import { PlacesContext } from '@components/PlacesContextProvider';
+import { PLACE_CATEGORIES, groupPlacesByType } from '@utils/placesUtils';
 import ListDetailNavigatorComponent from '@components/ListDetailNavigatorComponent';
 
 /**

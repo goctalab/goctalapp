@@ -3,7 +3,7 @@ import { createStackNavigator } from '@react-navigation/stack';
 import { StyleSheet, Button } from 'react-native';
 import DetailViewComponent from '@components/DetailViewComponent';
 import ListViewComponent from '@components/ListViewComponent';
-import { HOME_ROUTE, getRouteNameFromKMLItem, getListViewTitle } from '@src/routeUtils';
+import { HOME_ROUTE, getRouteNameFromKMLItem, getListViewTitle } from '@utils/routeUtils';
 import { PLACE_FIELDS } from '@data/dbUtils';
 
 const ListDetailsStack = createStackNavigator();
