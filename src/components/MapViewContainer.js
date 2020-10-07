@@ -3,7 +3,8 @@ import { Dimensions, Platform, StyleSheet, View, Image, TouchableOpacity } from 
 import MapView, { PROVIDER_GOOGLE } from 'react-native-maps';
 import { Asset } from 'expo-asset';
 import { MapContext } from "@src/MapContextProvider";
-import { KML_FIELDS } from "@data/dbUtils";
+import { PlacesContext } from "@src/PlacesContextProvider";
+import { KML_FIELDS, PLACE_FIELDS } from "@data/dbUtils";
 
 import MenuComponent from '@components/MenuComponent';
 import MarkerComponent from '@components/MarkerComponent';
@@ -46,11 +47,12 @@ export default MapViewContainer = function(props) {
 
   const [ layersDeselected, setLayersDeselected ] = useState([]);
   const [ mapData, setMapData ] = useState({ markers: [], polygons: [], polylines: []});
-  const { mapData: allMapData } = useContext(MapContext);
+  const { mapData: mapContextData } = useContext(MapContext);
+  const { placesData: placesContextData } = useContext(PlacesContext);
 
   useEffect(() => {
-    parseMapData(allMapData);
-  }, [allMapData]);
+    parseMapData(mapContextData, placesContextData);
+  }, [ mapContextData, placesContextData ]);
 
   const getMapRegion = () => {
     return new MapView.AnimatedRegion({
@@ -81,27 +83,26 @@ export default MapViewContainer = function(props) {
     }
   }
 
-  const parseMapData = (mapData) => {
-    if (!mapData || mapData.length === 0) {
-      return;
-    }
+  const parseMapData = (mapData=[], placesData=[]) => {
     const markerData = [],
       polygonData = [],
       polylineData = [];
 
-    mapData.forEach((data, i) => {
-      const object = { 
+    mapData.forEach((data) => {
+      const mapObject = { 
         name: data[KML_FIELDS.filename],
         coordinates: processCoordinates(data[KML_FIELDS.coordinates]),
         type: data[KML_FIELDS.type]
       };
       // const coords = JSON.parse(data.coordinates);
       if (data[KML_FIELDS.type] === KML_TYPES.Polygon) {
-        polygonData.push(object);
+        polygonData.push(mapObject);
       } else if (data[KML_FIELDS.type] === KML_TYPES.Point) {
-         markerData.push(object);
+        const placeData = (placesData.find((place) => place[PLACE_FIELDS.filename] === mapObject.name));
+        const markerObject = { ...mapObject, ...placeData }; 
+        markerData.push(markerObject);
       } else {
-        polylineData.push(object); // KML_TYPE Polyline and Track
+        polylineData.push(mapObject); // KML_TYPE Polyline and Track
       }
     });
     setMapData({

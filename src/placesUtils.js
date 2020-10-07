@@ -4,7 +4,7 @@ import { PLACE_FIELDS } from '@data/dbUtils';
  * @description categories that map to category in the db
  */
 export const PLACE_CATEGORIES = {
-  pointOfInterest : "point_of_interest",
+  pointOfInterest: "point_of_interest",
   path: "path",
   trek: "trek",
   flora: "flora",

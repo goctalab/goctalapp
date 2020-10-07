@@ -17,14 +17,14 @@ export default function(props) {
     <Marker
       pinColor={pinColor}
       coordinate={markerData.coordinates[0]}
-      title={markerData.name}
+      title={markerData.title}
       description={markerData.description || defaultDescription }
       image={imageIcon}
     >
       <Callout tooltip>
         <View style={styles.callout}>
-          <Text style={{ fontSize: 16, marginBottom: 8 }}>{markerData.name}</Text>
-          <Text style={{ fontSize: 14 }}>{ placeInformation[markerData.name] || defaultDescription }</Text>
+          <Text style={{ fontSize: 16, marginBottom: 8 }}>{markerData.title}</Text>
+          <Text style={{ fontSize: 14 }}>{markerData.description || defaultDescription}</Text>
           {/* <TouchableHighlight /> */}
         </View>
       </Callout>

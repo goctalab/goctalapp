@@ -81,7 +81,7 @@ export default {
     // also make call to kml to cross reference filename
     return this.db.transaction(async function(tx) {
       await tx.executeSql(
-        `SELECT rowid, ${PLACE_FIELDS.title}, ${PLACE_FIELDS.filename}, ${PLACE_FIELDS.category} from ${PLACES_DESCRIPTION_TABLE}`,
+        `SELECT rowid, ${PLACE_FIELDS.title}, ${PLACE_FIELDS.description}, ${PLACE_FIELDS.filename}, ${PLACE_FIELDS.category} from ${PLACES_DESCRIPTION_TABLE}`,
         [], 
         (_tx, { rows }) => { 
           // console.log("success", rows.length);

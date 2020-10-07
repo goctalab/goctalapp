@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { View, Text, TouchableWithoutFeedback } from 'react-native';
+import { ScrollView, Text, TouchableWithoutFeedback } from 'react-native';
 import { StyleSheet } from 'react-native';
 import { getRouteNameFromKMLItem } from '@src/routeUtils';
 import { PLACE_FIELDS } from '@data/dbUtils';
@@ -25,13 +25,15 @@ function ListViewComponent(props) {
   }); 
 
   return (
-    <View style={styles.container}>
+    <ScrollView style={styles.container}>
       { detailViewLinks }
-    </View>
+    </ScrollView>
   );
 };
 
-export default React.memo(ListViewComponent);
+// https://reactnavigation.org/docs/hello-react-navigation/#passing-additional-props
+const memoized = React.memo(ListViewComponent);
+export default memoized;
 
 const styles = StyleSheet.create({
   container: {

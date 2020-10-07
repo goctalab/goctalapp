@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
 
-export const PlacesContext = React.createContext({ trek: [] })
+export const PlacesContext = React.createContext([])
 
 export const PlacesContextProvider = (props) => {
-  const initState = props.state || {};
+  const initState = props.state || [];
   const [ placesData, setState ] = useState(initState);
 
   // https://medium.com/@justintulk/react-anti-patterns-props-in-initial-state-28687846cc2e

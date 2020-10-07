@@ -18,7 +18,6 @@ import { MapContextProvider } from './MapContextProvider';
 import { PlacesContextProvider } from './PlacesContextProvider';
 
 import dbUtils from '@data/dbUtils';
-import { groupPlacesByType } from '@src/placesUtils';
 import * as ROUTES  from '@src/routeUtils';
 import { getListViewTitle } from '@src/routeUtils';
 
@@ -29,7 +28,7 @@ const Drawer = createDrawerNavigator();
 
 export default function(props) {
   const [ mapData, setMapData ] = useState([]);
-  const [ placesData, setPlacesData ] = useState({});
+  const [ placesData, setPlacesData ] = useState([]);
 
   async function askPermissions() {
     const { status } = await Permissions.askAsync(
@@ -47,8 +46,7 @@ export default function(props) {
       setMapData(kml);
     });
     dbUtils.getAllPlaces((places) => {
-      const groupedPlaces = groupPlacesByType(places);
-      setPlacesData(groupedPlaces);
+      setPlacesData(places);
     });
   }
 

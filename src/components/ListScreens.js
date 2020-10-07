@@ -1,25 +1,25 @@
 
-import { useContext } from 'react';
+import { useContext, useEffect } from 'react';
 import { PlacesContext } from '@src/PlacesContextProvider';
-import { PLACE_CATEGORIES } from '@src/placesUtils';
-
+import { PLACE_CATEGORIES, groupPlacesByType } from '@src/placesUtils';
 import ListDetailNavigatorComponent from '@components/ListDetailNavigatorComponent';
 
 /**
  * @description gets the component fed with the array of data we want from the context
- * @param {String} placeCategoriesForScreen corresponds to the placeType 
+ * @param {String} categoriesForScreen corresponds to the placeType 
  * of array we want from the PlacesContext 
  * @param {object} props 
  * @returns the screen component which is List with Detail
  */
-const getScreen = (placeCategoriesForScreen, props) => {
+const getScreen = (categoriesForScreen, props) => {
   const { placesData } = useContext(PlacesContext);
-
-  if (!Array.isArray(placeCategoriesForScreen)) {
-    placeCategoriesForScreen = [ placeCategoriesForScreen ];
+  const placesByCategory = groupPlacesByType(placesData);
+ 
+  if (!Array.isArray(categoriesForScreen)) {
+    categoriesForScreen = [ categoriesForScreen ];
   }
-  const listItems = placeCategoriesForScreen.reduce((data, key) =>
-    placesData[key] ? data.concat(placesData[key]) : data, []
+  const listItems = categoriesForScreen.reduce((data, cat) =>
+    placesByCategory[cat] ? data.concat(placesByCategory[cat]) : data, []
   );
   return ListDetailNavigatorComponent({ listItems, ...props});
 }
