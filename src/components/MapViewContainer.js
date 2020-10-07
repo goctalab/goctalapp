@@ -8,17 +8,28 @@ import { KML_FIELDS, PLACE_FIELDS } from "@data/dbUtils";
 
 import MenuComponent from '@components/MenuComponent';
 import MarkerComponent from '@components/MarkerComponent';
-import { mapStyle_00 } from '../mapStyle';
+import { mapStyle_00, mapStyle_01 } from '../mapStyle';
+import markerAssetsURI from '@src/mapMarkerAssetsURI';
 
 import { processCoordinates, KML_TYPES } from '@src/kmlUtils';
-import { mapOverlayCoordinates } from '@data/mapData'
 
 import * as RootNavigation from '/src/RootNavigation';
 import Icon from 'react-native-vector-icons/FontAwesome';
 const menuIcon = <Icon name="bars" size={30} color="#FFF" />;
 
 const logoResource = require("@assets/img/logo.png");
-const logoURI = Asset.fromModule(logoResource).uri;
+// const logoURI = Asset.fromModule(logoResource).uri;
+
+const mapOverlayCoordinates = [
+  { 
+    longitude: -77.89770174815041,
+    latitude: -6.054473497588077 + .00001 // adjustar un poco
+  },
+  { 
+    longitude: -77.89645032241788,
+    latitude: -6.055485813090427
+  }
+];
 
 const mapOverlayRegion = mapOverlayCoordinates.map((coordObject) => {
   const { latitude, longitude } = coordObject;
@@ -116,18 +127,12 @@ export default MapViewContainer = function(props) {
     // arrayPlaces.concat(markerData)
 
     return (markerData).map((placeData, i) => {
-      let imageIcon;
-      // TODO redo marker images
-      if (placeData.name === "+ALTO GLAB") {
-        const assetResource = require("@assets/img/BNGLW1.png");
-        imageIcon = Asset.fromModule(assetResource).uri;
-      } else if (placeData.name === "012") {
-        const assetResource = require("@assets/img/WSHP.png");
-        imageIcon = Asset.fromModule(assetResource).uri;
-      }
-      if (imageIcon) {
-        // debugger
-      }
+      const placename = placeData.name;
+      console.log(placename, "well?");
+      const getImageIcon = markerAssetsURI[placename] || markerAssetsURI.defaultMarker;
+      // const getImageIcon = markerAssetsURI.defaultMarker;
+      
+      const imageIcon = getImageIcon();
       return <MarkerComponent
         key={`${i}-${i}`}
         // pinColor={pinColors[i % pinColors.length]}
