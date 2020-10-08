@@ -11,16 +11,18 @@ parser = argparse.ArgumentParser(description='Import csv data into the db.')
 parser.add_argument('csv_file', metavar='F', type=str,
                    help='a path to the csv to load')
 parser.add_argument('--db', type=str,
-                   help='location of the db file')
+                   help='path location of the db file')
 
 args = parser.parse_args()
 
+# get table and db names, checking for env vars first
 DATA_TABLE = environ.get('SITES_TABLE', 'sites')
-DB_NAME = environ.get('DB_NAME', 'gocta_test')
+
+DB_NAME = environ.get('DB_NAME', 'gocta')
 DB_PATH = '~/{}.db'.format(DB_NAME);
+DB = args.db if args.db else path.expanduser(DB_PATH)
 
 csv_path = args.csv_file;
-DB = args.db if args.db else path.expanduser(DB_PATH);
 
 if not path.exists(csv_path):
   print("csv file path doesn't exist");
@@ -32,6 +34,7 @@ def fill_db():
   connection.text_factory = str
   cursor = connection.cursor()
 
+  # TODO not dropping table
   stmt = "DROP TABLE IF EXISTS {}".format(DATA_TABLE)
   cursor.execute(stmt)
 
@@ -50,7 +53,7 @@ def fill_db():
 resp = input("Will delete the old data and create new data from csv. Proceed? Y/n : ") 
 
 if resp != "Y":
-  print("Will not proceed. Have a nice day :)");
+  print("Will not proceed will the script. Have a nice day igual :)");
   sys.exit()
 else:
   fill_db()

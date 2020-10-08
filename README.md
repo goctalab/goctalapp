@@ -78,6 +78,20 @@ Syntax:
 Example:  
 `./scripts/writeKMLtoDb.py /Users/ivy/Projects/Gocta/GoctaLab\ locations/FROM_SERGIO/ `
 
+```
+ sqlite3
+SQLite version 3.24.0 2018-06-04 14:10:15
+Enter ".help" for usage hints.
+Connected to a transient in-memory database.
+Use ".open FILENAME" to reopen on a persistent database.
+sqlite> .open gocta1
+sqlite> .schema
+CREATE TABLE data2(kml_file varchar(50),  title varchar(100), description varchar(5000), type varchar(50));
+CREATE TABLE kml_data(kml_filename varchar(50), kml_geometry Geometry);
+CREATE TABLE kml(filename varchar(50), title varchar(100), raw_kml varchar(10000), coordinates varchar(10000), spatial_data Geometry, kml_type varchar(30));
+```
+
+#### Data models:
 #### Descripciones de puntos
 
 Las descripciones y titulos va a vivir en un excel, no importa donde -

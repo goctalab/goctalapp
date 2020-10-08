@@ -1,28 +1,39 @@
 
 import React from 'react';
-import { View, Text, TouchableWithoutFeedback } from 'react-native';
+import { ScrollView, Text, TouchableWithoutFeedback } from 'react-native';
 import { StyleSheet } from 'react-native';
+import { getRouteNameFromKMLItem } from '@utils/routeUtils';
+import { PLACE_FIELDS } from '@data/dbUtils';
 
 function ListViewComponent(props) {
-  const { navigation, listItems } = props;
-  const detailViewLinks = listItems.map((item, i) => (
-    <TouchableWithoutFeedback
+  const { navigation, route, listItems } = props;
+
+  const detailViewLinks = listItems.map((item, i) => {
+    const params = { title: item[PLACE_FIELDS.title], id: item.rowid };
+    const routeName = getRouteNameFromKMLItem(item);
+    
+    return (<TouchableWithoutFeedback
       style={styles.item}
       key={i}
-      onPress={() => navigation.navigate(item.route, item.params)}
+      onPress={() => {
+        console.log("navigating", route, params);
+        navigation.navigate(routeName, params)
+      }}
       {...props}>
-      <Text style={[styles.item, styles.text]}>{item.params.title}</Text>
+      <Text style={[styles.item, styles.text]}>{item[PLACE_FIELDS.title]}</Text>
     </TouchableWithoutFeedback>)
-  ); 
+  }); 
 
   return (
-    <View style={styles.container}>
+    <ScrollView style={styles.container}>
       { detailViewLinks }
-    </View>
+    </ScrollView>
   );
 };
 
-export default React.memo(ListViewComponent);
+// https://reactnavigation.org/docs/hello-react-navigation/#passing-additional-props
+const memoized = React.memo(ListViewComponent);
+export default memoized;
 
 const styles = StyleSheet.create({
   container: {

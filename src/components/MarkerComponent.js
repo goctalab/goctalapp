@@ -1,36 +1,48 @@
-import React from 'react';
+import React, { forwardRef, useImperativeHandle, useRef } from 'react';
 import { StyleSheet, View, Text } from 'react-native';
 import { Marker, Callout } from 'react-native-maps';
 
-import placeInformation from '@data/placesOfInterest';
-
 const defaultDescription = "need to add a description for this awesome place!";
 
-export default function(props) {
+const MarkerComponent = (props, ref) => {
   const { 
     markerData,
     imageIcon,
     pinColor
   } = props;
 
+  const markerRef = useRef(null);
+  const coordinate = markerData.coordinates[0];
+
+  useImperativeHandle(ref, () => ({
+    openCallout: () => {
+      markerRef.current.showCallout();
+    },
+    coordinate
+  }));
+
   return (
     <Marker
+      id={markerData.filename}
       pinColor={pinColor}
-      coordinate={markerData.coordinates[0]}
-      title={markerData.name}
+      coordinate={coordinate}
+      title={markerData.title}
       description={markerData.description || defaultDescription }
       image={imageIcon}
+      ref={markerRef}
     >
       <Callout tooltip>
         <View style={styles.callout}>
-          <Text style={{ fontSize: 16, marginBottom: 8 }}>{markerData.name}</Text>
-          <Text style={{ fontSize: 14 }}>{ placeInformation[markerData.name] || defaultDescription }</Text>
+          <Text style={{ fontSize: 16, marginBottom: 8 }}>{markerData.title}</Text>
+          <Text style={{ fontSize: 14 }}>{markerData.description || defaultDescription}</Text>
           {/* <TouchableHighlight /> */}
         </View>
       </Callout>
     </Marker>
   );
 }
+
+export default forwardRef(MarkerComponent);
 
 const styles = StyleSheet.create({
   callout: {
