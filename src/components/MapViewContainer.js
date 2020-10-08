@@ -101,7 +101,6 @@ export default MapViewContainer = function({ navigator, route }) {
   const openMarker = (selectedMarker) => {
     const marker = markersRef.current[selectedMarker];
     if (marker && marker.openCallout) {
-      // not sure why this is openCallout()
       centerMap(getRegionWithCoordinate(marker.coordinate));
       marker.openCallout();
     }
@@ -111,7 +110,7 @@ export default MapViewContainer = function({ navigator, route }) {
     mapRef.current.animateToRegion(region, 300);
   } 
 
-  const onNavItemClicked = (kmlType, allSelectedOptions) => {
+  const onMenuItemClicked = (allSelectedOptions) => {
     // console.log(allSelectedOptions)
     setLayersDeselected(allSelectedOptions);
   }
@@ -163,17 +162,14 @@ export default MapViewContainer = function({ navigator, route }) {
       const getIcon = markerAssetsURI[filename] || markerAssetsURI.defaultMarker;
       const icon = getIcon();
      
-      const markerComponent = <MarkerComponent
+      return <MarkerComponent
         key={`${i}-${i}`}
         // pinColor={pinColors[i % pinColors.length]}
         pinColor="#FFC0C0"
         markerData={data}
         imageIcon={icon}
-        ref={(ref) => markersRef.current[filename] = ref}
+        ref={(ref) => markersRef.current[filename] = ref} // store in ref to access by filename and open
       />
-      // markersRef.current[filename] = markerComponent;
-
-      return markerComponent;
     });
     
   }
@@ -217,7 +213,7 @@ export default MapViewContainer = function({ navigator, route }) {
       </TouchableOpacity>
 
       <MenuComponent
-        onMenuOptionClicked={onNavItemClicked}
+        onMenuOptionClicked={onMenuItemClicked}
         menuOptions={layerMenuItems}
       />
       <MapView.Animated
