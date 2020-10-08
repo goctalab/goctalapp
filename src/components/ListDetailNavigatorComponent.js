@@ -28,7 +28,7 @@ export default function({ navigation, route, listItems=[] }) {
         </ListDetailsStack.Screen>
         { listItems.map((item, i) => {
             const routeName = getRouteNameFromKMLItem(item);
-            console.log("route name", routeName);
+            // console.log("route name", routeName);
             return (<ListDetailsStack.Screen
                       key={item[PLACE_FIELDS.filename]}
                       name={routeName}

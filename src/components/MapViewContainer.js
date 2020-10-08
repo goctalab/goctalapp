@@ -1,4 +1,4 @@
-import React, { useState, useContext, useEffect, useRef } from 'react';
+import React, { useState, useContext, useEffect, useRef, useCallback } from 'react';
 import { Dimensions, Platform, StyleSheet, View, Image, TouchableOpacity } from 'react-native';
 import MapView, { PROVIDER_GOOGLE } from 'react-native-maps';
 import { Asset } from 'expo-asset';
@@ -56,13 +56,13 @@ export default MapViewContainer = function({ navigator, route }) {
 
   const [ layersDeselected, setLayersDeselected ] = useState([]);
   const [ mapData, setMapData ] = useState({ markers: [], polygons: [], polylines: []});
-  const [ markerComponents, setMarkerComponents ] = useState([]);
   const { mapData: mapContextData } = useContext(MapContext);
   const { placesData: placesContextData } = useContext(PlacesContext);
   
-
+  
   const mapRef = useRef(null);
-
+  const markersRef = useRef({});
+  
   useEffect(() => {
     parseMapData(mapContextData, placesContextData);
   }, [ mapContextData, placesContextData ]);
@@ -70,9 +70,7 @@ export default MapViewContainer = function({ navigator, route }) {
   useEffect(() => {
     if (params && params.selected_marker) {
       console.log('select this marker');
-      // find marker
-      // open callout
-      // animate
+      openMarker(params.selected_marker);
     }
   }, [ params ]);
 
@@ -88,22 +86,25 @@ export default MapViewContainer = function({ navigator, route }) {
   const onMarkerClick = (e) => {
     console.log("hello", e, e.nativeEvent);
     const item = e.nativeEvent;
+    centerMap(getRegionWithCoordinate(item.coordinate));
+  }
 
-    const markerRegion = {
-      latitude: item.coordinate.latitude,
-      longitude: item.coordinate.longitude,
+  const getRegionWithCoordinate = (coordinate) => {
+    return {
+      latitude: coordinate.latitude,
+      longitude: coordinate.longitude,
       latitudeDelta: DELTA,
       longitudeDelta: DELTA,
     }
-    //   // animate camera to that region over 500 ms
-    //   this.map.animateToRegion(newRegion, 500)
-    centerMap(markerRegion);
-  }
+  };
 
-  openMarker = (selectedMarker) => {
-    debugger
-    const marker = markerComponents.find((m) => m.filename === selectedMarker);
-    marker.showCallout();
+  const openMarker = (selectedMarker) => {
+    const marker = markersRef.current[selectedMarker];
+    if (marker && marker.openCallout) {
+      // not sure why this is openCallout()
+      centerMap(getRegionWithCoordinate(marker.coordinate));
+      marker.openCallout();
+    }
   }
 
   const centerMap = (region) => {
@@ -156,19 +157,23 @@ export default MapViewContainer = function({ navigator, route }) {
   }
 
   const renderMarkers = function(markerData=[]) {
+ 
     return (markerData).map((data, i) => {
-
       const filename = data[KML_FIELDS.filename];
       const getIcon = markerAssetsURI[filename] || markerAssetsURI.defaultMarker;
       const icon = getIcon();
      
-      <MarkerComponent
+      const markerComponent = <MarkerComponent
         key={`${i}-${i}`}
         // pinColor={pinColors[i % pinColors.length]}
         pinColor="#FFC0C0"
         markerData={data}
         imageIcon={icon}
+        ref={(ref) => markersRef.current[filename] = ref}
       />
+      // markersRef.current[filename] = markerComponent;
+
+      return markerComponent;
     });
     
   }
