@@ -6,7 +6,7 @@ import sqlite3
 from pykml import parser
 import json
 import argparse
-# import pdb, pdb.set_trace()
+import pdb
 
 aparser = argparse.ArgumentParser(description='Import csv data into the db.')
 aparser.add_argument('kml_dirpath', metavar='D', type=str,
@@ -48,7 +48,7 @@ def get_child_and_kml_type(root):
 def get_coordinates(root, node):
   tag = node.tag
   if kml_types["point"] in tag:
-    coords =  [ (node.coordinates.text).split(",") ]
+    coords = [ (node.coordinates.text).split(",") ]
   elif kml_types["polygon"] in tag:
     coords = node.outerBoundaryIs.LinearRing.coordinates.text.strip().split()
   elif kml_types["track"] in tag:
@@ -59,7 +59,7 @@ def get_coordinates(root, node):
     for coords_set in coord_strings:
       coords.append(",".join(coords_set.text.split()))
   elif kml_types["linestring"] in tag:
-    return [ (node.coordinates.text).split() ]
+    coords = (node.coordinates.text).split()
   return json.dumps(coords)
 
 def parse_kml_file(filename):
@@ -104,6 +104,7 @@ else:
     print("Aborting. Bye :)")
     sys.exit()
 
+# pdb.set_trace()
 file_paths = [f for f in listdir(dirpath) if path.isfile(path.join(dirpath, f)) and ".kml" in f]
 file_content_for_db = map(parse_kml_file, file_paths)
 # stmt = "INSERT INTO kml_data(kml_filename, kml_geometry) VALUES (?, GeomFromKML(?))"
