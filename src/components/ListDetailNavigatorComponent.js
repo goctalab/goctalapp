@@ -7,19 +7,12 @@ import { HOME_ROUTE, getRouteNameFromKMLItem, getListViewTitle } from '@utils/ro
 import { PLACE_FIELDS } from '@data/dbUtils';
 import { colors, headerStyles } from '@utils/styleUtils';
 import FIcon from 'react-native-vector-icons/Feather';
-const backIcon = <FIcon name="chevron-left" size={30} color="#FFF" />;
 
-// import { useFonts } from 'expo-font';
-// import { Tajawal_700Bold } from '@expo-google-fonts/tajawal';
-// import { Montserrat_900Black } from '@expo-google-fonts/montserrat';
 
+const backIcon = <FIcon name="chevron-right" size={10} color="#FFF" />;
 const ListDetailsStack = createStackNavigator();
 
 export default function({ navigation, route, listItems=[] }) {
-  // let [ fontsLoaded ] = useFonts({
-  //   Montserrat_900Black,
-  //   Tajawal_700Bold
-  // });
 
   return (
     <ListDetailsStack.Navigator>
@@ -34,6 +27,7 @@ export default function({ navigation, route, listItems=[] }) {
                   navigation.toggleDrawer();
                 }}
                 title="Back"
+                color="white"
                 icon={backIcon}
               />),
             ...headerStyles
@@ -48,16 +42,13 @@ export default function({ navigation, route, listItems=[] }) {
                       name={routeName}
                       component={DetailViewComponent}
                       options={{ 
-                        title: item[PLACE_FIELDS.title],
-                        headerStyle: {
-                          backgroundColor: '#f4511e',
-                        },
-                        headerTintColor: '#fff',
-                        headerTitleStyle: {
-                          fontWeight: 'bold',
-                        }
+                        title: "", // item[PLACE_FIELDS.title],
+                        ...headerStyles
                       }}
-                      initialParams={{ id: item.rowid, filename: item[PLACE_FIELDS.filename] }} >
+                      initialParams={{
+                        id: item.rowid, 
+                        filename: item[PLACE_FIELDS.filename] 
+                      }} >
                     </ListDetailsStack.Screen>)
           })
         }

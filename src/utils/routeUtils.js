@@ -14,17 +14,32 @@ export function getListViewTitle(route) {
   
   // const routeName = getFocusedRouteNameFromRoute(route) ?? HOME_ROUTE;
   
+//   switch (route.name) {
+//     case HOME_ROUTE:
+//       return "🗺️ Map";
+//     case FLORA_FAUNA_ROUTE:
+//       return '🌺 Flora y Fauna';
+//     case TREKS_ROUTE:
+//       return "🥾 Treks";
+//     case POI_ROUTE:
+//       return "📍 Points of Interest";
+//     case FARM_ROUTE:
+//       return "🌱 Experimental Farm";
+//     default:
+//       return "Home";
+//   }
+// }
   switch (route.name) {
     case HOME_ROUTE:
-      return "🗺️ Map";
+      return "Map";
     case FLORA_FAUNA_ROUTE:
-      return '🌺 Flora y Fauna';
+      return 'Flora and Fauna';
     case TREKS_ROUTE:
-      return "🥾 Treks";
+      return "Paths and Treks";
     case POI_ROUTE:
-      return "📍 Points of Interest";
+      return "Points of Interest";
     case FARM_ROUTE:
-      return "🌱 Experimental Farm";
+      return "Experimental Farm";
     default:
       return "Home";
   }

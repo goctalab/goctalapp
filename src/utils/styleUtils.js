@@ -24,10 +24,14 @@ export const headerStyles = {
   },
   headerTintColor: colors["Brandy"],
   headerTitleStyle: {
-    fontFamily: 'Montserrat_900Black',
-    fontWeight: 'bold',
-    fontSize: 24
+    fontFamily: 'Montserrat_600SemiBold',
+    fontSize: 18
   }
+}
+
+export const drawerStyles = {
+  backgroundColor: 'rgba(96, 108, 56, .3)',
+  //backgroundColor: 'rgba(254, 250, 224, 0.8)',
 }
 
 export const mapStyle_00 = [

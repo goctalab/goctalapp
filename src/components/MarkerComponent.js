@@ -44,7 +44,7 @@ const MarkerComponent = (props, ref) => {
     >
       <Callout tooltip>
         <View style={styles.callout}>
-          <Text style={{ fontFamily: 'Tajawal_700Bold', fontSize: 18, marginBottom: 8 }}>{markerData.title}</Text>
+          <Text style={{ fontFamily: 'Tajawal_500Medium', fontSize: 18, marginBottom: 8 }}>{markerData.title}</Text>
           <Text style={{ fontFamily: 'Raleway_400Regular', fontSize: 14 }}>{markerData.description || defaultDescription}</Text>
           {/* <TouchableHighlight /> */}
         </View>

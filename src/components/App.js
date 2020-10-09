@@ -9,14 +9,15 @@ import * as RootNavigation from '@components/RootNavigation';
 import * as Permissions from 'expo-permissions';
 
 import { useFonts } from 'expo-font';
-import { Tajawal_700Bold } from '@expo-google-fonts/tajawal';
+import { Tajawal_700Bold, Tajawal_500Medium } from '@expo-google-fonts/tajawal';
 import { 
   Montserrat_300Light, 
   Montserrat_400Regular,
   Montserrat_700Bold,
+  Montserrat_600SemiBold,
   Montserrat_900Black } from '@expo-google-fonts/montserrat';
 import { Raleway_400Regular } from '@expo-google-fonts/raleway';
-
+import { colors, drawerStyles } from '@utils/styleUtils';
 
 import MapViewContainer from '@components/MapViewContainer';
 import { FloraFaunaScreen,
@@ -41,19 +42,17 @@ export default function(props) {
   const [ mapData, setMapData ] = useState([]);
   const [ placesData, setPlacesData ] = useState([]);
 
-  let [ fontsLoaded, fontError ] = useFonts({
+  let [ fontsLoaded ] = useFonts({
     Montserrat_300Light, 
     Montserrat_400Regular,
+    Montserrat_600SemiBold,
     Montserrat_900Black,
     Montserrat_700Bold,
     Tajawal_700Bold,
+    Tajawal_500Medium,
     Raleway_400Regular
   });
 
-  console.log("HELLO WORLD!!!");
-  if (fontError) {
-    debugger
-  }
   //https://medium.com/quick-code/react-native-location-tracking-14ab2c9e2db8
   useEffect(() => {
     askPermissions();
@@ -91,6 +90,14 @@ export default function(props) {
           <PlacesContextProvider state={ placesData }>
             <Drawer.Navigator
               initialRouteName={ROUTES.HOME_ROUTE}
+              drawerContentOptions={{
+                activeTintColor: colors["Brandy"],
+                inactiveTintColor: colors["Eggshell"],
+                activeBackgroundColor: colors["Eggshell"],
+                itemStyle: { marginVertical: 10 },
+                labelStyle: { fontFamily: 'Montserrat_600SemiBold' },
+              }}
+              drawerStyle={drawerStyles}
               screenOptions={({ navigation } ) => ({
                 headerLeft: () => (
                   <DrawerButton onPress={() => navigation.toggleDrawer()} />
