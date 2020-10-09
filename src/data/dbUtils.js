@@ -62,7 +62,7 @@ export default {
     return this.db.transaction(async function (tx) {
       // console.log("executing sql");
       await tx.executeSql(
-        `SELECT ${KML_FIELDS.filename}, ${KML_FIELDS.coordinates}, ${KML_FIELDS.type} from ${KML_TABLE}`,
+        `SELECT ${KML_FIELDS.filename}, ${KML_FIELDS.coordinates}, ${KML_FIELDS.type} from ${KML_TABLE} ORDER BY rowid DESC`,
         [], 
         (_tx, { rows }) => { 
           callback(rows._array);
