@@ -11,7 +11,7 @@ import MarkerComponent from '@components/MarkerComponent';
 
 import { KML_FIELDS, PLACE_FIELDS } from "@data/dbUtils";
 import { processCoordinates, KML_TYPES } from '@utils/kmlUtils';
-import { mapStyle_00, mapStyle_01, colors } from '@utils/styleUtils';
+import { mapStyle, colors } from '@utils/styleUtils';
 import markerAssetsURI from '@src/mapMarkerAssetsURI';
 
 import Icon from 'react-native-vector-icons/FontAwesome';
@@ -48,7 +48,7 @@ const LAYER_TYPES = {
 const layerMenuItems = Object.keys(LAYER_TYPES);
 
 const START_COORDINATES = { latitude: -6.054429423257089, longitude: -77.89648004531624 };
-const DELTA = -0.001;
+const DELTA = 0.001;
 
 export default MapViewContainer = function({ navigator, route }) {
 
@@ -75,12 +75,14 @@ export default MapViewContainer = function({ navigator, route }) {
   }, [ params ]);
 
   const getMapRegion = () => {
-    return new MapView.AnimatedRegion({
+    const reg = new MapView.AnimatedRegion({
       latitude: START_COORDINATES.latitude,
       longitude: START_COORDINATES.longitude,
       latitudeDelta: DELTA,
       longitudeDelta: DELTA
-    })
+    });
+    console.log(reg);
+    return reg;
   }
 
   const onMarkerClick = (e) => {
@@ -156,7 +158,6 @@ export default MapViewContainer = function({ navigator, route }) {
   }
 
   const renderMarkers = function(markerData=[]) {
- 
     return (markerData).map((data, i) => {
       const filename = data[KML_FIELDS.filename];
       const getIcon = markerAssetsURI[filename] || markerAssetsURI.defaultMarker;
@@ -185,7 +186,7 @@ export default MapViewContainer = function({ navigator, route }) {
         fillColor={mapColors[polygonObj.filename] || mapColors.polygon.fillColor}
         strokeWidth={0}
         tappable={true}
-        zIndex={1}
+        // zIndex={1}
         onPress={(e) => console.log(e, e.nativeEvent, "press region")}
       />
     });
@@ -201,7 +202,7 @@ export default MapViewContainer = function({ navigator, route }) {
         // lineJoin="meter"
         // lineCap="butt"
         // meterLimit="5"
-        zIndex={2}
+        // zIndex={2}
       />
     );
   }
@@ -212,7 +213,7 @@ export default MapViewContainer = function({ navigator, route }) {
       <Image style={styles.logo} source={require('@assets/img/logo.png')} />
 
       <TouchableOpacity 
-        style={[ styles.flexRow, styles.menuControl ]}
+        style={[ styles.flexRow, styles.drawerControl ]}
         onPress={() => RootNavigation.openDrawer()}>
           { menuIcon }
       </TouchableOpacity>
@@ -232,20 +233,21 @@ export default MapViewContainer = function({ navigator, route }) {
         initialRegion={getInitialRegion()}
         region={getMapRegion()}
         style={styles.map} 
-        customMapStyle={mapStyle_00}
+        customMapStyle={mapStyle}
         maxZoomLevel={21} // docs say 20
         ref={mapRef}
+        zIndex={0} // necessary for Android
         onMarkerPress={onMarkerClick} >
 
         { isLayerShown(LAYER_TYPES.Regions) && 
           renderPolygons(mapData.polygons) } 
-        {/* { isLayerShown(LAYER_TYPES.Bldgs) && 
+        { isLayerShown(LAYER_TYPES.Bldgs) && 
           <MapView.Overlay 
             image={bldgOverlayURI}
             bounds={mapOverlayRegion}
-            style={{ position: 'absolute', zIndex: '5' }}
-            zIndex={'3'}
-          /> } */}
+            style={{ position: 'absolute' }} // , zIndex: '5'
+            // zIndex={3}
+          /> }
         { isLayerShown(LAYER_TYPES.Paths) && 
           renderPolylines(mapData.polylines) }
         
@@ -271,7 +273,7 @@ const styles = StyleSheet.create({
     height: 50,
     resizeMode: 'contain'
   },
-  menuControl: {
+  drawerControl: {
     position: 'absolute',
     top: 20,
     left: 15,
@@ -280,8 +282,9 @@ const styles = StyleSheet.create({
   },
   map: {
     flex: 1,
+    ...StyleSheet.absoluteFillObject,
     width: Dimensions.get('window').width,
-    height: Dimensions.get('window').height
+    height: Dimensions.get('window').height,
   },
   // noCallout: {
   //   backgroundColor: "transparent"
