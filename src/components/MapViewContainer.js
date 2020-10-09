@@ -11,7 +11,7 @@ import MarkerComponent from '@components/MarkerComponent';
 
 import { KML_FIELDS, PLACE_FIELDS } from "@data/dbUtils";
 import { processCoordinates, KML_TYPES } from '@utils/kmlUtils';
-import { mapStyle_00, mapStyle_01 } from '../mapStyle';
+import { mapStyle_00, mapStyle_01, colors } from '@utils/styleUtils';
 import markerAssetsURI from '@src/mapMarkerAssetsURI';
 
 import Icon from 'react-native-vector-icons/FontAwesome';
@@ -161,7 +161,9 @@ export default MapViewContainer = function({ navigator, route }) {
       const filename = data[KML_FIELDS.filename];
       const getIcon = markerAssetsURI[filename] || markerAssetsURI.defaultMarker;
       const icon = getIcon();
-     
+      // if (markerAssetsURI[filename]) {
+      //   debugger
+      // }
       return <MarkerComponent
         key={`${i}-${i}`}
         // pinColor={pinColors[i % pinColors.length]}
@@ -180,23 +182,23 @@ export default MapViewContainer = function({ navigator, route }) {
         key={`${i}-${i}`}
         title={polygonObj.name}
         coordinates={polygonObj.coordinates}
-        fillColor={"rgba(0, 200, 0, 0.0)"}
-        strokeColor="white"
-        strokeWidth={2}
+        fillColor={mapColors[polygonObj.filename] || mapColors.polygon.fillColor}
+        strokeWidth={0}
+        tappable={true}
+        zIndex={1}
+        onPress={(e) => console.log(e, e.nativeEvent, "press region")}
       />
     });
   }
 
   const renderPolylines = function(polylinesData=[]) {
-    const fillColors = ["rgba(255, 255, 0, 0.85)", "rgba(173, 255, 47, 0.85)", "rgba(255, 255, 0, 0.85)"];
-
     return polylinesData.map((polylineObj, i) =>
       <MapView.Polyline
         key={`${i}-${i}`}
         coordinates={polylineObj.coordinates}
-        fillColor={fillColors[i % fillColors.length]}
-        strokeColor="rgba(0,0,0,0.5)"
-        strokeWidth={3}
+        strokeColor={mapColors.paths.strokeColor}
+        strokeWidth={mapColors.paths.strokeWidth}
+        zIndex={2}
       />
     );
   }
@@ -216,11 +218,12 @@ export default MapViewContainer = function({ navigator, route }) {
         onMenuOptionClicked={onMenuItemClicked}
         menuOptions={layerMenuItems}
       />
+      
       <MapView.Animated
         showsUserLocation
         followsUserLocation
         loadingEnabled
-        provider={ PROVIDER_GOOGLE }
+        provider={PROVIDER_GOOGLE}
         // mapType="hybrid"
         mapType={Platform.OS == "android" ? "none" : "standard"}
         initialRegion={getInitialRegion()}
@@ -231,17 +234,21 @@ export default MapViewContainer = function({ navigator, route }) {
         ref={mapRef}
         onMarkerPress={onMarkerClick} >
 
-        { isLayerShown(LAYER_TYPES.Places) && 
-          renderMarkers(mapData.markers) }
         { isLayerShown(LAYER_TYPES.Regions) && 
-          renderPolygons(mapData.polygons) }
-        { isLayerShown(LAYER_TYPES.Paths) && 
-          renderPolylines(mapData.polylines) }
-        { isLayerShown(LAYER_TYPES.Bldgs) && 
+          renderPolygons(mapData.polygons) } 
+        {/* { isLayerShown(LAYER_TYPES.Bldgs) && 
           <MapView.Overlay 
             image={bldgOverlayURI}
-            bounds={mapOverlayRegion} /> }
-
+            bounds={mapOverlayRegion}
+            style={{ position: 'absolute', zIndex: '5' }}
+            zIndex={'3'}
+          /> } */}
+        { isLayerShown(LAYER_TYPES.Paths) && 
+          renderPolylines(mapData.polylines) }
+        
+        { isLayerShown(LAYER_TYPES.Places) && 
+          renderMarkers(mapData.markers) }
+        
       </MapView.Animated>
     </View>
   );
@@ -277,3 +284,17 @@ const styles = StyleSheet.create({
   //   backgroundColor: "transparent"
   // }
 });
+
+
+const mapColors = {
+  polygon: {
+    fillColor: colors["May Green"]
+  },
+  "PozoBirding.kml": colors["Middle Blue"],
+  "Crops.kml": colors["Android Green"],
+  "Andenes.kml": colors["Dark Olive Green"],
+  paths: {
+    strokeColor: 'rgba(242,232,207,.5)',
+    strokeWidth: 3
+  }
+}

@@ -1,11 +1,22 @@
 import React, { useEffect, useState } from 'react';
 import { StyleSheet, View } from 'react-native';
+import { AppLoading } from 'expo';
 import 'react-native-gesture-handler';
 import { NavigationContainer } from '@react-navigation/native';
 import { createDrawerNavigator } from '@react-navigation/drawer';
 import { createStackNavigator } from '@react-navigation/stack';
 import * as RootNavigation from '@components/RootNavigation';
 import * as Permissions from 'expo-permissions';
+
+import { useFonts } from 'expo-font';
+import { Tajawal_700Bold } from '@expo-google-fonts/tajawal';
+import { 
+  Montserrat_300Light, 
+  Montserrat_400Regular,
+  Montserrat_700Bold,
+  Montserrat_900Black } from '@expo-google-fonts/montserrat';
+import { Raleway_400Regular } from '@expo-google-fonts/raleway';
+
 
 import MapViewContainer from '@components/MapViewContainer';
 import { FloraFaunaScreen,
@@ -30,6 +41,26 @@ export default function(props) {
   const [ mapData, setMapData ] = useState([]);
   const [ placesData, setPlacesData ] = useState([]);
 
+  let [ fontsLoaded, fontError ] = useFonts({
+    Montserrat_300Light, 
+    Montserrat_400Regular,
+    Montserrat_900Black,
+    Montserrat_700Bold,
+    Tajawal_700Bold,
+    Raleway_400Regular
+  });
+
+  console.log("HELLO WORLD!!!");
+  if (fontError) {
+    debugger
+  }
+  //https://medium.com/quick-code/react-native-location-tracking-14ab2c9e2db8
+  useEffect(() => {
+    askPermissions();
+    initDb();
+  }, [props]);
+
+
   async function askPermissions() {
     const { status } = await Permissions.askAsync(
       Permissions.LOCATION
@@ -50,12 +81,9 @@ export default function(props) {
     });
   }
 
-  //https://medium.com/quick-code/react-native-location-tracking-14ab2c9e2db8
-  useEffect(() => {
-    askPermissions();
-    initDb();
-  }, [props]);
-
+  if (!fontsLoaded) {
+    return <AppLoading />;
+  }
   return (
     <MapContextProvider state={ mapData }>
       <NavigationContainer initialRouteName="Details" ref={ RootNavigation.navigationRef }>

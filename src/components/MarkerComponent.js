@@ -1,6 +1,11 @@
 import React, { forwardRef, useImperativeHandle, useRef } from 'react';
 import { StyleSheet, View, Text } from 'react-native';
 import { Marker, Callout } from 'react-native-maps';
+// import { useFonts } from 'expo-font';
+// import { Tajawal_700Bold } from '@expo-google-fonts/tajawal';
+// import {
+//   Montserrat_300Light,
+//   Montserrat_400Regular } from '@expo-google-fonts/montserrat';
 
 const defaultDescription = "need to add a description for this awesome place!";
 
@@ -13,6 +18,12 @@ const MarkerComponent = (props, ref) => {
 
   const markerRef = useRef(null);
   const coordinate = markerData.coordinates[0];
+
+  // useFonts({
+  //   Tajawal_700Bold,
+  //   Montserrat_300Light,
+  //   Montserrat_400Regular
+  // });
 
   useImperativeHandle(ref, () => ({
     openCallout: () => {
@@ -33,8 +44,8 @@ const MarkerComponent = (props, ref) => {
     >
       <Callout tooltip>
         <View style={styles.callout}>
-          <Text style={{ fontSize: 16, marginBottom: 8 }}>{markerData.title}</Text>
-          <Text style={{ fontSize: 14 }}>{markerData.description || defaultDescription}</Text>
+          <Text style={{ fontFamily: 'Tajawal_700Bold', fontSize: 18, marginBottom: 8 }}>{markerData.title}</Text>
+          <Text style={{ fontFamily: 'Raleway_400Regular', fontSize: 14 }}>{markerData.description || defaultDescription}</Text>
           {/* <TouchableHighlight /> */}
         </View>
       </Callout>
@@ -46,10 +57,12 @@ export default forwardRef(MarkerComponent);
 
 const styles = StyleSheet.create({
   callout: {
-    backgroundColor: "white",
-    //borderRadius: 5,
+    backgroundColor: 'rgba(255, 255, 255, .75)',
     padding: 12,
     marginHorizontal: 40,
-    maxWidth: 300,
+    maxWidth: 250,
+    borderRadius: 5,
+    borderWidth: 5,
+    borderColor: 'rgba(255, 255, 255, .25)',
   }
 });

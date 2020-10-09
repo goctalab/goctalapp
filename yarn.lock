@@ -1181,6 +1181,21 @@
   dependencies:
     "@types/hammerjs" "^2.0.36"
 
+"@expo-google-fonts/montserrat@^0.1.0":
+  version "0.1.0"
+  resolved "https://registry.yarnpkg.com/@expo-google-fonts/montserrat/-/montserrat-0.1.0.tgz#745361cf6c7414749161930e94ccc962ed8ee7d3"
+  integrity sha512-jSGVtgapN4Ahxf/p978TWIPV+Ax2cc60671BzkewLG/zGNIyRreE3eXsVJudotpRl2fRJQC5Q98DARfPh917Jg==
+
+"@expo-google-fonts/raleway@^0.1.0":
+  version "0.1.0"
+  resolved "https://registry.yarnpkg.com/@expo-google-fonts/raleway/-/raleway-0.1.0.tgz#c4828702327a269126acacb1017ee51adb3e851e"
+  integrity sha512-cBQmoq+Rw64dwni79kQaMLZaYaOEhDMZkdX7P9fBcv89aB7pVRot8qGUCJ75ly1hPmVTrLoV+XfxnTTIJ20+bg==
+
+"@expo-google-fonts/tajawal@^0.1.0":
+  version "0.1.0"
+  resolved "https://registry.yarnpkg.com/@expo-google-fonts/tajawal/-/tajawal-0.1.0.tgz#5525df6759228599ee80e6c495a7141e119c6250"
+  integrity sha512-jKQovqYwIsJ/vGrgcQ9BWCciR1WBmaSjrWwEtY3SnAYqVQYjDMlWscBucnKbVloi7P+u72q3kCAa8crFSNJs8A==
+
 "@expo/babel-preset-cli@0.2.18":
   version "0.2.18"
   resolved "https://registry.yarnpkg.com/@expo/babel-preset-cli/-/babel-preset-cli-0.2.18.tgz#136acf8a0efe259e29ebc614b68552e5acb47d86"

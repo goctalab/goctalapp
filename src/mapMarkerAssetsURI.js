@@ -10,7 +10,7 @@ export default {
     return Asset.fromModule(assetResource).uri;
   },
   "defaultMarker": () => {
-    const assetResource = require("@assets/img/mapMarkers/snake_eye_marker.png");
+    const assetResource = require("@assets/img/mapMarkers/snake_eye_marker_dark.png");
     return Asset.fromModule(assetResource).uri;
   }
 }

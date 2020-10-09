@@ -5,10 +5,22 @@ import DetailViewComponent from '@components/DetailViewComponent';
 import ListViewComponent from '@components/ListViewComponent';
 import { HOME_ROUTE, getRouteNameFromKMLItem, getListViewTitle } from '@utils/routeUtils';
 import { PLACE_FIELDS } from '@data/dbUtils';
+import { colors, headerStyles } from '@utils/styleUtils';
+import FIcon from 'react-native-vector-icons/Feather';
+const backIcon = <FIcon name="chevron-left" size={30} color="#FFF" />;
+
+// import { useFonts } from 'expo-font';
+// import { Tajawal_700Bold } from '@expo-google-fonts/tajawal';
+// import { Montserrat_900Black } from '@expo-google-fonts/montserrat';
 
 const ListDetailsStack = createStackNavigator();
 
 export default function({ navigation, route, listItems=[] }) {
+  // let [ fontsLoaded ] = useFonts({
+  //   Montserrat_900Black,
+  //   Tajawal_700Bold
+  // });
+
   return (
     <ListDetailsStack.Navigator>
         <ListDetailsStack.Screen 
@@ -21,8 +33,10 @@ export default function({ navigation, route, listItems=[] }) {
                   navigation.navigate(HOME_ROUTE);
                   navigation.toggleDrawer();
                 }}
-                title="< Back" // TODO: icon
-              />)
+                title="Back"
+                icon={backIcon}
+              />),
+            ...headerStyles
           }}>
         { props =>  <ListViewComponent {...props} listItems={listItems} />}
         </ListDetailsStack.Screen>
@@ -33,7 +47,16 @@ export default function({ navigation, route, listItems=[] }) {
                       key={item[PLACE_FIELDS.filename]}
                       name={routeName}
                       component={DetailViewComponent}
-                      options={{ title: item[PLACE_FIELDS.title] }}
+                      options={{ 
+                        title: item[PLACE_FIELDS.title],
+                        headerStyle: {
+                          backgroundColor: '#f4511e',
+                        },
+                        headerTintColor: '#fff',
+                        headerTitleStyle: {
+                          fontWeight: 'bold',
+                        }
+                      }}
                       initialParams={{ id: item.rowid, filename: item[PLACE_FIELDS.filename] }} >
                     </ListDetailsStack.Screen>)
           })
