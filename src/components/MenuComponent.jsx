@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import { View, StyleSheet, TouchableOpacity } from 'react-native';
 import MenuOptionComponent from '@components/MenuOptionComponent';
 import FIcon from 'react-native-vector-icons/Feather';
+import { colors } from '@utils/styleUtils';
 
 // https://github.com/oblador/react-native-vector-icons/issues/1215 ??
 const closeIcon = <FIcon name="chevrons-down" size={30} color="#FFF" />;
@@ -89,9 +90,9 @@ const styles = StyleSheet.create({
   menuOption: {
     alignItems: 'center',
     marginVertical: 4,
-    backgroundColor: 'rgba(255, 255, 255, 0.8)',
+    backgroundColor: colors["Eggshell"],
     paddingHorizontal: 10,
-    paddingVertical: 12,
+    paddingVertical: 8,
     width: 140,
   },
   deselected: {

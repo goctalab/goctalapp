@@ -198,6 +198,9 @@ export default MapViewContainer = function({ navigator, route }) {
         coordinates={polylineObj.coordinates}
         strokeColor={mapColors.paths.strokeColor}
         strokeWidth={mapColors.paths.strokeWidth}
+        // lineJoin="meter"
+        // lineCap="butt"
+        // meterLimit="5"
         zIndex={2}
       />
     );
