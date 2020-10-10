@@ -27,10 +27,10 @@ export default function MenuComponent({ menuOptions, onMenuOptionClicked }) {
     const options = Array.from(new Set(selectedOptions));
     setSelectedOptions(options);
     // options or selectedOptions
-    onMenuOptionClicked(clickedOption, options);
+    onMenuOptionClicked(options);
   }
 
-  
+  console.log("selected options", selectedOptions)
   const optionComponents = menuOptions.map((option) => {
     return <MenuOptionComponent 
             style={[ styles.menuOption, selectedOptions.includes(option) ? styles.selected : styles.deselected ]} 
@@ -99,6 +99,7 @@ const styles = StyleSheet.create({
     color: 'black'
   },
   selected: {
-    // backgroundColor: "#CCCCCC",
+    color: colors["Eggshell"],
+    backgroundColor: 'transparent' // confusing because selected is actually deselected layers
   }
 });

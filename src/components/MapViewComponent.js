@@ -8,6 +8,7 @@ import * as RootNavigation from '@components/RootNavigation';
 
 import MenuComponent from '@components/MenuComponent';
 import MarkerComponent from '@components/MarkerComponent';
+import PolygonCalloutComponent from '@components/PolygonCalloutComponent';
 
 import { KML_FIELDS, PLACE_FIELDS } from "@data/dbUtils";
 import { processCoordinates, KML_TYPES } from '@utils/kmlUtils';
@@ -15,7 +16,6 @@ import { mapStyle_00, colors } from '@utils/styleUtils';
 import markerAssetsURI from '@src/mapMarkerAssetsURI';
 
 import Icon from 'react-native-vector-icons/FontAwesome';
-import { setStatusBarNetworkActivityIndicatorVisible } from 'expo-status-bar';
 const menuIcon = <Icon name="bars" size={30} color="#FFF" />;
 
 const logoResource = require("@assets/img/logo.png");
@@ -65,10 +65,6 @@ export default MapViewContainer = function({ route }) {
   
   const mapRef = useRef(null);
   const markersRef = useRef({});
-  
-  // useEffect(() => {
-  //   askPermissions();
-  // }, [props]);
 
   useEffect(() => {
     parseMapData(mapContextData, placesContextData);
@@ -80,19 +76,6 @@ export default MapViewContainer = function({ route }) {
       openMarker(params.selected_marker);
     }
   }, [ params ]);
-
-  // async function askPermissions() {
-  //   const { status } = await Permissions.askAsync(
-  //     Permissions.LOCATION
-  //   );
-  //   console.log("Location permissions asked. Result: ", status);
-
-  //   if (status !== 'granted') {
-  //     alert('Ooops, You have not enabled location permissions.');
-  //   } else {
-  //     setState
-  //   }
-  // }
 
   const getCurrentLocation = () => {
     return new Promise((resolve, reject) => {
@@ -110,17 +93,9 @@ export default MapViewContainer = function({ route }) {
     });
   }
   
-  const getMapRegion = () => {
-    const reg = new MapView.AnimatedRegion({
-      latitude: CENTER_START_COORDINATES.latitude,
-      longitude: CENTER_START_COORDINATES.longitude,
-      latitudeDelta: DELTA,
-      longitudeDelta: DELTA
-    });
-    console.log(reg);
-    return reg;
-  }
-
+  const getMapRegion = () => new MapView.AnimatedRegion(getInitialRegion());
+ 
+  // TODO we need this?
   const onMarkerClick = (e) => {
     console.log("hello", e, e.nativeEvent);
     const item = e.nativeEvent;
@@ -150,15 +125,22 @@ export default MapViewContainer = function({ route }) {
 
   const onMenuItemClicked = (allSelectedOptions) => {
     // console.log(allSelectedOptions)
+    console.log("onMenuItemClicked", allSelectedOptions);
     setLayersDeselected(allSelectedOptions);
   }
 
-  const isLayerShown = (layerType) => !layersDeselected.includes(layerType);
+  const isLayerShown = (layerType) => {
+    debugger
+    const isLayerShown = !layersDeselected.includes(layerType);
+    console.log(layerType, "shown ?", isLayerShown);
+    return isLayerShown;
+  }
 
+  // TODO do we need this?
   const getInitialRegion = () => {
     return {
-      latitude: -6.055,
-      longitude: -77.8971,
+      latitude: CENTER_START_COORDINATES.latitude,
+      longitude: CENTER_START_COORDINATES.longitude,
       latitudeDelta: DELTA,
       longitudeDelta: DELTA
     }
@@ -170,18 +152,23 @@ export default MapViewContainer = function({ route }) {
       polylineData = [];
 
     mapData.forEach((data) => {
+      
+      // see if there is a place description entry for our thing
+      const placeData = (placesData.find((place) => place[PLACE_FIELDS.filename] === data[KML_FIELDS.filename]))
+        || {};
+      
       const mapObject = { 
         [KML_FIELDS.filename]: data[KML_FIELDS.filename],
         coordinates: processCoordinates(data[KML_FIELDS.coordinates]),
-        type: data[KML_FIELDS.type]
+        type: data[KML_FIELDS.type],
+        placeData
       };
-      // const coords = JSON.parse(data.coordinates);
+
       if (data[KML_FIELDS.type] === KML_TYPES.Polygon) {
         polygonData.push(mapObject);
       } else if (data[KML_FIELDS.type] === KML_TYPES.Point) {
-        const placeData = (placesData.find((place) => place[PLACE_FIELDS.filename] === mapObject[KML_FIELDS.filename]));
-        const markerObject = { ...mapObject, ...placeData }; 
-        markerData.push(markerObject);
+        //const markerObject = { ...mapObject, ...placeData }; 
+        markerData.push(mapObject);
       } else {
         polylineData.push(mapObject); // KML_TYPE Polyline and Track
       }
@@ -198,9 +185,7 @@ export default MapViewContainer = function({ route }) {
       const filename = data[KML_FIELDS.filename];
       const getIcon = markerAssetsURI[filename] || markerAssetsURI.defaultMarker;
       const icon = getIcon();
-      // if (markerAssetsURI[filename]) {
-      //   debugger
-      // }
+
       return <MarkerComponent
         key={`${i}-${i}`}
         // pinColor={pinColors[i % pinColors.length]}
@@ -215,6 +200,18 @@ export default MapViewContainer = function({ route }) {
 
   const renderPolygons = function(polygonData=[]) {
     return (polygonData).map((polygonObj, i) => {
+
+      if (Object.keys(polygonObj.placeData).length) {
+        return <PolygonCalloutComponent
+          key={`${i}-${i}`}
+          polygonData={polygonObj}
+          fillColor={mapColors[polygonObj.filename] || mapColors.polygon.fillColor}
+          strokeWidth={2}
+          strokeColor={colors["Liver Dogs"]}
+          // zIndex={1}
+          // onPress={(e) => console.log(e, e.nativeEvent, "press region")}
+        />
+      }
       return <MapView.Polygon
         key={`${i}-${i}`}
         title={polygonObj.name}
@@ -229,17 +226,19 @@ export default MapViewContainer = function({ route }) {
   }
 
   const renderPolylines = function(polylinesData=[]) {
-    return polylinesData.map((polylineObj, i) =>
-      <MapView.Polyline
+    return polylinesData.map((polyline, i) => {
+      return <MapView.Polyline
         key={`${i}-${i}`}
-        coordinates={polylineObj.coordinates}
+        coordinates={polyline.coordinates}
         strokeColor={mapColors.paths.strokeColor}
         strokeWidth={mapColors.paths.strokeWidth}
+        zIndex={10}
         // lineJoin="meter"
         // lineCap="butt"
         // meterLimit="5"
         // zIndex={2}
       />
+    }
     );
   }
 
