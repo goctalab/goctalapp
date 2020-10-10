@@ -35,6 +35,7 @@ export const drawerStyles = {
 }
 
 // https://mapstyle.withgoogle.com/
+
 export const mapStyles = [
   {
     "featureType": "administrative.country",
@@ -118,3 +119,134 @@ export const mapStyles = [
     ]
   }
 ]
+
+
+export const mapStyle_00 = [
+{
+  "elementType": "geometry",
+  "stylers": [
+    {
+      "color": "#ebe3cd"
+    }
+  ]
+},
+{
+  "elementType": "labels",
+  "stylers": [
+    {
+      "visibility": "off"
+    }
+  ]
+},
+{
+  "elementType": "labels.text.fill",
+  "stylers": [
+    {
+      "color": "#523735"
+    }
+  ]
+},
+{
+  "elementType": "labels.text.stroke",
+  "stylers": [
+    {
+      "color": "#f5f1e6"
+    }
+  ]
+},
+{
+  "featureType": "administrative",
+  "elementType": "geometry.stroke",
+  "stylers": [
+    {
+      "color": "#c9b2a6"
+    }
+  ]
+},
+{
+  "featureType": "administrative.land_parcel",
+  "stylers": [
+    {
+      "visibility": "off"
+    }
+  ]
+},
+{
+  "featureType": "administrative.land_parcel",
+  "elementType": "geometry.stroke",
+  "stylers": [
+    {
+      "color": "#dcd2be"
+    }
+  ]
+},
+{
+  "featureType": "administrative.land_parcel",
+  "elementType": "labels.text.fill",
+  "stylers": [
+    {
+      "color": "#ae9e90"
+    }
+  ]
+},
+{
+  "featureType": "administrative.neighborhood",
+  "stylers": [
+    {
+      "visibility": "off"
+    }
+  ]
+},
+{
+  "featureType": "administrative.province",
+  "elementType": "geometry.stroke",
+  "stylers": [
+    {
+      "visibility": "off"
+    }
+  ]
+},
+{
+  "featureType": "landscape.natural",
+  "elementType": "geometry",
+  "stylers": [
+    {
+      "color": colors["Kombu Green"]  // #384F13"
+    }
+  ]
+},
+{
+  "featureType": "landscape.natural.terrain",
+  "stylers": [
+    {
+      "saturation": -45,
+      "color": colors["Android Green"]
+    }
+  ]
+},
+{
+  "featureType": "poi",
+  "elementType": "geometry",
+  "stylers": [
+    {
+      "color": "#dfd2ae"
+    }
+  ]
+},
+{
+  "featureType": "poi",
+  "elementType": "labels.text.fill",
+  "stylers": [
+    {
+      "color": "#93817c"
+    }
+  ]
+},
+{
+  "featureType": "poi.business",
+  "stylers": [
+    {
+      "visibility": "off"
+    }
+  ]
+}];

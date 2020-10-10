@@ -11,7 +11,7 @@ import MarkerComponent from '@components/MarkerComponent';
 
 import { KML_FIELDS, PLACE_FIELDS } from "@data/dbUtils";
 import { processCoordinates, KML_TYPES } from '@utils/kmlUtils';
-import { mapStyle, colors } from '@utils/styleUtils';
+import { mapStyle_00, colors } from '@utils/styleUtils';
 import markerAssetsURI from '@src/mapMarkerAssetsURI';
 
 import Icon from 'react-native-vector-icons/FontAwesome';
@@ -222,7 +222,20 @@ export default MapViewContainer = function({ navigator, route }) {
         onMenuOptionClicked={onMenuItemClicked}
         menuOptions={layerMenuItems}
       />
-      
+      {/* <MapView.Animated
+        showsUserLocation
+        followsUserLocation
+        loadingEnabled
+        provider={ PROVIDER_GOOGLE }
+        // mapType="hybrid"
+        mapType={Platform.OS == "android" ? "none" : "standard"}
+        initialRegion={getInitialRegion()}
+        region={getMapRegion()}
+        style={styles.map} 
+        customMapStyle={mapStyle_00}
+        maxZoomLevel={21} // docs say 20
+        ref={mapRef}
+        onMarkerPress={onMarkerClick} ></MapView.Animated> */}
       <MapView.Animated
         showsUserLocation
         followsUserLocation
@@ -233,7 +246,7 @@ export default MapViewContainer = function({ navigator, route }) {
         initialRegion={getInitialRegion()}
         region={getMapRegion()}
         style={styles.map} 
-        customMapStyle={mapStyle}
+        customMapStyle={mapStyle_00}
         maxZoomLevel={21} // docs say 20
         ref={mapRef}
         zIndex={0} // necessary for Android
