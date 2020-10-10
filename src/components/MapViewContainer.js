@@ -47,8 +47,10 @@ const LAYER_TYPES = {
 };
 const layerMenuItems = Object.keys(LAYER_TYPES);
 
-const START_COORDINATES = { latitude: -6.054429423257089, longitude: -77.89648004531624 };
-const DELTA = 0.001;
+// const ALTO_GLAB = { longitude: -77.89661099999999, latitude: -6.055215999999999 }
+// const BATAN = { longitude: -77.89718338255179, latitude: -6.05487980193391 }
+const CENTER_START_COORDINATES = { longitude: -77.89741388888889, latitude: -6.055380555555556 };
+const DELTA = 0.0019;
 
 export default MapViewContainer = function({ navigator, route }) {
 
@@ -76,8 +78,8 @@ export default MapViewContainer = function({ navigator, route }) {
 
   const getMapRegion = () => {
     const reg = new MapView.AnimatedRegion({
-      latitude: START_COORDINATES.latitude,
-      longitude: START_COORDINATES.longitude,
+      latitude: CENTER_START_COORDINATES.latitude,
+      longitude: CENTER_START_COORDINATES.longitude,
       latitudeDelta: DELTA,
       longitudeDelta: DELTA
     });
