@@ -301,8 +301,8 @@ export default MapViewContainer = function({ route }) {
           <MapView.Overlay 
             image={bldgOverlayURI}
             bounds={mapOverlayRegion}
-            style={{ position: 'absolute' }} // , zIndex: '5'
-            // zIndex={3}
+            // style={{ position: 'absolute', zIndex: 25 }} // , zIndex: '5'
+            // zIndex={13} no z index seems to work on apple
           /> }
         { isLayerShown(LAYER_TYPES.Paths) && 
           renderPolylines(mapData.polylines) }
