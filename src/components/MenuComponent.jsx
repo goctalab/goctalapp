@@ -75,7 +75,7 @@ const styles = StyleSheet.create({
     position: "absolute",
     zIndex: 2,
     bottom:'2%',
-    right: '5%',
+    left: '5%',
     //height: 200
   },
   menuOptionsContainer: {

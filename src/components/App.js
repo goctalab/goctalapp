@@ -19,7 +19,7 @@ import {
 import { Raleway_400Regular } from '@expo-google-fonts/raleway';
 import { colors, drawerStyles } from '@utils/styleUtils';
 
-import MapViewContainer from '@components/MapViewContainer';
+import MapViewComponent from '@components/MapViewComponent';
 import { FloraFaunaScreen,
   PointsOfInterestScreen,
   TreksScreen,
@@ -66,7 +66,9 @@ export default function(props) {
     );
     console.log("asked perms", status);
     if (status !== 'granted') {
-      alert('Hey! You have not enabled selected permissions!');
+      alert('Ooops, You have not enabled location permissions.');
+    } else {
+      
     }
   }
 
@@ -106,7 +108,7 @@ export default function(props) {
               <DrawerNavStack.Screen 
                 name={ROUTES.HOME_ROUTE}
                 options={({ route }) => ({ title: getListViewTitle(route) })}
-                component={ MapViewContainer } />
+                component={ MapViewComponent } />
               <DrawerNavStack.Screen
                 name={ROUTES.POI_ROUTE}
                 options={({ route }) => ({ title: getListViewTitle(route) })}

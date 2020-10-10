@@ -1,4 +1,4 @@
-import React, { useState, useContext, useEffect, useRef, useCallback } from 'react';
+import React, { useState, useContext, useEffect, useRef } from 'react';
 import { Dimensions, Platform, StyleSheet, View, Image, TouchableOpacity } from 'react-native';
 import MapView, { PROVIDER_GOOGLE } from 'react-native-maps';
 import { Asset } from 'expo-asset';
@@ -15,6 +15,7 @@ import { mapStyle_00, colors } from '@utils/styleUtils';
 import markerAssetsURI from '@src/mapMarkerAssetsURI';
 
 import Icon from 'react-native-vector-icons/FontAwesome';
+import { setStatusBarNetworkActivityIndicatorVisible } from 'expo-status-bar';
 const menuIcon = <Icon name="bars" size={30} color="#FFF" />;
 
 const logoResource = require("@assets/img/logo.png");
@@ -52,7 +53,7 @@ const layerMenuItems = Object.keys(LAYER_TYPES);
 const CENTER_START_COORDINATES = { longitude: -77.89741388888889, latitude: -6.055380555555556 };
 const DELTA = 0.0019;
 
-export default MapViewContainer = function({ navigator, route }) {
+export default MapViewContainer = function({ route }) {
 
   const params = route.params;
 
@@ -65,6 +66,10 @@ export default MapViewContainer = function({ navigator, route }) {
   const mapRef = useRef(null);
   const markersRef = useRef({});
   
+  // useEffect(() => {
+  //   askPermissions();
+  // }, [props]);
+
   useEffect(() => {
     parseMapData(mapContextData, placesContextData);
   }, [ mapContextData, placesContextData ]);
@@ -76,6 +81,35 @@ export default MapViewContainer = function({ navigator, route }) {
     }
   }, [ params ]);
 
+  // async function askPermissions() {
+  //   const { status } = await Permissions.askAsync(
+  //     Permissions.LOCATION
+  //   );
+  //   console.log("Location permissions asked. Result: ", status);
+
+  //   if (status !== 'granted') {
+  //     alert('Ooops, You have not enabled location permissions.');
+  //   } else {
+  //     setState
+  //   }
+  // }
+
+  const getCurrentLocation = () => {
+    return new Promise((resolve, reject) => {
+      console.log("getCurrentLocation");
+      navigator.geolocation.getCurrentPosition(position => resolve(position), e => reject(e));
+    });
+  };
+
+  const resetUserLocation = () => {
+    return getCurrentLocation().then(position => {
+      if (position) {
+        console.log("centering on user dot");
+        centerMap(getRegionWithCoordinate(position.coords));
+      }
+    });
+  }
+  
   const getMapRegion = () => {
     const reg = new MapView.AnimatedRegion({
       latitude: CENTER_START_COORDINATES.latitude,
@@ -212,7 +246,13 @@ export default MapViewContainer = function({ navigator, route }) {
   return (
     <View style={styles.viewContainer} >
 
-      <Image style={styles.logo} source={require('@assets/img/logo.png')} />
+      <TouchableOpacity style={styles.logoBtn} 
+        onPress={resetUserLocation}>
+        <Image 
+          style={styles.logo}
+          source={require('@assets/img/logo.png')}
+        />
+      </TouchableOpacity>
 
       <TouchableOpacity 
         style={[ styles.flexRow, styles.drawerControl ]}
@@ -242,6 +282,7 @@ export default MapViewContainer = function({ navigator, route }) {
         showsUserLocation
         followsUserLocation
         loadingEnabled
+        showsMyLocationButton
         provider={PROVIDER_GOOGLE}
         // mapType="hybrid"
         mapType={Platform.OS == "android" ? "none" : "standard"}
@@ -278,12 +319,15 @@ const styles = StyleSheet.create({
   viewContainer: {
     flex: 1
   },
-  logo: {
+  logoBtn: {
     position: 'absolute',
     backgroundColor: 'transparent',
     top: 25,
     right: 15,
     zIndex: 2,
+  },
+  logo: {
+    backgroundColor: 'transparent',
     width: 50,
     height: 50,
     resizeMode: 'contain'
