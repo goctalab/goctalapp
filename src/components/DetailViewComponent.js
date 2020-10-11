@@ -3,9 +3,9 @@ import React, { useEffect, useState, useLayoutEffect } from 'react';
 import { View, Text, Button } from 'react-native';
 import dbUtils from '@data/dbUtils';
 import { HOME_ROUTE } from '@utils/routeUtils';
-import { CommonActions, NavigationAction, NavigationContainer } from '@react-navigation/native';
-import { StackActions } from '@react-navigation/native';
-
+import { CommonActions, NavigationAction, NavigationContainer, StackActions } from '@react-navigation/native';
+// import { StackActions } from '@react-navigation/native';
+import { HeaderBackButton } from '@react-navigation/stack'
 
 export default function DetailViewComponent({ route, navigation }) {
 
@@ -27,10 +27,17 @@ export default function DetailViewComponent({ route, navigation }) {
     navigation.setOptions({
       headerLeft: () => (
         <Button onPress={() => { 
-          navigation.reset({
-            index: 0,
-            routes: [{ name: HOME_ROUTE }],
-          });
+          navigation.dispatch(
+            CommonActions.reset({
+              index: 0,
+              routes: [{ name: HOME_ROUTE }]
+            })
+          );
+          // navigation.reset({
+          //   index: 0,
+          //   routes: [{ name: HOME_ROUTE }],
+          // });
+          // navigation.dispatch(StackActions.replace(HOME_ROUTE));
           // navigation.dispatch(CommonActions.reset())
          }} title="Close" />
       )

@@ -36,7 +36,7 @@ export default function({ navigation, route, listItems=[] }) {
         </ListDetailsStack.Screen>
         { listItems.map((item, i) => {
             const screenName = getScreenNameFromSiteItem(item);
-            console.log("route name for details", screenName);
+            // console.log("route name for details", screenName);
             return (
               <ListDetailsStack.Screen
                 key={item[PLACE_FIELDS.filename]}
