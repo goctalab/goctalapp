@@ -30,7 +30,7 @@ export default function MenuComponent({ menuOptions, onMenuOptionClicked }) {
     onMenuOptionClicked(options);
   }
 
-  console.log("selected options", selectedOptions)
+  // console.log("selected options", selectedOptions)
   const optionComponents = menuOptions.map((option) => {
     return <MenuOptionComponent 
             style={[ styles.menuOption, selectedOptions.includes(option) ? styles.selected : styles.deselected ]} 

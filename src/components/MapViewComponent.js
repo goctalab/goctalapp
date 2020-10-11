@@ -71,7 +71,10 @@ export default MapViewContainer = function({ route }) {
   }, [ mapContextData, placesContextData ]);
 
   useEffect(() => {
+    console.log("PARAMS", params);
     if (params && params.selected_marker) {
+      
+      // parseMapData(mapContextData, placesContextData);
       openMarker(params.selected_marker);
     }
   }, [ params ]);
@@ -92,8 +95,6 @@ export default MapViewContainer = function({ route }) {
     });
   }
   
-  const getMapRegion = () => new MapView.AnimatedRegion(getInitialRegion());
- 
   const onMapItemClick = (e, mapItemData) => {
     setSelectedMapItem(mapItemData);
     console.log(mapItemData, mapItemData.coordinates[0]);
@@ -111,6 +112,7 @@ export default MapViewContainer = function({ route }) {
 
   const openMarker = (selectedMarker) => {
     const marker = markersRef.current[selectedMarker];
+    // console.log("marker to open", marker, markersRef.current);
     if (marker && marker.openCallout) {
       console.log(selectedMarker);
       centerMap(getRegionWithCoordinate(marker.coordinate));
@@ -119,12 +121,12 @@ export default MapViewContainer = function({ route }) {
   }
 
   const centerMap = (region) => {
-    console.log("centering", region);
+    // console.log("centering", region);
     mapRef.current.animateToRegion(region, 300);
   } 
 
   const onMenuItemClicked = (allSelectedOptions) => {
-    console.log("onMenuItemClicked", allSelectedOptions);
+    // console.log("onMenuItemClicked", allSelectedOptions);
     setLayersDeselected(allSelectedOptions);
   }
 
@@ -132,7 +134,7 @@ export default MapViewContainer = function({ route }) {
       
   const isLayerShown = (layerType) => {
     const isLayerShown = !layersDeselected.includes(layerType);
-    console.log(layerType, "shown ?", isLayerShown);
+    // console.log(layerType, "shown ?", isLayerShown);
     return isLayerShown;
   }
 
@@ -194,7 +196,9 @@ export default MapViewContainer = function({ route }) {
         selectedImageIcon={icons.selected} 
         isSelected={isMapItemSelected(data)}
         onPress={onMapItemClick}
-        ref={(ref) => markersRef.current[filename] = ref} // store in ref to access by filename and open
+        ref={(ref) => {
+          markersRef.current[filename] = ref;
+        }} // store in ref to access by filename and open
       />
     });
     
@@ -204,17 +208,22 @@ export default MapViewContainer = function({ route }) {
     return (polygonData).map((polygonObj, i) => {
 
       if (Object.keys(polygonObj.placeData).length) {
+
         return <PolygonCalloutComponent
           key={`${i}-${i}`}
           polygonData={polygonObj}
+          ref={(ref) => {
+            // console.log("ref from polygon", ref);
+            markersRef.current[polygonObj.filename] = ref;
+          }}
           fillColor={mapColors[polygonObj.filename] || mapColors.polygon.fillColor}
           strokeWidth={2}
           strokeColor={colors["Liver Dogs"]}
           isSelected={isMapItemSelected(polygonObj)}
           onPress={onMapItemClick}
+        />
           // zIndex={1}
           // onPress={(e) => console.log(e, e.nativeEvent, "press region")}
-        />
       }
       return <MapView.Polygon
         key={`${i}-${i}`}
@@ -222,6 +231,10 @@ export default MapViewContainer = function({ route }) {
         coordinates={polygonObj.coordinates}
         fillColor={mapColors[polygonObj.filename] || mapColors.polygon.fillColor}
         strokeWidth={0}
+        // ref={(ref) => {
+        //   console.log("ref from polygon 2", ref);
+        //   markersRef.current[polygonObj.filename] = ref;
+        // }}
         // zIndex={1}
       />
     });

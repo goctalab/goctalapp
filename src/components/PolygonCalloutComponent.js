@@ -18,8 +18,11 @@ const PolygonCalloutComponent = (props, ref) => {
   const emptyIcon = markerIcon.empty();
   const currentFillColor = isSelected ? colors["Eggshell"] : fillColor;
 
-  console.log(isSelected, currentFillColor, fillColor);
-  
+  // console.log(isSelected, currentFillColor, fillColor);
+  useImperativeHandle(ref, () => ({
+    openCallout: markerRef.current.openCallout,
+    coordinate: polygonData.coordinates[0]
+  }));
 
   return (
     <>
@@ -38,7 +41,6 @@ const PolygonCalloutComponent = (props, ref) => {
       {...props}
       // zIndex={1}
       onPress={(e) => {
-        console.log(e, e.nativeEvent, "press region will open callout");
         markerRef.current.openCallout();
         onPress(e, polygonData);
       }}
@@ -48,6 +50,7 @@ const PolygonCalloutComponent = (props, ref) => {
 }
 
 export default forwardRef(PolygonCalloutComponent);
+// export default PolygonCalloutComponent;
 
 const styles = StyleSheet.create({
   callout: {
