@@ -124,11 +124,11 @@ export default function(props) {
                 options={({ route }) => ({ title: getListViewTitle(route) })}
                 component={ FloraFaunaScreen }
               />
-              <DrawerNavStack.Screen 
+              {/* <DrawerNavStack.Screen 
                 name={ROUTES.FARM_ROUTE}
                 options={({ route }) => ({ title: getListViewTitle(route) })}
                 component={ FarmScreen }
-              />
+              /> */}
               {/* <Stack.Screen name="About"
                 component={ ListDetailNavComponent }
                 initialParams={{ listItems: trekListItems }} /> */}
