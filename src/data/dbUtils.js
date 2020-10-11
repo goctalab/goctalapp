@@ -93,7 +93,7 @@ export default {
         });
       }, 
       this.error, 
-      () => { console.log('transaction completed'); })
+      () => { console.log('kml transaction completed'); })
   },
 
   getAllPlaces: function(callback) {
@@ -113,7 +113,7 @@ export default {
         });
       }, 
       this.error, 
-      () => { console.log("transaction completed"); })
+      () => { console.log("places transaction completed"); })
   },
 
   getDetailsForPlace: function(callback, id, language) {
