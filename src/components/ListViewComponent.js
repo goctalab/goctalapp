@@ -2,7 +2,7 @@
 import React from 'react';
 import { ScrollView, Text, TouchableWithoutFeedback } from 'react-native';
 import { StyleSheet } from 'react-native';
-import { getRouteNameFromKMLItem } from '@utils/routeUtils';
+import { getScreenNameFromSiteItem } from '@utils/routeUtils';
 import { PLACE_FIELDS } from '@data/dbUtils';
 import { colors } from '@utils/styleUtils';
 
@@ -11,7 +11,7 @@ function ListViewComponent(props) {
 
   const detailViewLinks = listItems.map((item, i) => {
     const params = { title: item[PLACE_FIELDS.title], id: item.rowid };
-    const routeName = getRouteNameFromKMLItem(item);
+    const routeName = getScreenNameFromSiteItem(item);
     
     return (<TouchableWithoutFeedback
       style={styles.item}
