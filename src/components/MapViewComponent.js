@@ -12,7 +12,7 @@ import PolygonCalloutComponent from '@components/PolygonCalloutComponent';
 
 import { KML_FIELDS, PLACE_FIELDS } from "@data/dbUtils";
 import { processCoordinates, KML_TYPES } from '@utils/kmlUtils';
-import { mapStyle_00, colors } from '@utils/styleUtils';
+import { mapStyle, mapStyle_00, colors } from '@utils/styleUtils';
 import markerAssetsURI from '@src/mapMarkerAssetsURI';
 
 import Icon from 'react-native-vector-icons/FontAwesome';
@@ -241,7 +241,11 @@ export default MapViewContainer = function({ route }) {
   }
 
   const renderPolylines = function(polylinesData=[]) {
+    console.log('polylines', polylinesData);
     return polylinesData.map((polyline, i) => {
+      // const strokeColor = (polyline.filename.indexOf("agrofo") > -1) ?
+      //   colors["Lapis Lazuli"] :
+      //   mapColors.paths.strokeColor;
       return <MapView.Polyline
         key={`${i}-${i}`}
         coordinates={polyline.coordinates}
@@ -278,28 +282,14 @@ export default MapViewContainer = function({ route }) {
         onMenuOptionClicked={onMenuItemClicked}
         menuOptions={layerMenuItems}
       />
-      {/* <MapView.Animated
-        showsUserLocation
-        followsUserLocation
-        loadingEnabled
-        provider={ PROVIDER_GOOGLE }
-        // mapType="hybrid"
-        mapType={Platform.OS == "android" ? "none" : "standard"}
-        initialRegion={getInitialRegion()}
-        region={getMapRegion()}
-        style={styles.map} 
-        customMapStyle={mapStyle_00}
-        maxZoomLevel={21} // docs say 20
-        ref={mapRef}
-        onMarkerPress={onMarkerClick} ></MapView.Animated> */}
       <MapView.Animated
         showsUserLocation
         followsUserLocation
         loadingEnabled
         showsMyLocationButton
         provider={PROVIDER_GOOGLE}
-        // mapType="hybrid"
-        mapType={Platform.OS == "android" ? "none" : "standard"}
+        mapType="hybrid"
+        // mapType={Platform.OS == "android" ? "standard" : "standard"}
         initialRegion={getInitialRegion()}
         style={styles.map} 
         customMapStyle={mapStyle_00}
@@ -366,7 +356,7 @@ const styles = StyleSheet.create({
 
 const mapColors = {
   polygon: {
-    fillColor: colors["May Green"]
+    fillColor: 'rgba(106, 153, 78, .5)' // colors["May Green"]
   },
   "PozoBirding.kml": colors["Middle Blue"],
   "Crops.kml": colors["Android Green"],

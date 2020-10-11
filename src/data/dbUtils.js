@@ -51,8 +51,7 @@ export default {
     if (this.db) {
       return;
     }
-    console.log("HOLA MUNDO!");
-    
+
     const callback = (function({ uri }) {
       const db = SQLite.openDatabase('goctaTest.db', 0.1);
       // https://forums.expo.io/t/how-to-connect-to-an-existing-database/6154

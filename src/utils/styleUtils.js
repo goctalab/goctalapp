@@ -20,12 +20,13 @@ export const colors = {
 
 export const headerStyles = {
   headerStyle: {
-    backgroundColor: colors["Fawn"],
+    backgroundColor: colors["Brandy"],
   },
-  headerTintColor: colors["Brandy"],
+  headerTintColor: 'white',
   headerTitleStyle: {
     fontFamily: 'Montserrat_600SemiBold',
-    fontSize: 18
+    fontSize: 18,
+    textAlign: 'center'
   }
 }
 
@@ -36,7 +37,7 @@ export const drawerStyles = {
 
 // https://mapstyle.withgoogle.com/
 
-export const mapStyles = [
+export const mapStyle = [
   {
     "featureType": "administrative.country",
     "elementType": "geometry.fill",
