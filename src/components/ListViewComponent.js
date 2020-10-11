@@ -39,10 +39,10 @@ export default memoized;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: 'white',
+    backgroundColor: '#DDDDDD',
   },
   item: {
-    backgroundColor: colors["Eggshell"],
+    backgroundColor: 'white', // colors["Eggshell"],
     paddingHorizontal: 20,
     paddingVertical: 20,
     borderWidth: 1,
