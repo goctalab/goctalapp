@@ -37,9 +37,9 @@ export default function DetailViewComponent({ route, navigation }) {
       paddingHorizontal: 50 }}>
       <Text style={{ fontSize: 25, marginBottom: 24, textAlign: 'center' }}>{title}</Text>
       <Text style={{ fontSize: 18 }}>{newLineDescription}</Text>
-      <Button
+      { !from_map && <Button
         title="Go to map view"
-        onPress={() => navigation.navigate(HOME_ROUTE, { selected_marker: filename } )} />
+        onPress={() => navigation.navigate(HOME_ROUTE, { selected_marker: filename } )} /> }
     </View>
   );
 }
