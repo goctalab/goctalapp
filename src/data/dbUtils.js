@@ -6,6 +6,8 @@ import { Asset } from 'expo-asset';
 const PLACES_DESCRIPTION_TABLE = process.env.SITES_TABLE || 'sites';
 const KML_TABLE = process.env.KML_TABLE || 'kml ';
 
+const ROW_ID = "rowid";
+
 export const PLACE_FIELDS = {
   filename: "filename",
   title: "title",
@@ -80,7 +82,7 @@ export default {
     return this.db.transaction(async function (tx) {
       // console.log("executing sql");
       await tx.executeSql(
-        `SELECT ${KML_FIELDS.filename}, ${KML_FIELDS.coordinates}, ${KML_FIELDS.type} from ${KML_TABLE} ORDER BY rowid DESC`,
+        `SELECT ${ROW_ID}, ${KML_FIELDS.filename}, ${KML_FIELDS.coordinates}, ${KML_FIELDS.type} from ${KML_TABLE} ORDER BY ${ROW_ID} DESC`,
         [], 
         (_tx, { rows }) => { 
           callback(rows._array);
@@ -99,7 +101,7 @@ export default {
     // also make call to kml to cross reference filename
     return this.db.transaction(async function(tx) {
       await tx.executeSql(
-        `SELECT rowid, ${PLACE_FIELDS.title}, ${PLACE_FIELDS.title}, ${PLACE_FIELDS.description}, ${PLACE_FIELDS.filename}, ${PLACE_FIELDS.category} from ${PLACES_DESCRIPTION_TABLE}`,
+        `SELECT ${ROW_ID}, ${PLACE_FIELDS.title}, ${PLACE_FIELDS.title}, ${PLACE_FIELDS.description}, ${PLACE_FIELDS.filename}, ${PLACE_FIELDS.category} from ${PLACES_DESCRIPTION_TABLE}`,
         [], 
         (_tx, { rows }) => { 
           // console.log("success", rows.length);
