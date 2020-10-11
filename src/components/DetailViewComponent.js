@@ -48,7 +48,7 @@ export default function DetailViewComponent({ route, navigation }) {
   return (
     <View style={{ flex: 1,
       alignItems: 'center',
-      justifyContent: 'top',  
+      // justifyContent: 'top',  
       padding: 30,
       paddingHorizontal: 50 }}>
       <Text style={{ fontSize: 25, marginBottom: 24, textAlign: 'center' }}>{title}</Text>
