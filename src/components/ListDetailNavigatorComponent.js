@@ -27,7 +27,7 @@ export default function({ navigation, route, listItems=[] }) {
                   navigation.toggleDrawer();
                 }}
                 title="Back"
-                color="white"
+                // color="white" // on android it blanks it out
                 icon={backIcon}
               />),
             ...headerStyles
