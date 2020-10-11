@@ -356,7 +356,7 @@ const styles = StyleSheet.create({
 
 const mapColors = {
   polygon: {
-    fillColor: 'rgba(106, 153, 78, .5)' // colors["May Green"]
+    fillColor: 'rgba(106, 153, 78, .3)' // colors["May Green"]
   },
   "PozoBirding.kml": colors["Middle Blue"],
   "Crops.kml": colors["Android Green"],
