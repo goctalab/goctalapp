@@ -1,17 +1,25 @@
 
 import React, { forwardRef, useImperativeHandle, useRef } from 'react';
-import { StyleSheet, View, Text } from 'react-native';
+import { StyleSheet } from 'react-native';
 import { Polygon } from 'react-native-maps';
 import MarkerComponent from '@components/MarkerComponent';
-
+import markerIcon from '@src/mapMarkerAssetsURI.js';
+import { colors } from '@utils/styleUtils';
 
 const PolygonCalloutComponent = (props, ref) => {
   const { 
     polygonData,
-    fillColor
+    fillColor,
+    onPress,
+    isSelected
   } = props;
 
   const markerRef = useRef(null);
+  const emptyIcon = markerIcon.empty();
+  const currentFillColor = isSelected ? colors["Eggshell"] : fillColor;
+
+  console.log(isSelected, currentFillColor, fillColor);
+  
 
   return (
     <>
@@ -19,18 +27,20 @@ const PolygonCalloutComponent = (props, ref) => {
       markerData={polygonData}
       ref={markerRef}
       ref={(ref) => markerRef.current = ref}
-      hidden
+      imageIcon={emptyIcon}
+      // hidden
     />
     <Polygon
       title={polygonData.name}
       coordinates={polygonData.coordinates}
-      fillColor={fillColor}
+      fillColor={currentFillColor}
       tappable={true}
       {...props}
       // zIndex={1}
       onPress={(e) => {
         console.log(e, e.nativeEvent, "press region will open callout");
         markerRef.current.openCallout();
+        onPress(e, polygonData);
       }}
     />
     </>

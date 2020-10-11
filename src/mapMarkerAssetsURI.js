@@ -3,14 +3,21 @@ import { Asset } from 'expo-asset';
 export default {
   "alto_glab.kml": () => {
     const assetResource = require("@assets/img/mapMarkers/alto_glab.png");
-    return  Asset.fromModule(assetResource).uri;
+    const defaultIconUri = Asset.fromModule(assetResource).uri;
+    return { default: defaultIconUri, selected: defaultIconUri };
   },
   "taller.kml": () => {
     const assetResource = require("@assets/img/mapMarkers/taller.png");
-    return Asset.fromModule(assetResource).uri;
+    const defaultIconUri = Asset.fromModule(assetResource).uri;
+    return { default: defaultIconUri, selected: defaultIconUri };
   },
   "defaultMarker": () => {
     const assetResource = require("@assets/img/mapMarkers/snake_eye_marker_dark.png");
-    return Asset.fromModule(assetResource).uri;
+    const selectedAssetResource = require("@assets/img/mapMarkers/snake_eye_marker.png");
+    return { default: assetResource, selected: selectedAssetResource };
+  },
+  "empty": () => {
+    const assetResource = require("@assets/img/mapMarkers/empty.png");
+    return assetResource;
   }
 }

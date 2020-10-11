@@ -43,7 +43,7 @@ const bldgOverlayURI = Asset.fromModule(bldgOverlayResource).uri;
 const LAYER_TYPES = {
   Places: "Places", 
   Regions: "Regions", 
-  Bldgs: "Bldgs",
+  // Bldgs: "Bldgs",
   Paths: "Paths"
 };
 const layerMenuItems = Object.keys(LAYER_TYPES);
@@ -59,9 +59,9 @@ export default MapViewContainer = function({ route }) {
 
   const [ layersDeselected, setLayersDeselected ] = useState([]);
   const [ mapData, setMapData ] = useState({ markers: [], polygons: [], polylines: []});
+  const [ selectedMapItem, setSelectedMapItem ] = useState(null);
   const { mapData: mapContextData } = useContext(MapContext);
   const { placesData: placesContextData } = useContext(PlacesContext);
-  
   
   const mapRef = useRef(null);
   const markersRef = useRef({});
@@ -72,7 +72,6 @@ export default MapViewContainer = function({ route }) {
 
   useEffect(() => {
     if (params && params.selected_marker) {
-      console.log('select this marker');
       openMarker(params.selected_marker);
     }
   }, [ params ]);
@@ -95,11 +94,10 @@ export default MapViewContainer = function({ route }) {
   
   const getMapRegion = () => new MapView.AnimatedRegion(getInitialRegion());
  
-  // TODO we need this?
-  const onMarkerClick = (e) => {
-    console.log("hello", e, e.nativeEvent);
-    const item = e.nativeEvent;
-    centerMap(getRegionWithCoordinate(item.coordinate));
+  const onMapItemClick = (e, mapItemData) => {
+    setSelectedMapItem(mapItemData);
+    console.log(mapItemData, mapItemData.coordinates[0]);
+    centerMap(getRegionWithCoordinate(mapItemData.coordinates[0]));
   }
 
   const getRegionWithCoordinate = (coordinate) => {
@@ -114,23 +112,25 @@ export default MapViewContainer = function({ route }) {
   const openMarker = (selectedMarker) => {
     const marker = markersRef.current[selectedMarker];
     if (marker && marker.openCallout) {
+      console.log(selectedMarker);
       centerMap(getRegionWithCoordinate(marker.coordinate));
       marker.openCallout();
     }
   }
 
   const centerMap = (region) => {
+    console.log("centering", region);
     mapRef.current.animateToRegion(region, 300);
   } 
 
   const onMenuItemClicked = (allSelectedOptions) => {
-    // console.log(allSelectedOptions)
     console.log("onMenuItemClicked", allSelectedOptions);
     setLayersDeselected(allSelectedOptions);
   }
 
+  const isMapItemSelected = (data) => !!(selectedMapItem && selectedMapItem.filename === data.filename);
+      
   const isLayerShown = (layerType) => {
-    debugger
     const isLayerShown = !layersDeselected.includes(layerType);
     console.log(layerType, "shown ?", isLayerShown);
     return isLayerShown;
@@ -160,6 +160,7 @@ export default MapViewContainer = function({ route }) {
       const mapObject = { 
         [KML_FIELDS.filename]: data[KML_FIELDS.filename],
         coordinates: processCoordinates(data[KML_FIELDS.coordinates]),
+        rowid: data.rowid, // TODO improve rowid hardcode
         type: data[KML_FIELDS.type],
         placeData
       };
@@ -184,14 +185,15 @@ export default MapViewContainer = function({ route }) {
     return (markerData).map((data, i) => {
       const filename = data[KML_FIELDS.filename];
       const getIcon = markerAssetsURI[filename] || markerAssetsURI.defaultMarker;
-      const icon = getIcon();
+      const icons = getIcon();
 
       return <MarkerComponent
         key={`${i}-${i}`}
-        // pinColor={pinColors[i % pinColors.length]}
-        pinColor="#FFC0C0"
         markerData={data}
-        imageIcon={icon}
+        imageIcon={icons.default}
+        selectedImageIcon={icons.selected} 
+        isSelected={isMapItemSelected(data)}
+        onPress={onMapItemClick}
         ref={(ref) => markersRef.current[filename] = ref} // store in ref to access by filename and open
       />
     });
@@ -208,6 +210,8 @@ export default MapViewContainer = function({ route }) {
           fillColor={mapColors[polygonObj.filename] || mapColors.polygon.fillColor}
           strokeWidth={2}
           strokeColor={colors["Liver Dogs"]}
+          isSelected={isMapItemSelected(polygonObj)}
+          onPress={onMapItemClick}
           // zIndex={1}
           // onPress={(e) => console.log(e, e.nativeEvent, "press region")}
         />
@@ -218,9 +222,7 @@ export default MapViewContainer = function({ route }) {
         coordinates={polygonObj.coordinates}
         fillColor={mapColors[polygonObj.filename] || mapColors.polygon.fillColor}
         strokeWidth={0}
-        tappable={true}
         // zIndex={1}
-        onPress={(e) => console.log(e, e.nativeEvent, "press region")}
       />
     });
   }
@@ -286,17 +288,16 @@ export default MapViewContainer = function({ route }) {
         // mapType="hybrid"
         mapType={Platform.OS == "android" ? "none" : "standard"}
         initialRegion={getInitialRegion()}
-        region={getMapRegion()}
         style={styles.map} 
         customMapStyle={mapStyle_00}
         maxZoomLevel={21} // docs say 20
         ref={mapRef}
         zIndex={0} // necessary for Android
-        onMarkerPress={onMarkerClick} >
+      >
 
         { isLayerShown(LAYER_TYPES.Regions) && 
           renderPolygons(mapData.polygons) } 
-        { isLayerShown(LAYER_TYPES.Bldgs) && 
+        { true && 
           <MapView.Overlay 
             image={bldgOverlayURI}
             bounds={mapOverlayRegion}
