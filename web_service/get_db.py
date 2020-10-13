@@ -1,4 +1,7 @@
-goctalab@goctalab:/var/www/html$ sudo vi /var/www/html/gocta_api/get_db.py 
+# this code lives installed in
+# /var/www/html/gocta_api/get_db.py 
+# responsible for the endpoint 192.168.0.105/get_db
+# returns db on server to update db in app
 
 def application(environ, start_response):
     status = '200 OK'

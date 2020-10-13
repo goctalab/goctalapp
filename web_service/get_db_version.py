@@ -1,3 +1,8 @@
+# this code lives installed in
+# /var/www/html/gocta_api/get_db_version.py 
+# responsible for the endpoint 192.168.0.105/get_db_version
+# returns version number to compare with version in app
+
 import sqlite3
 import subprocess
 
