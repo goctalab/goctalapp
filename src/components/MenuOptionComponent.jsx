@@ -8,7 +8,7 @@ export default function MenuOption(props) {
   return <TouchableOpacity 
           onPress={() => { onClick(!isSelected); }}
           {...props} >
-          <Text>{text}</Text>
+          <Text style={{ fontFamily: 'Montserrat_600SemiBold' }}>{text}</Text>
         </TouchableOpacity>
 
 }

@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import { View, StyleSheet, TouchableOpacity } from 'react-native';
 import MenuOptionComponent from '@components/MenuOptionComponent';
 import FIcon from 'react-native-vector-icons/Feather';
+import { colors } from '@utils/styleUtils';
 
 // https://github.com/oblador/react-native-vector-icons/issues/1215 ??
 const closeIcon = <FIcon name="chevrons-down" size={30} color="#FFF" />;
@@ -26,10 +27,10 @@ export default function MenuComponent({ menuOptions, onMenuOptionClicked }) {
     const options = Array.from(new Set(selectedOptions));
     setSelectedOptions(options);
     // options or selectedOptions
-    onMenuOptionClicked(clickedOption, options);
+    onMenuOptionClicked(options);
   }
 
-  
+  // console.log("selected options", selectedOptions)
   const optionComponents = menuOptions.map((option) => {
     return <MenuOptionComponent 
             style={[ styles.menuOption, selectedOptions.includes(option) ? styles.selected : styles.deselected ]} 
@@ -74,7 +75,7 @@ const styles = StyleSheet.create({
     position: "absolute",
     zIndex: 2,
     bottom:'2%',
-    right: '5%',
+    left: '5%',
     //height: 200
   },
   menuOptionsContainer: {
@@ -89,15 +90,16 @@ const styles = StyleSheet.create({
   menuOption: {
     alignItems: 'center',
     marginVertical: 4,
-    backgroundColor: 'rgba(255, 255, 255, 0.8)',
+    backgroundColor: colors["Eggshell"],
     paddingHorizontal: 10,
-    paddingVertical: 12,
+    paddingVertical: 8,
     width: 140,
   },
   deselected: {
     color: 'black'
   },
   selected: {
-    // backgroundColor: "#CCCCCC",
+    color: colors["Eggshell"],
+    backgroundColor: 'transparent' // confusing because selected is actually deselected layers
   }
 });
