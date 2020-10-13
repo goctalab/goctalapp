@@ -1,5 +1,10 @@
 import * as FileSystem from 'expo-file-system';
 import * as SQLite from 'expo-sqlite';
+// import io from  "socket.io-client" ; 
+
+// console.log(io);
+// let socket = io();
+// socket.listen(3000);
 
 // const DB_NAME = process.env.DB_NAME || 'gocta';
 const PLACES_DESCRIPTION_TABLE = process.env.SITES_TABLE || 'sites';
@@ -27,12 +32,14 @@ export const KML_FIELDS = {
 
 export default {
   db: null,
+  current_db_version: null,
+  updateCallback: () => {},
   /**
    * @method
    * @description checks if the db exists and loads and opens the db file
    * @returns Promise
    */
-  init: async function() {
+  init: async function(updateCallback) {
     if (this.db) {
       return;
     }
@@ -44,9 +51,11 @@ export default {
     const callback = (function({ uri }) {
       const db = SQLite.openDatabase('goctaTest.db', 0.1);
       // https://forums.expo.io/t/how-to-connect-to-an-existing-database/6154
-      // const db = SQLite.openDatabase(uri, 0.1);
       console.log('db is at this uri', uri, db);
       this.db = db;
+
+      this.checkForUpdate();
+
       return this;
     }).bind(this);
 
@@ -58,9 +67,60 @@ export default {
 
   error: (err) => console.log(`received db error ${err}`),
 
+  checkForUpdate: (function() {
+   this.db.transaction(async function (tx) {
+      await tx.executeSql(
+        `PRAGMA user_version`,
+        [], 
+        (_tx, { rows }) => { 
+          this.current_db_version = rows._array[0].user_version;
+          console.log(this.current_db_version, rows);
+        }, 
+        (_tx, err) => {
+          console.log(`error from check for update ${err}`); 
+        });
+      }, 
+      this.error, 
+      () => { console.log('check for update transaction completed'); })
+    
+    fetch(('http://192.168.0.105/get_db_version'))
+      .then(async (resp) => {
+        let remote_version = await resp.text();
+        // could be that app_db_version isnt set yet
+        if (parseInt(remote_version) >= this.current_db_version) {
+          console.log("will proceed with download...");
+          this.downloadUpdate();
+        };
+      })
+      .catch((err) => { 
+        console.log('error getting db version', err); 
+      });
+  }),
+
+  downloadUpdate: function() {
+    FileSystem.downloadAsync(
+      'http://192.168.0.105/get_db',
+      `${FileSystem.documentDirectory}SQLite/goctaTest_new.db`
+      ).then(async ({ uri }) => {
+        await FileSystem.moveAsync({ 
+          from: `${FileSystem.documentDirectory}SQLite/goctaTest.db`,
+          to: `${FileSystem.documentDirectory}SQLite/goctaTest.db.old`,
+        });
+        await FileSystem.moveAsync({ 
+          from: `${FileSystem.documentDirectory}SQLite/goctaTest_new.db`,
+          to: `${FileSystem.documentDirectory}SQLite/goctaTest.db`,
+        });
+
+        this.db = SQLite.openDatabase('goctaTest.db', 0.2);
+
+        this.updateCallback();
+
+        console.log('success update db is at this uri', uri, db);
+      })
+  },
+  
   getAllKML: function(callback) {
     return this.db.transaction(async function (tx) {
-      // console.log("executing sql");
       await tx.executeSql(
         `SELECT ${KML_FIELDS.filename}, ${KML_FIELDS.coordinates}, ${KML_FIELDS.type} from ${KML_TABLE}`,
         [], 
@@ -77,14 +137,11 @@ export default {
   },
 
   getAllPlaces: function(callback) {
-    // data2 has kml_file title description type
-    // also make call to kml to cross reference filename
     return this.db.transaction(async function(tx) {
       await tx.executeSql(
         `SELECT rowid, ${PLACE_FIELDS.title}, ${PLACE_FIELDS.title}, ${PLACE_FIELDS.description}, ${PLACE_FIELDS.filename}, ${PLACE_FIELDS.category} from ${PLACES_DESCRIPTION_TABLE}`,
         [], 
         (_tx, { rows }) => { 
-          // console.log("success", rows.length);
           // console.table(rows._array);
           callback(rows._array);
         }, 
@@ -102,7 +159,6 @@ export default {
         `SELECT ${PLACE_FIELDS.title}, ${PLACE_FIELDS.description} from ${PLACES_DESCRIPTION_TABLE} where rowid = ?`,
         [id], 
         (_tx, { rows }) => { 
-          // console.log("success", rows.length);
           // console.table(rows._array);
           callback(rows._array[0]);
         },
