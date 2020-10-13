@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { StyleSheet, View } from 'react-native';
+import { AppLoading } from 'expo';
 import 'react-native-gesture-handler';
 import { NavigationContainer } from '@react-navigation/native';
 import { createDrawerNavigator } from '@react-navigation/drawer';
@@ -7,7 +8,18 @@ import { createStackNavigator } from '@react-navigation/stack';
 import * as RootNavigation from '@components/RootNavigation';
 import * as Permissions from 'expo-permissions';
 
-import MapViewContainer from '@components/MapViewContainer';
+import { useFonts } from 'expo-font';
+import { Tajawal_700Bold, Tajawal_500Medium } from '@expo-google-fonts/tajawal';
+import { 
+  Montserrat_300Light, 
+  Montserrat_400Regular,
+  Montserrat_700Bold,
+  Montserrat_600SemiBold,
+  Montserrat_900Black } from '@expo-google-fonts/montserrat';
+import { Raleway_400Regular } from '@expo-google-fonts/raleway';
+import { colors, drawerStyles } from '@utils/styleUtils';
+
+import MapViewComponent from '@components/MapViewComponent';
 import { FloraFaunaScreen,
   PointsOfInterestScreen,
   TreksScreen,
@@ -30,13 +42,33 @@ export default function(props) {
   const [ mapData, setMapData ] = useState([]);
   const [ placesData, setPlacesData ] = useState([]);
 
+  let [ fontsLoaded ] = useFonts({
+    Montserrat_300Light, 
+    Montserrat_400Regular,
+    Montserrat_600SemiBold,
+    Montserrat_900Black,
+    Montserrat_700Bold,
+    Tajawal_700Bold,
+    Tajawal_500Medium,
+    Raleway_400Regular
+  });
+
+  //https://medium.com/quick-code/react-native-location-tracking-14ab2c9e2db8
+  useEffect(() => {
+    askPermissions();
+    initDb();
+  }, [props]);
+
+
   async function askPermissions() {
     const { status } = await Permissions.askAsync(
       Permissions.LOCATION
     );
     console.log("asked perms", status);
     if (status !== 'granted') {
-      alert('Hey! You have not enabled selected permissions!');
+      alert('Ooops, You have not enabled location permissions.');
+    } else {
+      
     }
   }
 
@@ -50,12 +82,9 @@ export default function(props) {
     });
   }
 
-  //https://medium.com/quick-code/react-native-location-tracking-14ab2c9e2db8
-  useEffect(() => {
-    askPermissions();
-    initDb();
-  }, [props]);
-
+  if (!fontsLoaded) {
+    return <AppLoading />;
+  }
   return (
     <MapContextProvider state={ mapData }>
       <NavigationContainer initialRouteName="Details" ref={ RootNavigation.navigationRef }>
@@ -63,6 +92,14 @@ export default function(props) {
           <PlacesContextProvider state={ placesData }>
             <Drawer.Navigator
               initialRouteName={ROUTES.HOME_ROUTE}
+              drawerContentOptions={{
+                activeTintColor: colors["Brandy"],
+                inactiveTintColor: colors["Eggshell"],
+                activeBackgroundColor: colors["Eggshell"],
+                itemStyle: { marginVertical: 10 },
+                labelStyle: { fontFamily: 'Montserrat_600SemiBold' },
+              }}
+              drawerStyle={drawerStyles}
               screenOptions={({ navigation } ) => ({
                 headerLeft: () => (
                   <DrawerButton onPress={() => navigation.toggleDrawer()} />
@@ -71,7 +108,7 @@ export default function(props) {
               <DrawerNavStack.Screen 
                 name={ROUTES.HOME_ROUTE}
                 options={({ route }) => ({ title: getListViewTitle(route) })}
-                component={ MapViewContainer } />
+                component={ MapViewComponent } />
               <DrawerNavStack.Screen
                 name={ROUTES.POI_ROUTE}
                 options={({ route }) => ({ title: getListViewTitle(route) })}
@@ -87,11 +124,11 @@ export default function(props) {
                 options={({ route }) => ({ title: getListViewTitle(route) })}
                 component={ FloraFaunaScreen }
               />
-              <DrawerNavStack.Screen 
+              {/* <DrawerNavStack.Screen 
                 name={ROUTES.FARM_ROUTE}
                 options={({ route }) => ({ title: getListViewTitle(route) })}
                 component={ FarmScreen }
-              />
+              /> */}
               {/* <Stack.Screen name="About"
                 component={ ListDetailNavComponent }
                 initialParams={{ listItems: trekListItems }} /> */}
