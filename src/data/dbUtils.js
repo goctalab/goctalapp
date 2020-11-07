@@ -27,51 +27,50 @@ export const KML_FIELDS = {
 }
 
 const dbDir = FileSystem.documentDirectory + 'SQLite/';
-// Checks if gif directory exists. If not, creates it
-async function ensureDirExists() {
-  const dirInfo = await FileSystem.getInfoAsync(dbDir)
+const GOCTA_DB_FILENAME = "goctaTest.db";
+/**
+ * @description Checks if gif directory exists. If not, creates it
+ */
+export async function ensureDirExists() {
+  const dirInfo = await FileSystem.getInfoAsync(dbDir);
+  // console.log("dirinfo", dirInfo);
   if (!dirInfo.exists) {
     console.log('sqlite directory doesn\'t exist, creating...');
     await FileSystem.makeDirectoryAsync(dbDir, { intermediates: true });
     return;
   }
-  return;
+  return true;
 }
 
 export default {
   db: null,
   current_db_version: null,
-  updateCallback: () => {},
+  onUpdateDbFromRemote: () => {},
   /**
    * @method
    * @description checks if the db exists and loads and opens the db file
    * @returns Promise
    */
+  setDB: function(dbFile) {
+    // https://forums.expo.io/t/how-to-connect-to-an-existing-database/6154
+    this.db = SQLite.openDatabase(dbFile, 0.1);
+  },
+
   init: async function(updateCallback) {
     if (this.db) {
       return;
     }
 
-    const callback = (function({ uri }) {
-      const db = SQLite.openDatabase('goctaTest.db', 0.1);
-      // https://forums.expo.io/t/how-to-connect-to-an-existing-database/6154
-      console.log('db is at this uri', uri, db);
-      this.db = db;
-
-      this.checkForUpdate();
-
-      return this;
-    }).bind(this);
+    this.onUpdateDbFromRemote = updateCallback;
 
     await ensureDirExists();
 
-    const module = require('@assets/db/gocta_test.db');
-  
-    console.log("module is", module);
-
     return FileSystem.downloadAsync(
-      Expo.Asset.fromModule(module).uri, `${dbDir}/goctaTest.db`)
-      .then(callback)
+      Expo.Asset.fromModule(require('@assets/db/gocta_test.db')).uri, `${dbDir}/${GOCTA_DB_FILENAME}`)
+      .then(() =>{
+        this.setDB(GOCTA_DB_FILENAME);
+        this.checkForUpdate();
+      })
       .catch((err) => {
         console.log("error when downloading db");
       });
@@ -79,30 +78,41 @@ export default {
 
   error: (err) => console.log(`received db error ${err}`),
 
-  checkForUpdate: (function() {
-   this.db.transaction(async function (tx) {
-      await tx.executeSql(
-        `PRAGMA user_version`,
-        [], 
-        (_tx, { rows }) => { 
-          this.current_db_version = rows._array[0].user_version;
-          console.log(this.current_db_version, rows);
+  getCurrentDbVersion: function() {
+    return new Promise(function(resolve, reject) {
+      if (this.current_db_version) {
+        resolve(this.current_db_version);
+      }
+      this.db.transaction(function (tx) {
+        tx.executeSql(
+          `PRAGMA user_version`,
+          [], 
+          (_tx, { rows }) => { 
+            this.current_db_version = rows._array[0].user_version;
+            console.log(this.current_db_version, rows);
+            resolve(this.current_db_version);
+          }, 
+          (_tx, err) => {
+            console.log(`error from check for update ${err}`); 
+          });
         }, 
-        (_tx, err) => {
-          console.log(`error from check for update ${err}`); 
-        });
-      }, 
-      this.error, 
-      () => { console.log('check for update transaction completed'); })
-    
-    fetch(('http://192.168.0.105/get_db_version'))
-      .then(async (resp) => {
-        let remote_version = await resp.text();
+        () => { reject(err); }, 
+        () => { console.log('check for update transaction completed');
+      })
+    });
+  },
+
+  checkForUpdate: (async function() {
+    const dbVersion = await this.getCurrentDbVersion();
+    return fetch('http://192.168.0.105/get_db_version')
+      .then((resp) => resp.text())
+      .then((remote_version) => {
         // could be that app_db_version isnt set yet
-        if (parseInt(remote_version) >= this.current_db_version) {
+        // console.log('remote version is greater', remote_version, parseInt(remote_version) > dbVersion);
+        if (parseInt(remote_version) > dbVersion) {
           console.log("will proceed with download...");
           this.downloadUpdate();
-        };
+        }
       })
       .catch((err) => { 
         console.log('error getting db version', err); 
@@ -110,25 +120,26 @@ export default {
   }),
 
   downloadUpdate: function() {
-    FileSystem.downloadAsync(
-      'http://192.168.0.105/get_db',
-      `${FileSystem.documentDirectory}SQLite/goctaTest_new.db`
-      ).then(async ({ uri }) => {
-        await FileSystem.moveAsync({ 
-          from: `${FileSystem.documentDirectory}SQLite/goctaTest.db`,
-          to: `${FileSystem.documentDirectory}SQLite/goctaTest.db.old`,
-        });
-        await FileSystem.moveAsync({ 
-          from: `${FileSystem.documentDirectory}SQLite/goctaTest_new.db`,
-          to: `${FileSystem.documentDirectory}SQLite/goctaTest.db`,
-        });
-
-        this.db = SQLite.openDatabase('goctaTest.db', 0.2);
-
-        this.updateCallback();
-
-        console.log('success update db is at this uri', uri, db);
+    const remoteDBFilename = "goctaTest_tmp.db";
+    return FileSystem.downloadAsync('http://192.168.0.105/get_db', `${dbDir}/${remoteDBFilename}`)
+      .then(() =>
+        FileSystem.moveAsync({ 
+          from: `${dbDir}/${GOCTA_DB_FILENAME}`,
+          to: `${dbDir}/goctaTest.db.prev`,
+        })
+      )
+      .then(() =>
+        FileSystem.moveAsync({ 
+          from: `${dbDir}/${remoteDBFilename}`,
+          to: `${dbDir}/${GOCTA_DB_FILENAME}`,
+        })
+      )
+      .then(() => {
+        this.setDB(GOCTA_DB_FILENAME);
+        this.onUpdateDbFromRemote();
+        // console.log('success update db is at this uri', uri, db);
       })
+      .catch((err) => console.log(`moving async err ${err}`))
   },
   
   getAllKML: function(callback) {
@@ -183,3 +194,11 @@ export default {
     () => { console.log("transaction completed"); })
   }
 }
+
+export const fakeFetch = () => {
+  console.log("fakey fetch");
+  return fetch('http://192.168.0.105/get_db_version')
+    .then((resp) => {
+      return resp
+    });
+  }
