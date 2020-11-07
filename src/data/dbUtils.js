@@ -79,9 +79,10 @@ export default {
   error: (err) => console.log(`received db error ${err}`),
 
   getCurrentDbVersion: function() {
-    return new Promise(function(resolve, reject) {
+    return new Promise((resolve, reject) => {
       if (this.current_db_version) {
         resolve(this.current_db_version);
+        return;
       }
       this.db.transaction(function (tx) {
         tx.executeSql(
@@ -89,7 +90,7 @@ export default {
           [], 
           (_tx, { rows }) => { 
             this.current_db_version = rows._array[0].user_version;
-            console.log(this.current_db_version, rows);
+            // console.log(this.current_db_version, rows);
             resolve(this.current_db_version);
           }, 
           (_tx, err) => {
@@ -102,7 +103,7 @@ export default {
     });
   },
 
-  checkForUpdate: (async function() {
+  checkForUpdate: async function() {
     const dbVersion = await this.getCurrentDbVersion();
     return fetch('http://192.168.0.105/get_db_version')
       .then((resp) => resp.text())
@@ -117,7 +118,7 @@ export default {
       .catch((err) => { 
         console.log('error getting db version', err); 
       });
-  }),
+  },
 
   downloadUpdate: function() {
     const remoteDBFilename = "goctaTest_tmp.db";
@@ -196,7 +197,6 @@ export default {
 }
 
 export const fakeFetch = () => {
-  console.log("fakey fetch");
   return fetch('http://192.168.0.105/get_db_version')
     .then((resp) => {
       return resp

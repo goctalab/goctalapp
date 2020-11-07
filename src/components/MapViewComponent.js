@@ -97,7 +97,7 @@ export default MapViewContainer = function({ route }) {
   
   const onMapItemClick = (e, mapItemData) => {
     setSelectedMapItem(mapItemData);
-    console.log(mapItemData, mapItemData.coordinates[0]);
+    // console.log(mapItemData, mapItemData.coordinates[0]);
     centerMap(getRegionWithCoordinate(mapItemData.coordinates[0]));
   }
 
@@ -241,7 +241,7 @@ export default MapViewContainer = function({ route }) {
   }
 
   const renderPolylines = function(polylinesData=[]) {
-    console.log('polylines', polylinesData);
+    // ('polylines', polylinesData);
     return polylinesData.map((polyline, i) => {
       // const strokeColor = (polyline.filename.indexOf("agrofo") > -1) ?
       //   colors["Lapis Lazuli"] :
