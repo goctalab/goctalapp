@@ -1,4 +1,4 @@
-import dbUtils, { fakeFetch, ensureDirExists } from '@data/dbUtils';
+import dbUtils, { ensureDirExists } from '@data/dbUtils';
 
 jest.mock('expo-file-system', () => {
   return {

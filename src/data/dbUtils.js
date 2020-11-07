@@ -195,10 +195,3 @@ export default {
     () => { console.log("transaction completed"); })
   }
 }
-
-export const fakeFetch = () => {
-  return fetch('http://192.168.0.105/get_db_version')
-    .then((resp) => {
-      return resp
-    });
-  }
