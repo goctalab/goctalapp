@@ -77,6 +77,9 @@ Syntax:
 
 Example:  
 `./scripts/writeKMLtoDb.py /Users/ivy/Projects/Gocta/GoctaLab\ locations/FROM_SERGIO/ `
+`./scripts/importKML.py /home/goctalab/Documentos/aaProyectos\ Hoy/GoctaLapp/APP/kmls/ --db=/home/goctalab/Escritorio/db/test_con_sergio.db
+/home/goctalab/Escritorio/db/test_con_sergio.db`
+
 
 ```
  sqlite3
