@@ -11,7 +11,7 @@ export function getListViewTitle(route) {
     case HOME_ROUTE:
       return "Map";
     case FLORA_FAUNA_ROUTE:
-      return 'Flora and Fauna';
+      return "Flora and Fauna";
     case TREKS_ROUTE:
       return "Paths and Trails";
     case POI_ROUTE:
