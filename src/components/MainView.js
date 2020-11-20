@@ -1,11 +1,14 @@
 import React from 'react';
 import { StyleSheet, View } from 'react-native';
 import { AppLoading } from 'expo';
+import { useFonts } from 'expo-font';
 import 'react-native-gesture-handler';
 import { NavigationContainer } from '@react-navigation/native';
 import { createDrawerNavigator } from '@react-navigation/drawer';
 import { createStackNavigator } from '@react-navigation/stack';
 import * as RootNavigation from '@components/RootNavigation';
+import * as ROUTES  from '@utils/routeUtils';
+import { getListViewTitle } from '@utils/routeUtils';
 
 import MapViewComponent from '@components/MapViewComponent';
 import { FloraFaunaScreen,
@@ -14,6 +17,16 @@ import { FloraFaunaScreen,
   FarmScreen
 } from '@components/ListScreens';
 import DetailViewComponent from '@components/DetailViewComponent';
+
+import { Tajawal_700Bold, Tajawal_500Medium } from '@expo-google-fonts/tajawal';
+import { 
+  Montserrat_300Light, 
+  Montserrat_400Regular,
+  Montserrat_700Bold,
+  Montserrat_600SemiBold,
+  Montserrat_900Black } from '@expo-google-fonts/montserrat';
+import { Raleway_400Regular } from '@expo-google-fonts/raleway';
+import { colors, drawerStyles } from '@utils/styleUtils';
 
 
 const Drawer = createDrawerNavigator();
