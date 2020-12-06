@@ -10,15 +10,17 @@ import { HeaderBackButton } from '@react-navigation/stack'
 export default function DetailViewComponent({ route, navigation }) {
 
   const [ description, setDescription ] = useState("Loading...");
+  // const { id, title, filename, from_map } = route.params;
   const { id, title, filename, from_map } = route.params;
- 
-  // db call
   useEffect(() => {
     dbUtils.getDetailsForPlace((data) => {
+      if (!data) { // todo more elegant way?
+        return;
+      }
       const { description } = data;
       setDescription(description);
     }, id);
-  });
+  }, [id]);
 
   useLayoutEffect(() => {
     if (!from_map) {
@@ -57,7 +59,8 @@ export default function DetailViewComponent({ route, navigation }) {
         <Button
           title="Go to map view"
           onPress={() => {
-            navigation.goBack();
+            // navigation.goBack(); // to pop the list view when we are here, better option like reset?
+            console.log("Clicked on go to map view with options", HOME_ROUTE, { selected_marker: filename });
             navigation.navigate(HOME_ROUTE, { selected_marker: filename } )}
           }
           // navigation.reset({

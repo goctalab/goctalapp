@@ -26,7 +26,7 @@ import {
   Montserrat_600SemiBold,
   Montserrat_900Black } from '@expo-google-fonts/montserrat';
 import { Raleway_400Regular } from '@expo-google-fonts/raleway';
-import { colors, drawerStyles } from '@utils/styleUtils';
+import { colors, drawerStyles, headerStyles } from '@utils/styleUtils';
 
 
 const Drawer = createDrawerNavigator();
@@ -36,17 +36,18 @@ const DrawerSectionStack = createStackNavigator();
 const MapStack = () => {
   const Stack = createStackNavigator();
   return (
-    <Stack.Navigator>
+    <Stack.Navigator mode="modal">
       <Stack.Screen 
         name={ROUTES.HOME_ROUTE}
         options={({ route }) => ({ headerShown: false, title: getListViewTitle(route) })}
         component={ MapViewComponent } />
-      <Stack.Screen 
-        name="Details"
+      <Stack.Screen
+        name={ROUTES.DETAILS_ROUTE}
         component={ DetailViewComponent }
         initialParams={{
           id: 0 // TODO change this to empty object?
         }} 
+        options={{ ...headerStyles }}
       />
     </Stack.Navigator>
   )
@@ -70,7 +71,7 @@ export default function() {
   }
 
   return (
-    <NavigationContainer initialRouteName="Details" ref={ RootNavigation.navigationRef }>
+    <NavigationContainer ref={ RootNavigation.navigationRef }>
       <View style={ styles.container }>
         <Drawer.Navigator
           initialRouteName={ ROUTES.HOME_ROUTE }
@@ -88,8 +89,8 @@ export default function() {
             )
           })}>
           <DrawerSectionStack.Screen 
-            name={ ROUTES.HOME_ROUTE }
-            options={({ route }) => ({ title: getListViewTitle(route) })}
+            name={ "Map" } // TODO decide whether this is map or home route
+            // options={({ route }) => ({ title: getListViewTitle(route) })}
             component={ MapStack } />
           <DrawerSectionStack.Screen
             name={ ROUTES.POI_ROUTE }

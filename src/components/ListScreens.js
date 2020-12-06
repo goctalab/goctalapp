@@ -1,4 +1,3 @@
-
 import { useContext } from 'react';
 import { PlacesContext } from '@components/PlacesContextProvider';
 import { PLACE_CATEGORIES, groupPlacesByType } from '@utils/placesUtils';

@@ -1,11 +1,12 @@
 import React, { useState, useContext, useEffect, useRef } from 'react';
-import { Dimensions, Platform, StyleSheet, View, Image, TouchableOpacity } from 'react-native';
+import { Dimensions, StyleSheet, View, Image, TouchableOpacity } from 'react-native';
 import MapView, { PROVIDER_GOOGLE } from 'react-native-maps';
 import { Asset } from 'expo-asset';
+import Icon from 'react-native-vector-icons/FontAwesome';
+
 import { MapContext } from "@components/MapContextProvider";
 import { PlacesContext } from "@components/PlacesContextProvider";
 import * as RootNavigation from '@components/RootNavigation';
-
 import MenuComponent from '@components/MenuComponent';
 import MarkerComponent from '@components/MarkerComponent';
 import PolygonCalloutComponent from '@components/PolygonCalloutComponent';
@@ -15,11 +16,7 @@ import { processCoordinates, KML_TYPES } from '@utils/kmlUtils';
 import { mapStyle, mapStyle_00, colors } from '@utils/styleUtils';
 import markerAssetsURI from '@src/mapMarkerAssetsURI';
 
-import Icon from 'react-native-vector-icons/FontAwesome';
 const menuIcon = <Icon name="bars" size={30} color="#FFF" />;
-
-const logoResource = require("@assets/img/logo.png");
-// const logoURI = Asset.fromModule(logoResource).uri;
 
 const mapOverlayCoordinates = [
   { 
@@ -53,28 +50,29 @@ const layerMenuItems = Object.keys(LAYER_TYPES);
 const CENTER_START_COORDINATES = { longitude: -77.89741388888889, latitude: -6.055380555555556 };
 const DELTA = 0.0019;
 
-export default MapViewContainer = function({ route }) {
+export default function({ route, navigation }) {
 
   const params = route.params;
+
+  const { mapData: mapContextData } = useContext(MapContext);
+  const { placesData: placesContextData } = useContext(PlacesContext);
 
   const [ layersDeselected, setLayersDeselected ] = useState([]);
   const [ mapData, setMapData ] = useState({ markers: [], polygons: [], polylines: []});
   const [ selectedMapItem, setSelectedMapItem ] = useState(null);
-  const { mapData: mapContextData } = useContext(MapContext);
-  const { placesData: placesContextData } = useContext(PlacesContext);
   
   const mapRef = useRef(null);
   const markersRef = useRef({});
+
+  console.log("PARAMS received by MapView", params);
 
   useEffect(() => {
     parseMapData(mapContextData, placesContextData);
   }, [ mapContextData, placesContextData ]);
 
   useEffect(() => {
-    console.log("PARAMS", params);
+    console.log("PARAMS in MapView use effect", params);
     if (params && params.selected_marker) {
-      
-      // parseMapData(mapContextData, placesContextData);
       openMarker(params.selected_marker);
     }
   }, [ params ]);
@@ -112,9 +110,8 @@ export default MapViewContainer = function({ route }) {
 
   const openMarker = (selectedMarker) => {
     const marker = markersRef.current[selectedMarker];
-    // console.log("marker to open", marker, markersRef.current);
     if (marker && marker.openCallout) {
-      console.log(selectedMarker);
+      console.log(`selected marker ${selectedMarker}`);
       centerMap(getRegionWithCoordinate(marker.coordinate));
       marker.openCallout();
     }
@@ -130,7 +127,7 @@ export default MapViewContainer = function({ route }) {
     setLayersDeselected(allSelectedOptions);
   }
 
-  const isMapItemSelected = (data) => !!(selectedMapItem && selectedMapItem.filename === data.filename);
+  const isMapItemSelected = (id) => !!(selectedMapItem && selectedMapItem.id === id);
       
   const isLayerShown = (layerType) => {
     const isLayerShown = !layersDeselected.includes(layerType);
@@ -148,6 +145,7 @@ export default MapViewContainer = function({ route }) {
     }
   }
 
+  // TODO tranfer this to a context ?
   const parseMapData = (mapData=[], placesData=[]) => {
     const markerData = [],
       polygonData = [],
@@ -156,6 +154,7 @@ export default MapViewContainer = function({ route }) {
     mapData.forEach((data) => {
       
       // see if there is a place description entry for our thing
+      // places and kml have filenames in common
       const placeData = (placesData.find((place) => place[PLACE_FIELDS.filename] === data[KML_FIELDS.filename]))
         || {};
       
@@ -188,13 +187,14 @@ export default MapViewContainer = function({ route }) {
       const filename = data[KML_FIELDS.filename];
       const getIcon = markerAssetsURI[filename] || markerAssetsURI.defaultMarker;
       const icons = getIcon();
-
+      console.log("ref ", data.rowid);
+  
       return <MarkerComponent
         key={`${i}-${i}`}
         markerData={data}
         imageIcon={icons.default}
         selectedImageIcon={icons.selected} 
-        isSelected={isMapItemSelected(data)}
+        isSelected={isMapItemSelected(data.id)} // TODO rowid or id
         onPress={onMapItemClick}
         ref={(ref) => {
           markersRef.current[filename] = ref;

@@ -2,27 +2,40 @@
 import React from 'react';
 import { ScrollView, Text, TouchableWithoutFeedback } from 'react-native';
 import { StyleSheet } from 'react-native';
-import { getScreenNameFromSiteItem } from '@utils/routeUtils';
 import { PLACE_FIELDS } from '@data/dbUtils';
 import { colors } from '@utils/styleUtils';
+import { DETAILS_ROUTE } from '@utils/routeUtils';
+
+
+export function DetailViewLink(item, i, onListItemPress) {
+  return (<TouchableWithoutFeedback
+    style={styles.item}
+    key={i}
+    onPress={onListItemPress}
+    {...props}>
+    <Text style={[styles.item, styles.text]}>{item[PLACE_FIELDS.title]}</Text>
+  </TouchableWithoutFeedback>)
+}
+
+export function configureOnPress(navigation, route, item) {
+  const params = {
+    title: item[PLACE_FIELDS.title],
+    id: item.rowid,
+    filename: item[PLACE_FIELDS.filename]
+  };
+
+  return (() => {
+    // console.log("navigating", route, params);
+    navigation.navigate(route, params)
+  })
+}
 
 function ListViewComponent(props) {
   const { navigation, route, listItems } = props;
 
   const detailViewLinks = listItems.map((item, i) => {
-    const params = { title: item[PLACE_FIELDS.title], id: item.rowid };
-    const routeName = getScreenNameFromSiteItem(item);
-    
-    return (<TouchableWithoutFeedback
-      style={styles.item}
-      key={i}
-      onPress={() => {
-        console.log("navigating", route, params);
-        navigation.navigate(routeName, params)
-      }}
-      {...props}>
-      <Text style={[styles.item, styles.text]}>{item[PLACE_FIELDS.title]}</Text>
-    </TouchableWithoutFeedback>)
+    const onPress = configureOnPress(navigation, DETAILS_ROUTE, item);
+    DetailViewLink(item, i, onPress);
   }); 
 
   return (

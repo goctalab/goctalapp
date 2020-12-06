@@ -5,6 +5,7 @@ export const POI_ROUTE = "pointsOfInterest";
 export const FLORA_FAUNA_ROUTE = "floraFauna";
 export const TREKS_ROUTE = "treks";
 export const FARM_ROUTE = "farm";
+export const DETAILS_ROUTE = "details";
 
 export function getListViewTitle(route) {
   switch (route.name) {
