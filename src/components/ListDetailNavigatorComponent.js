@@ -31,7 +31,7 @@ export default function({ navigation, route, listItems=[] }) {
               />),
             ...headerStyles
           }}>
-        { props =>  <ListViewComponent {...props} listItems={listItems} />}
+        { props =>  <ListViewComponent {...props} listItems={listItems} /> }
         </ListDetailsStack.Screen>
         <ListDetailsStack.Screen
           name={DETAILS_ROUTE}

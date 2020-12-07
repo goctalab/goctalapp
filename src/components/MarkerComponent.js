@@ -31,9 +31,11 @@ const MarkerComponent = (props, ref) => {
   }
 
   const openDetailView = () => {
-    const screen = getScreenNameFromSiteItem(markerData.placeData); //TODO rename since using sites
+    // const screen = getScreenNameFromSiteItem(markerData.placeData); //TODO rename since using sites
     const route = getRouteNameFromCategory(markerData.placeData[PLACE_FIELDS.category]);
-    navigation.navigate( DETAILS_ROUTE, { screen, params: { id: placeData.rowid, title: placeData[PLACE_FIELDS.title], from_map: true }});
+    debugger
+    // navigation.navigate( DETAILS_ROUTE, { screen, params: { id: placeData.rowid, title: placeData[PLACE_FIELDS.title], from_map: true }});
+    navigation.navigate( DETAILS_ROUTE, { id: placeData.rowid, title: placeData[PLACE_FIELDS.title], from_map: true });
   }
 
   const truncate = (str) => (str) ? str.substr(0, str.indexOf('.') + 1) :  "";
