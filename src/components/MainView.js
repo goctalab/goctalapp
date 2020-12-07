@@ -36,10 +36,10 @@ const DrawerSectionStack = createStackNavigator();
 const MapStack = () => {
   const Stack = createStackNavigator();
   return (
-    <Stack.Navigator mode="modal">
+    <Stack.Navigator mode="modal" screenOptions={{ title: "" }}>
       <Stack.Screen 
         name={ROUTES.HOME_ROUTE}
-        options={({ route }) => ({ headerShown: false, title: getListViewTitle(route) })}
+        options={({ route }) => ({ headerShown: false })}
         component={ MapViewComponent } />
       <Stack.Screen
         name={ROUTES.DETAILS_ROUTE}
