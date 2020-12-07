@@ -12,6 +12,7 @@ export default function DetailViewComponent({ route, navigation }) {
   const [ description, setDescription ] = useState("Loading...");
   // const { id, title, filename, from_map } = route.params;
   const { id, title, filename, from_map } = route.params;
+
   useEffect(() => {
     dbUtils.getDetailsForPlace((data) => {
       if (!data) { // todo more elegant way?
@@ -22,29 +23,29 @@ export default function DetailViewComponent({ route, navigation }) {
     }, id);
   }, [id]);
 
-  useLayoutEffect(() => {
-    if (!from_map) {
-      return;
-    }
-    navigation.setOptions({
-      headerLeft: () => (
-        <Button onPress={() => { 
-          navigation.dispatch(
-            CommonActions.reset({
-              index: 0,
-              routes: [{ name: HOME_ROUTE }]
-            })
-          );
-          // navigation.reset({
-          //   index: 0,
-          //   routes: [{ name: HOME_ROUTE }],
-          // });
-          // navigation.dispatch(StackActions.replace(HOME_ROUTE));
-          // navigation.dispatch(CommonActions.reset())
-         }} title="Close" />
-      )
-    });
-  }, [route]);
+  // useLayoutEffect(() => {
+  //   if (!from_map) {
+  //     return;
+  //   }
+  //   navigation.setOptions({
+  //     headerLeft: () => (
+  //       <Button onPress={() => { 
+  //         navigation.dispatch(
+  //           CommonActions.reset({
+  //             index: 0,
+  //             routes: [{ name: HOME_ROUTE }]
+  //           })
+  //         );
+  //         // navigation.reset({
+  //         //   index: 0,
+  //         //   routes: [{ name: HOME_ROUTE }],
+  //         // });
+  //         // navigation.dispatch(StackActions.replace(HOME_ROUTE));
+  //         // navigation.dispatch(CommonActions.reset())
+  //        }} title="Close" />
+  //     )
+  //   });
+  // }, [route]);
 
   const newLineDescription = (description.replace(/(?:\\\\[rn])+/g, ' \n'));
   return (
@@ -58,18 +59,13 @@ export default function DetailViewComponent({ route, navigation }) {
       { !from_map &&
         <Button
           title="Go to map view"
-          onPress={() => {
-            // navigation.goBack(); // to pop the list view when we are here, better option like reset?
+          onPress={() => {  
+            navigation.goBack(); // to pop the list view when we are here, better option like reset?
             console.log("Clicked on go to map view with options", HOME_ROUTE, { selected_marker: filename });
-            navigation.navigate(HOME_ROUTE, { selected_marker: filename } )}
-          }
-          // navigation.reset({
-          //   index: 0,
-          //   routes: [{ name: HOME_ROUTE, params: { selected_marker: filename } }]
-          // })} 
-          />
-        }
-        {/* // navigation.navigate(HOME_ROUTE, { selected_marker: filename } )} /> } */}
+            navigation.navigate(HOME_ROUTE, { selected_marker: filename } )
+          }}
+        />
+      }
     </View>
   );
 }

@@ -36,7 +36,15 @@ const DrawerSectionStack = createStackNavigator();
 const MapStack = () => {
   const Stack = createStackNavigator();
   return (
-    <Stack.Navigator mode="modal" screenOptions={{ title: "" }}>
+    <Stack.Navigator 
+      mode="modal" 
+      screenOptions={{ title: "" }}
+      transitionConfig={() => ({
+        transitionSpec: { // https://stackoverflow.com/questions/53587246/react-navigation-disable-modal-animation
+          duration: 0,
+        },
+      })}
+    >
       <Stack.Screen 
         name={ROUTES.HOME_ROUTE}
         options={({ route }) => ({ headerShown: false })}
