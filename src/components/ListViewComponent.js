@@ -7,12 +7,13 @@ import { colors } from '@utils/styleUtils';
 import { DETAILS_ROUTE } from '@utils/routeUtils';
 
 
-export function DetailViewLink(item, i, onListItemPress) {
+export function DetailViewLink(props) {
+  const { item, index, onPress } = props;
+  console.log("Hola", index);
   return (<TouchableWithoutFeedback
     style={styles.item}
-    key={i}
-    onPress={onListItemPress}
-    {...props}>
+    key={index}
+    onPress={onPress}>
     <Text style={[styles.item, styles.text]}>{item[PLACE_FIELDS.title]}</Text>
   </TouchableWithoutFeedback>)
 }
@@ -31,11 +32,11 @@ export function configureOnPress(navigation, route, item) {
 }
 
 function ListViewComponent(props) {
-  const { navigation, route, listItems } = props;
+  const { navigation, listItems } = props;
 
-  const detailViewLinks = listItems.map((item, i) => {
+  const detailViewLinks = listItems.map((item, key) => {
     const onPress = configureOnPress(navigation, DETAILS_ROUTE, item);
-    DetailViewLink(item, i, onPress);
+    return DetailViewLink({ item, key, onPress }) ;
   }); 
 
   return (

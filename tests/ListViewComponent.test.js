@@ -1,4 +1,7 @@
 import TestRenderer from 'react-test-renderer';
+import { ScrollView, Text, TouchableWithoutFeedback } from 'react-native';
+import React from 'react';
+import { DETAILS_ROUTE } from '@utils/routeUtils';
 import ListViewComponent, { DetailViewLink, configureOnPress }
   from '@components/ListViewComponent';
 
@@ -18,12 +21,16 @@ const items = [
     title: "A Title 2",
     rowid: 2,
     filename: "pond.kml"
+  },
+  {
+    title: "A Title 3",
+    rowid: 3,
+    filename: "other_site.kml"
   }
 ];
 
 describe("ListViewComponent", () => {
-
-  describe("configureOnPress", () => {
+  describe("configureOnPress creates a navigation callback fn for each list item and", () => {
     it("returns a function", () => {
       expect(typeof configureOnPress()).toEqual("function");
     });
@@ -37,14 +44,41 @@ describe("ListViewComponent", () => {
   });
 
   describe("DetailViewLink", () => {
-    it("returns touchable feedback link with onPress attached", () => {
 
+    let testRenderer;
+    let onPress = () => { return true };
+      
+    beforeAll(() => {
+      testRenderer = TestRenderer.create(
+        <DetailViewLink item={items[1]} index={1} onPress={onPress} />
+      );
+    });
+
+    afterAll(() => {
+      testRenderer = null;
+      onPress = null;
+    });
+
+    it("returns touchable feedback link with title text of item", () => {
+      const testInstance = testRenderer.root;
+      expect(testInstance.props.onPress).toBe(onPress);
+      expect(testInstance.findByType(Text).props.children).toEqual(items[1].title);
+    });
+
+    it("returns touchable feedback link with onPress attached", () => {
+      const testInstance = testRenderer.root;
+      expect(testInstance.props.onPress).toBe(onPress);
     });
   });
 
+
   describe("ListViewComponent", () => {
     it("renders a scroll view with links that correspond to each item", () => {
+      const testRenderer = TestRenderer.create(<ListViewComponent listItems={items} navigation={navigation} />);
+      const instance = testRenderer.root;
 
+      const touchableLinks = instance.findAllByType(TouchableWithoutFeedback);
+      expect(touchableLinks.length).toBe(items.length);
     });
   })
 })
