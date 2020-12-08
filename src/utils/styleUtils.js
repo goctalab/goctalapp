@@ -27,7 +27,7 @@ export const headerStyles = {
     fontFamily: 'Montserrat_600SemiBold',
     fontSize: 18,
     textAlign: 'center'
-  }
+  },
 }
 
 export const drawerStyles = {

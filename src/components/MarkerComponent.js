@@ -46,7 +46,7 @@ const MarkerComponent = (props, ref) => {
   }));
   
   const onMyPress = (e) => { 
-    console.log("onMyPress", markerRef.current, e.nativeEvent);
+    // console.log("onMyPress", markerRef.current, e.nativeEvent);
     if (typeof(onPress) !== "function") {
       return true;
     }

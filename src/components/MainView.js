@@ -9,8 +9,10 @@ import { createStackNavigator } from '@react-navigation/stack';
 import * as RootNavigation from '@components/RootNavigation';
 import * as ROUTES  from '@utils/routeUtils';
 import { getListViewTitle } from '@utils/routeUtils';
+import Icon from 'react-native-vector-icons/Ionicons';
 
 import MapViewComponent from '@components/MapViewComponent';
+
 import { FloraFaunaScreen,
   PointsOfInterestScreen,
   TreksScreen,
@@ -55,7 +57,15 @@ const MapStack = () => {
         initialParams={{
           id: 0 // TODO change this to empty object?
         }} 
-        options={{ ...headerStyles }}
+        options={{ 
+         ...headerStyles,
+          headerLeftContainerStyle: {
+            bottom: "25%",
+            left: 5
+          },
+          headerBackTitle: "Close",
+          headerBackImage: (tintColor) => <Icon name="ios-close" style={{ paddingHorizontal: 8 }} size={32} color="#FFF" />
+        }}
       />
     </Stack.Navigator>
   )
