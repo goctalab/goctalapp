@@ -94,6 +94,8 @@ export default function({ route, navigation }) {
   }
   
   const onMapItemClick = (e, mapItemData) => {
+    debugger
+    console.log("onmapitemclick", mapItemData);
     setSelectedMapItem(mapItemData);
     // console.log(mapItemData, mapItemData.coordinates[0]);
     centerMap(getRegionWithCoordinate(mapItemData.coordinates[0]));
@@ -127,7 +129,12 @@ export default function({ route, navigation }) {
     setLayersDeselected(allSelectedOptions);
   }
 
-  const isMapItemSelected = (id) => !!(selectedMapItem && selectedMapItem.id === id);
+  const isMapItemSelected = (id) => {
+    if (!!(selectedMapItem && selectedMapItem.rowid === id)) {
+      console.log("is map item selected", selectedMapItem, id, selectedMapItem.rowid);
+    }
+    return !!(selectedMapItem && selectedMapItem.rowid === id);
+  }
       
   const isLayerShown = (layerType) => {
     const isLayerShown = !layersDeselected.includes(layerType);
@@ -194,7 +201,7 @@ export default function({ route, navigation }) {
         markerData={data}
         imageIcon={icons.default}
         selectedImageIcon={icons.selected} 
-        isSelected={isMapItemSelected(data.id)} // TODO rowid or id
+        isSelected={isMapItemSelected(data.rowid)} // TODO rowid or id
         onPress={onMapItemClick}
         ref={(ref) => {
           markersRef.current[filename] = ref;
@@ -219,7 +226,7 @@ export default function({ route, navigation }) {
           fillColor={mapColors[polygonObj.filename] || mapColors.polygon.fillColor}
           strokeWidth={2}
           strokeColor={colors["Liver Dogs"]}
-          isSelected={isMapItemSelected(polygonObj)}
+          isSelected={isMapItemSelected(polygonObj)} // TODO ?
           onPress={onMapItemClick}
         />
           // zIndex={1}
