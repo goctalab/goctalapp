@@ -23,29 +23,32 @@ export default function DetailViewComponent({ route, navigation }) {
     }, id);
   }, [id]);
 
-  // useLayoutEffect(() => {
-  //   if (!from_map) {
-  //     return;
-  //   }
-  //   navigation.setOptions({
-  //     headerLeft: () => (
-  //       <Button onPress={() => { 
-  //         navigation.dispatch(
-  //           CommonActions.reset({
-  //             index: 0,
-  //             routes: [{ name: HOME_ROUTE }]
-  //           })
-  //         );
-  //         // navigation.reset({
-  //         //   index: 0,
-  //         //   routes: [{ name: HOME_ROUTE }],
-  //         // });
-  //         // navigation.dispatch(StackActions.replace(HOME_ROUTE));
-  //         // navigation.dispatch(CommonActions.reset())
-  //        }} title="Close" />
-  //     )
-  //   });
-  // }, [route]);
+  /* seems unnecessary now 
+  // but need to investigate
+  useLayoutEffect(() => {
+    if (!from_map) {
+      return;
+    }
+    navigation.setOptions({
+      headerLeft: () => (
+        <Button onPress={() => { 
+          navigation.dispatch(
+            CommonActions.reset({
+              index: 0,
+              routes: [{ name: HOME_ROUTE }]
+            })
+          );
+          // navigation.reset({
+          //   index: 0,
+          //   routes: [{ name: HOME_ROUTE }],
+          // });
+          // navigation.dispatch(StackActions.replace(HOME_ROUTE));
+          // navigation.dispatch(CommonActions.reset())
+         }} title="Close" />
+      )
+    });
+  }, [route]);
+  */
 
   const newLineDescription = (description.replace(/(?:\\\\[rn])+/g, ' \n'));
   return (

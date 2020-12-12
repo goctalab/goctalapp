@@ -18,6 +18,8 @@ import markerAssetsURI from '@src/mapMarkerAssetsURI';
 
 const menuIcon = <Icon name="bars" size={30} color="#FFF" />;
 
+console.log("HOLA MAP VIEW)", MapView, MapView.Animated);
+
 const mapOverlayCoordinates = [
   { 
     longitude: -77.89770174815041,
@@ -94,7 +96,6 @@ export default function({ route, navigation }) {
   }
   
   const onMapItemClick = (e, mapItemData) => {
-    debugger
     console.log("onmapitemclick", mapItemData);
     setSelectedMapItem(mapItemData);
     // console.log(mapItemData, mapItemData.coordinates[0]);
