@@ -1,9 +1,7 @@
-import TestRenderer from 'react-test-renderer';
-import { ScrollView, Text, TouchableWithoutFeedback } from 'react-native';
 import React from 'react';
-import { DETAILS_ROUTE } from '@utils/routeUtils';
-import ListViewComponent, { DetailViewLink, configureOnPress }
-  from '@components/ListViewComponent';
+import TestRenderer from 'react-test-renderer';
+import { Text, TouchableWithoutFeedback } from 'react-native';
+import ListViewComponent, { DetailViewLink, configureOnPress } from '@components/ListViewComponent';
 
 const navigation = {
   navigate: jest.fn()
@@ -29,10 +27,10 @@ const items = [
   }
 ];
 
-describe("ListViewComponent", () => {
+describe.only("ListViewComponent", () => {
   describe("configureOnPress creates a navigation callback fn for each list item and", () => {
     it("returns a function", () => {
-      expect(typeof configureOnPress()).toEqual("function");
+      expect(typeof configureOnPress).toEqual("function");
     });
 
     it("returns a fn that calls navigator with expected params", () => {

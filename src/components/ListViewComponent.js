@@ -9,7 +9,6 @@ import { DETAILS_ROUTE } from '@utils/routeUtils';
 
 export function DetailViewLink(props) {
   const { item, index, onPress } = props;
-  console.log("Hola", index);
   return (<TouchableWithoutFeedback
     style={styles.item}
     key={index}
@@ -34,9 +33,9 @@ export function configureOnPress(navigation, route, item) {
 function ListViewComponent(props) {
   const { navigation, listItems } = props;
 
-  const detailViewLinks = listItems.map((item, key) => {
+  const detailViewLinks = listItems.map((item, index) => {
     const onPress = configureOnPress(navigation, DETAILS_ROUTE, item);
-    return DetailViewLink({ item, key, onPress }) ;
+    return DetailViewLink({ item, index, onPress }) ;
   }); 
 
   return (
