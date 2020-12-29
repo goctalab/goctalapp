@@ -1,0 +1,100 @@
+
+import React from 'react';
+import MapView from 'react-native-maps';
+import MarkerComponent from '@components/MarkerComponent';
+import PolygonCalloutComponent from '@components/PolygonCalloutComponent';
+
+import { KML_FIELDS } from "@data/dbUtils";
+import markerAssetsURI from '@src/mapMarkerAssetsURI';
+import { colors } from '@utils/styleUtils';
+
+export const renderMarkers = function(markerData=[], markersRef, selectedMapItem, onMapItemClick) {
+  return (markerData).map((data, i) => {
+    const filename = data[KML_FIELDS.filename];
+    const getIcon = markerAssetsURI[filename] || markerAssetsURI.defaultMarker;
+    const icons = getIcon();
+
+    return <MarkerComponent
+      key={`${i}-${i}`}
+      markerData={data}
+      imageIcon={icons.default}
+      selectedImageIcon={icons.selected} 
+      isSelected={isMapItemSelected(data[KML_FIELDS.id], selectedMapItem)} // TODO rowid or id
+      onPress={onMapItemClick}
+      ref={(ref) => {
+        markersRef.current[filename] = ref;
+      }} // store in ref to access by filename and open
+    />
+  });
+}
+
+export const renderPolygons = function(polygonData=[]) {
+  return (polygonData).map((polygonObj, i) => {
+
+    if (Object.keys(polygonObj.placeData).length) {
+
+      return <PolygonCalloutComponent
+        key={`${i}-${i}`}
+        polygonData={polygonObj}
+        ref={(ref) => {
+          // console.log("ref from polygon", ref);
+          markersRef.current[polygonObj.filename] = ref;
+        }}
+        fillColor={mapColors[polygonObj.filename] || mapColors.polygon.fillColor}
+        strokeWidth={2}
+        strokeColor={colors["Liver Dogs"]}
+        isSelected={MapViewInteractions.isMapItemSelected(polygonObj[KML_FIELDS.id], selectedMapItem)} // TODO ?
+        onPress={MapViewInteractions.onMapItemClick}
+      />
+        // zIndex={1}
+        // onPress={(e) => console.log(e, e.nativeEvent, "press region")}
+    }
+    return <MapView.Polygon
+      key={`${i}-${i}`}
+      title={polygonObj.name}
+      coordinates={polygonObj.coordinates}
+      fillColor={mapColors[polygonObj.filename] || mapColors.polygon.fillColor}
+      strokeWidth={0}
+      // ref={(ref) => {
+      //   console.log("ref from polygon 2", ref);
+      //   markersRef.current[polygonObj.filename] = ref;
+      // }}
+      // zIndex={1}
+    />
+  });
+}
+
+export const renderPolylines = function(polylinesData=[]) {
+  // ('polylines', polylinesData);
+  return polylinesData.map((polyline, i) => {
+    // const strokeColor = (polyline.filename.indexOf("agrofo") > -1) ?
+    //   colors["Lapis Lazuli"] :
+    //   mapColors.paths.strokeColor;
+    return <MapView.Polyline
+      key={`${i}-${i}`}
+      coordinates={polyline.coordinates}
+      strokeColor={mapColors.paths.strokeColor}
+      strokeWidth={mapColors.paths.strokeWidth}
+      zIndex={10}
+      // lineJoin="meter"
+      // lineCap="butt"
+      // meterLimit="5"
+      // zIndex={2}
+    />
+  }
+  );
+}
+
+
+const mapColors = {
+  polygon: {
+    fillColor: 'rgba(106, 153, 78, .3)' // colors["May Green"]
+  },
+  "PozoBirding.kml": colors["Middle Blue"],
+  "Crops.kml": colors["Android Green"],
+  "Andenes.kml": colors["Dark Olive Green"],
+  paths: {
+    strokeColor: 'rgba(242,232,207,.5)',
+    strokeWidth: 3
+  }
+}

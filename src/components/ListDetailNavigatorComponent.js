@@ -3,11 +3,10 @@ import { createStackNavigator } from '@react-navigation/stack';
 import { StyleSheet, Button } from 'react-native';
 import DetailViewComponent from '@components/DetailViewComponent';
 import ListViewComponent from '@components/ListViewComponent';
-import { HOME_ROUTE, getScreenNameFromSiteItem, getListViewTitle } from '@utils/routeUtils';
+import { HOME_ROUTE, DETAILS_ROUTE, getListViewTitle } from '@utils/routeUtils';
 import { PLACE_FIELDS } from '@data/dbUtils';
 import { colors, headerStyles } from '@utils/styleUtils';
 import FIcon from 'react-native-vector-icons/Feather';
-
 
 const backIcon = <FIcon name="chevron-right" size={10} color="#FFF" />;
 const ListDetailsStack = createStackNavigator();
@@ -32,28 +31,20 @@ export default function({ navigation, route, listItems=[] }) {
               />),
             ...headerStyles
           }}>
-        { props =>  <ListViewComponent {...props} listItems={listItems} />}
+        { props =>  <ListViewComponent {...props} listItems={listItems} /> }
         </ListDetailsStack.Screen>
-        { listItems.map((item, i) => {
-            const screenName = getScreenNameFromSiteItem(item);
-            // console.log("route name for details", screenName);
-            return (
-              <ListDetailsStack.Screen
-                key={item[PLACE_FIELDS.filename]}
-                name={screenName}
-                component={DetailViewComponent}
-                options={{ 
-                  title: "", // item[PLACE_FIELDS.title],
-                  ...headerStyles
-                }}
-                initialParams={{
-                  id: item.rowid, 
-                  filename: item[PLACE_FIELDS.filename] 
-                }} >
-              </ListDetailsStack.Screen>
-            )
-          })
-        }
+        <ListDetailsStack.Screen
+          name={DETAILS_ROUTE}
+          component={DetailViewComponent}
+          options={{ 
+            title: "", // item[PLACE_FIELDS.title],
+            ...headerStyles
+          }}
+          initialParams={{
+            id: 0, 
+            // filename: item[PLACE_FIELDS.filename] 
+          }} >
+        </ListDetailsStack.Screen>
       </ListDetailsStack.Navigator>
   );
 }
