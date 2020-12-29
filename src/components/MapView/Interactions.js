@@ -13,6 +13,3 @@ export const centerMap = (region, mapRef) => {
   console.log("centering", region, mapRef);
   mapRef.current.animateToRegion(region, 300);
 } 
-
-
-

@@ -10,16 +10,13 @@ import * as RootNavigation from '@components/RootNavigation';
 import * as ROUTES  from '@utils/routeUtils';
 import { getListViewTitle } from '@utils/routeUtils';
 import Icon from 'react-native-vector-icons/Ionicons';
-
-import MapViewComponent from '@components/MapViewComponent';
-
+import DetailViewComponent from '@components/DetailViewComponent';
 import { FloraFaunaScreen,
   PointsOfInterestScreen,
   TreksScreen,
   FarmScreen
 } from '@components/ListScreens';
-import DetailViewComponent from '@components/DetailViewComponent';
-
+import MapViewComponent from '@components/MapViewComponent';
 import { Tajawal_700Bold, Tajawal_500Medium } from '@expo-google-fonts/tajawal';
 import { 
   Montserrat_300Light, 
@@ -30,9 +27,7 @@ import {
 import { Raleway_400Regular } from '@expo-google-fonts/raleway';
 import { colors, drawerStyles, headerStyles } from '@utils/styleUtils';
 
-
 const Drawer = createDrawerNavigator();
-
 const DrawerSectionStack = createStackNavigator();
 
 const MapStack = () => {
@@ -72,7 +67,6 @@ const MapStack = () => {
 };
 
 export default function() {
-
   let [ fontsLoaded ] = useFonts({
     Montserrat_300Light, 
     Montserrat_400Regular,
@@ -139,7 +133,6 @@ export default function() {
   );
 }
 
-// console.log("width", Dimensions.get('window').width);
 const styles = StyleSheet.create({
   container: {
     flex: 1,

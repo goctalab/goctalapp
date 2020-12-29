@@ -13,7 +13,6 @@ export const selectedMarkerParam = "selected_marker";
 export default function DetailViewComponent({ route, navigation }) {
 
   const [ description, setDescription ] = useState("Loading...");
-  // const { id, title, filename, from_map } = route.params;
   const { id, title, filename, from_map } = route.params;
 
   useEffect(() => {
@@ -67,7 +66,7 @@ export default function DetailViewComponent({ route, navigation }) {
           title={goToMapTitle}
           onPress={() => {  
             navigation.goBack(); // to pop the list view when we are here, better option like reset?
-            console.log("Clicked on go to map view with options", HOME_ROUTE, { selected_marker: filename });
+            console.log("Clicked on go to map view with options", HOME_ROUTE, { [selectedMarkerParam]: filename });
             navigation.navigate(HOME_ROUTE, { [selectedMarkerParam]: filename } )
           }}
         />
