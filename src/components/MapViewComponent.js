@@ -12,6 +12,8 @@ import { mapStyle, mapStyle_00, colors } from '@utils/styleUtils';
 import * as MapViewInteractions from "@components/MapView/Interactions";
 import * as MapViewLayers from "@components/MapView/Layers";
 
+import { selectedMarkerParam } from '@components/DetailViewComponent';
+
 const menuIcon = <Icon name="bars" size={30} color="#FFF" />;
 
 const mapOverlayCoordinates = [
@@ -79,7 +81,7 @@ export default function({ route, navigation }) {
   }, [ mapContextData, placesContextData ]);
 
   useEffect(() => {
-    if (params && params.selected_marker) {
+    if (params && params[selectedMarkerParam]) {
       MapViewInteractions.openMarker(params.selected_marker, markersRef);
     }
   }, [ params ]);

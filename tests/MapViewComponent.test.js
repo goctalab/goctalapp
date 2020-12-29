@@ -6,7 +6,6 @@ import MapViewComponent from '@components/MapViewComponent';
 import * as MapContextModule from '@components/MapContextProvider';
 import markers from './mockMarkers.js';
 
-// TODO move to mocks
 jest.mock('react-native-vector-icons/Feather', () => {
   const { View } = require('react-native');
   const { Component } = require('react');
@@ -58,14 +57,6 @@ describe("MapViewComponent", () => {
     );
   });
 
-  // beforeEach(() => {
-  //   useContextSpy = jest.spyOn(React, "useContext").mockImplementation(
-  //     () => {
-  //       console.log("calling fake useMapContext",  { mapData: markers });
-  //       return { mapData: markers }
-  //     }
-  //   );
-  // });
 
   afterEach(() => {
     useContextSpy.mockReset();

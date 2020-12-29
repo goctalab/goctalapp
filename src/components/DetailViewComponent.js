@@ -3,9 +3,12 @@ import React, { useEffect, useState, useLayoutEffect } from 'react';
 import { View, Text, Button } from 'react-native';
 import dbUtils from '@data/dbUtils';
 import { HOME_ROUTE } from '@utils/routeUtils';
-import { CommonActions, NavigationAction, NavigationContainer, StackActions } from '@react-navigation/native';
+// import { CommonActions, NavigationAction, NavigationContainer, StackActions } from '@react-navigation/native';
 // import { StackActions } from '@react-navigation/native';
-import { HeaderBackButton } from '@react-navigation/stack'
+// import { HeaderBackButton } from '@react-navigation/stack'
+
+export const goToMapTitle = "Go to map view";
+export const selectedMarkerParam = "selected_marker";
 
 export default function DetailViewComponent({ route, navigation }) {
 
@@ -61,11 +64,11 @@ export default function DetailViewComponent({ route, navigation }) {
       <Text style={{ fontSize: 18 }}>{newLineDescription}</Text>
       { !from_map &&
         <Button
-          title="Go to map view"
+          title={goToMapTitle}
           onPress={() => {  
             navigation.goBack(); // to pop the list view when we are here, better option like reset?
             console.log("Clicked on go to map view with options", HOME_ROUTE, { selected_marker: filename });
-            navigation.navigate(HOME_ROUTE, { selected_marker: filename } )
+            navigation.navigate(HOME_ROUTE, { [selectedMarkerParam]: filename } )
           }}
         />
       }
