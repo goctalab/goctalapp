@@ -1,17 +1,16 @@
 import React, { useState, useContext, useEffect, useRef } from 'react';
 import { Dimensions, StyleSheet, View, Image, TouchableOpacity } from 'react-native';
-import MapView, { PROVIDER_GOOGLE } from 'react-native-maps';
 import Icon from 'react-native-vector-icons/FontAwesome';
-
-import { useMapContext, MapContext } from "@components/MapContextProvider";
+import MapView, { PROVIDER_GOOGLE } from 'react-native-maps';
+import MenuComponent from '@components/MenuComponent';
+import { useMapContext } from "@components/MapContextProvider";
 import { PlacesContext } from "@components/PlacesContextProvider";
 import * as RootNavigation from '@components/RootNavigation';
-import MenuComponent from '@components/MenuComponent';
-import { mapStyle, mapStyle_00, colors } from '@utils/styleUtils';
-
 import * as MapViewInteractions from "@components/MapView/Interactions";
 import * as MapViewLayers from "@components/MapView/Layers";
-
+import { KML_FIELDS, PLACE_FIELDS } from "@data/dbUtils";
+import { processCoordinates, KML_TYPES } from '@utils/kmlUtils';
+import { mapStyle, mapStyle_00 } from '@utils/styleUtils';
 import { selectedMarkerParam } from '@components/DetailViewComponent';
 
 const menuIcon = <Icon name="bars" size={30} color="#FFF" />;
@@ -58,6 +57,42 @@ const getRegionWithCoordinate = (coordinate) => {
   }
 };
 
+// TODO tranfer this to a context ?
+export const parseMapData = (mapData=[], placesData=[]) => {
+  const markerData = [],
+    polygonData = [],
+    polylineData = [];
+
+  mapData.forEach((data) => {
+    // see if there is a place description entry for our thing
+    // places and kml have filenames in common
+    const placeData = (placesData.find((place) => place[PLACE_FIELDS.filename] === data[KML_FIELDS.filename]))
+      || {};
+    
+    const mapObject = { 
+      [KML_FIELDS.filename]: data[KML_FIELDS.filename],
+      coordinates: processCoordinates(data[KML_FIELDS.coordinates]),
+      rowid: data.rowid, // TODO improve rowid hardcode
+      type: data[KML_FIELDS.type],
+      placeData
+    };
+
+    if (data[KML_FIELDS.type] === KML_TYPES.Polygon) {
+      polygonData.push(mapObject);
+    } else if (data[KML_FIELDS.type] === KML_TYPES.Point) {
+      //const markerObject = { ...mapObject, ...placeData }; 
+      markerData.push(mapObject);
+    } else {
+      polylineData.push(mapObject); // KML_TYPE Polyline and Track
+    }
+  });
+  return {
+    markers: markerData,
+    polygons: polygonData,
+    polylines: polylineData
+  };
+}
+
 export default function({ route, navigation }) {
   const params = route.params;
   // console.log("RENDERING MAP WITH ROUTE", route);
@@ -76,7 +111,7 @@ export default function({ route, navigation }) {
 
   useEffect(() => {
     // console.log("going to call parse with", mapContextData);
-    const data = MapViewInteractions.parseMapData(mapContextData, placesContextData);
+    const data = parseMapData(mapContextData, placesContextData);
     setMapData(data);
   }, [ mapContextData, placesContextData ]);
 

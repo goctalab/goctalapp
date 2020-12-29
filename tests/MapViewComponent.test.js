@@ -2,7 +2,7 @@ import React from 'react';
 import TestRenderer from 'react-test-renderer';
 import * as MapViewInteractions from '@components/MapView/Interactions';
 import * as MapViewLayers from '@components/MapView/Layers';
-import MapViewComponent from '@components/MapViewComponent';
+import MapViewComponent, { parseMapData } from '@components/MapViewComponent';
 import * as MapContextModule from '@components/MapContextProvider';
 import markers from './mockMarkers.js';
 
@@ -74,10 +74,10 @@ describe("MapViewComponent", () => {
       TestRenderer.act(
         () => { TestRenderer.create(<MapViewComponent route={{}} navigation={navigation} />) }
       );
-      const md = MapViewInteractions.parseMapData(markers);
+      const mapData = parseMapData(markers);
       // last called to wait for context and useEffect to be called
       expect(MapViewLayers.renderMarkers).toHaveBeenLastCalledWith(
-        md.markers,
+        mapData.markers,
         expect.anything(), 
         null,
         expect.anything());
