@@ -1,4 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
+
+// added this for testing
+export const useMapContext = () => useContext(MapContext);
 
 export const MapContext = React.createContext([{ testMarker: "testing" }])
 

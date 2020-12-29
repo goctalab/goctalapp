@@ -3,23 +3,31 @@ import React, { useEffect, useState, useLayoutEffect } from 'react';
 import { View, Text, Button } from 'react-native';
 import dbUtils from '@data/dbUtils';
 import { HOME_ROUTE } from '@utils/routeUtils';
-import { CommonActions, NavigationAction, NavigationContainer, StackActions } from '@react-navigation/native';
+// import { CommonActions, NavigationAction, NavigationContainer, StackActions } from '@react-navigation/native';
 // import { StackActions } from '@react-navigation/native';
-import { HeaderBackButton } from '@react-navigation/stack'
+// import { HeaderBackButton } from '@react-navigation/stack'
+
+export const goToMapTitle = "Go to map view";
+export const selectedMarkerParam = "selected_marker";
 
 export default function DetailViewComponent({ route, navigation }) {
 
   const [ description, setDescription ] = useState("Loading...");
+  // const { id, title, filename, from_map } = route.params;
   const { id, title, filename, from_map } = route.params;
- 
-  // db call
+
   useEffect(() => {
     dbUtils.getDetailsForPlace((data) => {
+      if (!data) { // todo more elegant way?
+        return;
+      }
       const { description } = data;
       setDescription(description);
     }, id);
-  });
+  }, [id]);
 
+  /* seems unnecessary now 
+  // but need to investigate
   useLayoutEffect(() => {
     if (!from_map) {
       return;
@@ -43,6 +51,7 @@ export default function DetailViewComponent({ route, navigation }) {
       )
     });
   }, [route]);
+  */
 
   const newLineDescription = (description.replace(/(?:\\\\[rn])+/g, ' \n'));
   return (
@@ -55,18 +64,14 @@ export default function DetailViewComponent({ route, navigation }) {
       <Text style={{ fontSize: 18 }}>{newLineDescription}</Text>
       { !from_map &&
         <Button
-          title="Go to map view"
-          onPress={() => {
-            navigation.goBack();
-            navigation.navigate(HOME_ROUTE, { selected_marker: filename } )}
-          }
-          // navigation.reset({
-          //   index: 0,
-          //   routes: [{ name: HOME_ROUTE, params: { selected_marker: filename } }]
-          // })} 
-          />
-        }
-        {/* // navigation.navigate(HOME_ROUTE, { selected_marker: filename } )} /> } */}
+          title={goToMapTitle}
+          onPress={() => {  
+            navigation.goBack(); // to pop the list view when we are here, better option like reset?
+            console.log("Clicked on go to map view with options", HOME_ROUTE, { selected_marker: filename });
+            navigation.navigate(HOME_ROUTE, { [selectedMarkerParam]: filename } )
+          }}
+        />
+      }
     </View>
   );
 }

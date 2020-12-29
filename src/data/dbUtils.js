@@ -23,7 +23,8 @@ export const PLACE_FIELDS_ES = { ...PLACE_FIELDS, ...ES };
 export const KML_FIELDS = {
   filename: "filename",
   coordinates: "coordinates",
-  type: "kml_type"
+  type: "kml_type",
+  id: "rowid"
 }
 
 const dbDir = FileSystem.documentDirectory + 'SQLite/';
@@ -105,7 +106,7 @@ export default {
 
   checkForUpdate: async function() {
     const dbVersion = await this.getCurrentDbVersion();
-    return fetch('http://192.168.0.105/get_db_version')
+    fetch('http://192.168.0.105/get_db_version')
       .then((resp) => resp.text())
       .then((remote_version) => {
         // could be that app_db_version isnt set yet
@@ -178,7 +179,7 @@ export default {
   },
 
   getDetailsForPlace: function(callback, id, language) {
-    return this.db.transaction(async function(tx) {
+    this.db.transaction(async function(tx) {
       await tx.executeSql(
         `SELECT ${PLACE_FIELDS.title}, ${PLACE_FIELDS.description} from ${PLACES_DESCRIPTION_TABLE} where rowid = ?`,
         [id], 
