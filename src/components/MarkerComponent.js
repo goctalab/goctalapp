@@ -8,7 +8,10 @@ import { DETAILS_ROUTE } from '@utils/routeUtils';
 
 const defaultDescription = "need to add a description for this awesome place!";
 const READ_MORE_TEXT = "\nRead more"
-const MarkerComponent = (props, ref) => {
+
+// testing so exporting this way
+export const markerComponent = (props, ref) => {
+  // console.log("marker component called WOOOOOO");
   const { 
     markerData,
     imageIcon,
@@ -33,7 +36,6 @@ const MarkerComponent = (props, ref) => {
   const openDetailView = () => {
     // const screen = getScreenNameFromSiteItem(markerData.placeData); //TODO rename since using sites
     const route = getRouteNameFromCategory(markerData.placeData[PLACE_FIELDS.category]);
-    debugger
     // navigation.navigate( DETAILS_ROUTE, { screen, params: { id: placeData.rowid, title: placeData[PLACE_FIELDS.title], from_map: true }});
     navigation.navigate( DETAILS_ROUTE, { id: placeData.rowid, title: placeData[PLACE_FIELDS.title], from_map: true });
   }
@@ -78,7 +80,7 @@ const MarkerComponent = (props, ref) => {
   );
 }
 
-export default forwardRef(MarkerComponent);
+export default forwardRef(markerComponent);
 
 const styles = StyleSheet.create({
   hidden: {

@@ -27,7 +27,7 @@ const items = [
   }
 ];
 
-describe.only("ListViewComponent", () => {
+describe("ListViewComponent", () => {
   describe("configureOnPress creates a navigation callback fn for each list item and", () => {
     it("returns a function", () => {
       expect(typeof configureOnPress).toEqual("function");
@@ -46,13 +46,13 @@ describe.only("ListViewComponent", () => {
     let testRenderer;
     let onPress = () => { return true };
       
-    beforeAll(() => {
+    beforeEach(() => {
       testRenderer = TestRenderer.create(
         <DetailViewLink item={items[1]} index={1} onPress={onPress} />
       );
     });
 
-    afterAll(() => {
+    afterEach(() => {
       testRenderer = null;
       onPress = null;
     });

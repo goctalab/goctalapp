@@ -1,24 +1,18 @@
 import React, { useState, useContext, useEffect, useRef } from 'react';
 import { Dimensions, StyleSheet, View, Image, TouchableOpacity } from 'react-native';
 import MapView, { PROVIDER_GOOGLE } from 'react-native-maps';
-import { Asset } from 'expo-asset';
 import Icon from 'react-native-vector-icons/FontAwesome';
 
-import { MapContext } from "@components/MapContextProvider";
+import { useMapContext, MapContext } from "@components/MapContextProvider";
 import { PlacesContext } from "@components/PlacesContextProvider";
 import * as RootNavigation from '@components/RootNavigation';
 import MenuComponent from '@components/MenuComponent';
-import MarkerComponent from '@components/MarkerComponent';
-import PolygonCalloutComponent from '@components/PolygonCalloutComponent';
-
-import { KML_FIELDS, PLACE_FIELDS } from "@data/dbUtils";
-import { processCoordinates, KML_TYPES } from '@utils/kmlUtils';
 import { mapStyle, mapStyle_00, colors } from '@utils/styleUtils';
-import markerAssetsURI from '@src/mapMarkerAssetsURI';
+
+import * as MapViewInteractions from "@components/MapView/Interactions";
+import * as MapViewLayers from "@components/MapView/Layers";
 
 const menuIcon = <Icon name="bars" size={30} color="#FFF" />;
-
-console.log("HOLA MAP VIEW)", MapView, MapView.Animated);
 
 const mapOverlayCoordinates = [
   { 
@@ -31,13 +25,13 @@ const mapOverlayCoordinates = [
   }
 ];
 
-const mapOverlayRegion = mapOverlayCoordinates.map((coordObject) => {
-  const { latitude, longitude } = coordObject;
-  return [ latitude, longitude ];
-});
+// const mapOverlayRegion = mapOverlayCoordinates.map((coordObject) => {
+//   const { latitude, longitude } = coordObject;
+//   return [ latitude, longitude ];
+// });
 
 const bldgOverlayResource = require("@assets/layers/rough_map_layer_edifcio-01.png");
-const bldgOverlayURI = Asset.fromModule(bldgOverlayResource).uri;
+// const bldgOverlayURI = Asset.fromModule(bldgOverlayResource).uri;
 
 const LAYER_TYPES = {
   Places: "Places", 
@@ -52,11 +46,23 @@ const layerMenuItems = Object.keys(LAYER_TYPES);
 const CENTER_START_COORDINATES = { longitude: -77.89741388888889, latitude: -6.055380555555556 };
 const DELTA = 0.0019;
 
+
+const getRegionWithCoordinate = (coordinate) => {
+  return {
+    latitude: coordinate.latitude,
+    longitude: coordinate.longitude,
+    latitudeDelta: DELTA,
+    longitudeDelta: DELTA,
+  }
+};
+
 export default function({ route, navigation }) {
-
   const params = route.params;
+  // console.log("RENDERING MAP WITH ROUTE", route);
 
-  const { mapData: mapContextData } = useContext(MapContext);
+  const { mapData: mapContextData } = useMapContext();
+  // const { mapData: mapContextData } = useContext(MapContext);
+  
   const { placesData: placesContextData } = useContext(PlacesContext);
 
   const [ layersDeselected, setLayersDeselected ] = useState([]);
@@ -66,16 +72,15 @@ export default function({ route, navigation }) {
   const mapRef = useRef(null);
   const markersRef = useRef({});
 
-  console.log("PARAMS received by MapView", params);
-
   useEffect(() => {
-    parseMapData(mapContextData, placesContextData);
+    // console.log("going to call parse with", mapContextData);
+    const data = MapViewInteractions.parseMapData(mapContextData, placesContextData);
+    setMapData(data);
   }, [ mapContextData, placesContextData ]);
 
   useEffect(() => {
-    console.log("PARAMS in MapView use effect", params);
     if (params && params.selected_marker) {
-      openMarker(params.selected_marker);
+      MapViewInteractions.openMarker(params.selected_marker, markersRef);
     }
   }, [ params ]);
 
@@ -89,59 +94,23 @@ export default function({ route, navigation }) {
   const resetUserLocation = () => {
     return getCurrentLocation().then(position => {
       if (position) {
-        console.log("centering on user dot");
-        centerMap(getRegionWithCoordinate(position.coords));
+        MapViewInteractions.centerMap(getRegionWithCoordinate(position.coords), mapRef);
       }
     });
   }
-  
+ 
   const onMapItemClick = (e, mapItemData) => {
-    console.log("onmapitemclick", mapItemData);
     setSelectedMapItem(mapItemData);
     // console.log(mapItemData, mapItemData.coordinates[0]);
-    centerMap(getRegionWithCoordinate(mapItemData.coordinates[0]));
-  }
-
-  const getRegionWithCoordinate = (coordinate) => {
-    return {
-      latitude: coordinate.latitude,
-      longitude: coordinate.longitude,
-      latitudeDelta: DELTA,
-      longitudeDelta: DELTA,
-    }
-  };
-
-  const openMarker = (selectedMarker) => {
-    const marker = markersRef.current[selectedMarker];
-    if (marker && marker.openCallout) {
-      console.log(`selected marker ${selectedMarker}`);
-      centerMap(getRegionWithCoordinate(marker.coordinate));
-      marker.openCallout();
-    }
-  }
-
-  const centerMap = (region) => {
-    // console.log("centering", region);
-    mapRef.current.animateToRegion(region, 300);
-  } 
+    MapViewInteractions.centerMap(getRegionWithCoordinate(mapItemData.coordinates[0]), mapRef);
+  }  
 
   const onMenuItemClicked = (allSelectedOptions) => {
     // console.log("onMenuItemClicked", allSelectedOptions);
     setLayersDeselected(allSelectedOptions);
   }
-
-  const isMapItemSelected = (id) => {
-    if (!!(selectedMapItem && selectedMapItem.rowid === id)) {
-      console.log("is map item selected", selectedMapItem, id, selectedMapItem.rowid);
-    }
-    return !!(selectedMapItem && selectedMapItem.rowid === id);
-  }
       
-  const isLayerShown = (layerType) => {
-    const isLayerShown = !layersDeselected.includes(layerType);
-    // console.log(layerType, "shown ?", isLayerShown);
-    return isLayerShown;
-  }
+  const isLayerShown = (layerType) => !layersDeselected.includes(layerType);
 
   // TODO do we need this?
   const getInitialRegion = () => {
@@ -153,125 +122,8 @@ export default function({ route, navigation }) {
     }
   }
 
-  // TODO tranfer this to a context ?
-  const parseMapData = (mapData=[], placesData=[]) => {
-    const markerData = [],
-      polygonData = [],
-      polylineData = [];
-
-    mapData.forEach((data) => {
-      
-      // see if there is a place description entry for our thing
-      // places and kml have filenames in common
-      const placeData = (placesData.find((place) => place[PLACE_FIELDS.filename] === data[KML_FIELDS.filename]))
-        || {};
-      
-      const mapObject = { 
-        [KML_FIELDS.filename]: data[KML_FIELDS.filename],
-        coordinates: processCoordinates(data[KML_FIELDS.coordinates]),
-        rowid: data.rowid, // TODO improve rowid hardcode
-        type: data[KML_FIELDS.type],
-        placeData
-      };
-
-      if (data[KML_FIELDS.type] === KML_TYPES.Polygon) {
-        polygonData.push(mapObject);
-      } else if (data[KML_FIELDS.type] === KML_TYPES.Point) {
-        //const markerObject = { ...mapObject, ...placeData }; 
-        markerData.push(mapObject);
-      } else {
-        polylineData.push(mapObject); // KML_TYPE Polyline and Track
-      }
-    });
-    setMapData({
-      markers: markerData,
-      polygons: polygonData,
-      polylines: polylineData
-    });
-  }
-
-  const renderMarkers = function(markerData=[]) {
-    return (markerData).map((data, i) => {
-      const filename = data[KML_FIELDS.filename];
-      const getIcon = markerAssetsURI[filename] || markerAssetsURI.defaultMarker;
-      const icons = getIcon();
-      console.log("ref ", data.rowid);
-  
-      return <MarkerComponent
-        key={`${i}-${i}`}
-        markerData={data}
-        imageIcon={icons.default}
-        selectedImageIcon={icons.selected} 
-        isSelected={isMapItemSelected(data.rowid)} // TODO rowid or id
-        onPress={onMapItemClick}
-        ref={(ref) => {
-          markersRef.current[filename] = ref;
-        }} // store in ref to access by filename and open
-      />
-    });
-    
-  }
-
-  const renderPolygons = function(polygonData=[]) {
-    return (polygonData).map((polygonObj, i) => {
-
-      if (Object.keys(polygonObj.placeData).length) {
-
-        return <PolygonCalloutComponent
-          key={`${i}-${i}`}
-          polygonData={polygonObj}
-          ref={(ref) => {
-            // console.log("ref from polygon", ref);
-            markersRef.current[polygonObj.filename] = ref;
-          }}
-          fillColor={mapColors[polygonObj.filename] || mapColors.polygon.fillColor}
-          strokeWidth={2}
-          strokeColor={colors["Liver Dogs"]}
-          isSelected={isMapItemSelected(polygonObj)} // TODO ?
-          onPress={onMapItemClick}
-        />
-          // zIndex={1}
-          // onPress={(e) => console.log(e, e.nativeEvent, "press region")}
-      }
-      return <MapView.Polygon
-        key={`${i}-${i}`}
-        title={polygonObj.name}
-        coordinates={polygonObj.coordinates}
-        fillColor={mapColors[polygonObj.filename] || mapColors.polygon.fillColor}
-        strokeWidth={0}
-        // ref={(ref) => {
-        //   console.log("ref from polygon 2", ref);
-        //   markersRef.current[polygonObj.filename] = ref;
-        // }}
-        // zIndex={1}
-      />
-    });
-  }
-
-  const renderPolylines = function(polylinesData=[]) {
-    // ('polylines', polylinesData);
-    return polylinesData.map((polyline, i) => {
-      // const strokeColor = (polyline.filename.indexOf("agrofo") > -1) ?
-      //   colors["Lapis Lazuli"] :
-      //   mapColors.paths.strokeColor;
-      return <MapView.Polyline
-        key={`${i}-${i}`}
-        coordinates={polyline.coordinates}
-        strokeColor={mapColors.paths.strokeColor}
-        strokeWidth={mapColors.paths.strokeWidth}
-        zIndex={10}
-        // lineJoin="meter"
-        // lineCap="butt"
-        // meterLimit="5"
-        // zIndex={2}
-      />
-    }
-    );
-  }
-
   return (
     <View style={styles.viewContainer} >
-
       <TouchableOpacity style={styles.logoBtn} 
         onPress={resetUserLocation}>
         <Image 
@@ -307,19 +159,19 @@ export default function({ route, navigation }) {
       >
 
         { isLayerShown(LAYER_TYPES.Regions) && 
-          renderPolygons(mapData.polygons) } 
-        { true && 
+          MapViewLayers.renderPolygons(mapData.polygons) } 
+        {/* { true && 
           <MapView.Overlay 
             image={bldgOverlayURI}
             bounds={mapOverlayRegion}
             // style={{ position: 'absolute', zIndex: 25 }} // , zIndex: '5'
             // zIndex={13} no z index seems to work on apple
-          /> }
+          /> } */}
         { isLayerShown(LAYER_TYPES.Paths) && 
-          renderPolylines(mapData.polylines) }
+          MapViewLayers.renderPolylines(mapData.polylines) }
         
         { isLayerShown(LAYER_TYPES.Places) && 
-          renderMarkers(mapData.markers) }
+          MapViewLayers.renderMarkers(mapData.markers, markersRef, selectedMapItem, onMapItemClick) }
         
       </MapView.Animated>
     </View>
@@ -361,16 +213,3 @@ const styles = StyleSheet.create({
   // }
 });
 
-
-const mapColors = {
-  polygon: {
-    fillColor: 'rgba(106, 153, 78, .3)' // colors["May Green"]
-  },
-  "PozoBirding.kml": colors["Middle Blue"],
-  "Crops.kml": colors["Android Green"],
-  "Andenes.kml": colors["Dark Olive Green"],
-  paths: {
-    strokeColor: 'rgba(242,232,207,.5)',
-    strokeWidth: 3
-  }
-}

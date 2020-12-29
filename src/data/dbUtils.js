@@ -23,7 +23,8 @@ export const PLACE_FIELDS_ES = { ...PLACE_FIELDS, ...ES };
 export const KML_FIELDS = {
   filename: "filename",
   coordinates: "coordinates",
-  type: "kml_type"
+  type: "kml_type",
+  id: "rowid"
 }
 
 const dbDir = FileSystem.documentDirectory + 'SQLite/';
