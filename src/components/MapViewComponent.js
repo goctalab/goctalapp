@@ -44,18 +44,6 @@ const layerMenuItems = Object.keys(LAYER_TYPES);
 
 // const ALTO_GLAB = { longitude: -77.89661099999999, latitude: -6.055215999999999 }
 // const BATAN = { longitude: -77.89718338255179, latitude: -6.05487980193391 }
-const CENTER_START_COORDINATES = { longitude: -77.89741388888889, latitude: -6.055380555555556 };
-const DELTA = 0.0019;
-
-
-const getRegionWithCoordinate = (coordinate) => {
-  return {
-    latitude: coordinate.latitude,
-    longitude: coordinate.longitude,
-    latitudeDelta: DELTA,
-    longitudeDelta: DELTA,
-  }
-};
 
 // TODO tranfer this to a context ?
 export const parseMapData = (mapData=[], placesData=[]) => {
@@ -117,7 +105,9 @@ export default function({ route, navigation }) {
 
   useEffect(() => {
     if (params && params[selectedMarkerParam]) {
-      MapViewInteractions.openMarker(params.selected_marker, markersRef);
+      const selectedMarkerName = params[selectedMarkerParam];
+      const marker = markersRef.current[selectedMarkerName];
+      MapViewInteractions.openMarker(marker, mapRef);
     }
   }, [ params ]);
 
@@ -131,7 +121,7 @@ export default function({ route, navigation }) {
   const resetUserLocation = () => {
     return getCurrentLocation().then(position => {
       if (position) {
-        MapViewInteractions.centerMap(getRegionWithCoordinate(position.coords), mapRef);
+        MapViewInteractions.centerMap(position.coords, mapRef);
       }
     });
   }
@@ -139,7 +129,7 @@ export default function({ route, navigation }) {
   const onMapItemClick = (e, mapItemData) => {
     setSelectedMapItem(mapItemData);
     // console.log(mapItemData, mapItemData.coordinates[0]);
-    MapViewInteractions.centerMap(getRegionWithCoordinate(mapItemData.coordinates[0]), mapRef);
+    MapViewInteractions.centerMap(mapItemData.coordinates[0], mapRef);
   }  
 
   const onMenuItemClicked = (allSelectedOptions) => {
@@ -148,16 +138,6 @@ export default function({ route, navigation }) {
   }
       
   const isLayerShown = (layerType) => !layersDeselected.includes(layerType);
-
-  // TODO do we need this?
-  const getInitialRegion = () => {
-    return {
-      latitude: CENTER_START_COORDINATES.latitude,
-      longitude: CENTER_START_COORDINATES.longitude,
-      latitudeDelta: DELTA,
-      longitudeDelta: DELTA
-    }
-  }
 
   return (
     <View style={styles.viewContainer} >
@@ -187,16 +167,15 @@ export default function({ route, navigation }) {
         provider={PROVIDER_GOOGLE}
         mapType="hybrid"
         // mapType={Platform.OS == "android" ? "standard" : "standard"}
-        initialRegion={getInitialRegion()}
+        initialRegion={MapViewInteractions.getInitialRegion()}
         style={styles.map} 
         customMapStyle={mapStyle_00}
         maxZoomLevel={21} // docs say 20
         ref={mapRef}
         zIndex={0} // necessary for Android
       >
-
         { isLayerShown(LAYER_TYPES.Regions) && 
-          MapViewLayers.renderPolygons(mapData.polygons) } 
+          MapViewLayers.renderPolygons(mapData.polygons, markersRef, selectedMapItem, onMapItemClick) } 
         {/* { true && 
           <MapView.Overlay 
             image={bldgOverlayURI}

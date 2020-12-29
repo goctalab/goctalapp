@@ -8,6 +8,8 @@ import { KML_FIELDS } from "@data/dbUtils";
 import markerAssetsURI from '@src/mapMarkerAssetsURI';
 import { colors } from '@utils/styleUtils';
 
+export const isMapItemSelected = (id, selectedMapItem) => !!(selectedMapItem && selectedMapItem.rowid === id);
+
 export const renderMarkers = function(markerData=[], markersRef, selectedMapItem, onMapItemClick) {
   return (markerData).map((data, i) => {
     const filename = data[KML_FIELDS.filename];
@@ -28,11 +30,11 @@ export const renderMarkers = function(markerData=[], markersRef, selectedMapItem
   });
 }
 
-export const renderPolygons = function(polygonData=[]) {
+export const renderPolygons = function(polygonData=[], markersRef, selectedMapItem, onMapItemClick) {
   return (polygonData).map((polygonObj, i) => {
 
     if (Object.keys(polygonObj.placeData).length) {
-
+      // TODO refactor
       return <PolygonCalloutComponent
         key={`${i}-${i}`}
         polygonData={polygonObj}
@@ -43,8 +45,8 @@ export const renderPolygons = function(polygonData=[]) {
         fillColor={mapColors[polygonObj.filename] || mapColors.polygon.fillColor}
         strokeWidth={2}
         strokeColor={colors["Liver Dogs"]}
-        isSelected={MapViewInteractions.isMapItemSelected(polygonObj[KML_FIELDS.id], selectedMapItem)} // TODO ?
-        onPress={MapViewInteractions.onMapItemClick}
+        isSelected={isMapItemSelected(polygonObj[KML_FIELDS.id], selectedMapItem)} // TODO ?
+        onPress={onMapItemClick}
       />
         // zIndex={1}
         // onPress={(e) => console.log(e, e.nativeEvent, "press region")}
