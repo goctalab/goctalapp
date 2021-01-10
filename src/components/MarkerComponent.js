@@ -10,8 +10,7 @@ const defaultDescription = "need to add a description for this awesome place!";
 const READ_MORE_TEXT = "\nRead more"
 
 // testing so exporting this way
-export const markerComponent = (props, ref) => {
-  // console.log("marker component called WOOOOOO");
+export const component = (props, ref) => {
   const { 
     markerData,
     imageIcon,
@@ -80,7 +79,7 @@ export const markerComponent = (props, ref) => {
   );
 }
 
-export default forwardRef(markerComponent);
+export default forwardRef(component);
 
 const styles = StyleSheet.create({
   hidden: {

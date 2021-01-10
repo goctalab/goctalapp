@@ -7,9 +7,15 @@ export const openMarker = (selectedMarker, mapRef) => {
   selectedMarker.openCallout();
 }
 
+const onMapItemClick = (e, mapItemData, setState) => {
+  setState(mapItemData);
+  // console.log(mapItemData, mapItemData.coordinates[0]);
+  MapViewInteractions.centerMap(mapItemData.coordinates[0], mapRef);
+}  
+
 export const centerMap = (coordinate, mapRef) => {
   const region = getRegionWithCoordinate(coordinate);
-  console.log("centering", region, mapRef);
+  // console.log("centering", region, mapRef);
   mapRef.current.animateToRegion(region, 300);
 }
 

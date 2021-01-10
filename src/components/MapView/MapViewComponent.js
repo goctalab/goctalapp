@@ -81,6 +81,14 @@ export const parseMapData = (mapData=[], placesData=[]) => {
   };
 }
 
+export const getOnMapItemClick = (setState, mapRef) => {
+  return (e, mapItemData) => {
+    setState(mapItemData);
+    // console.log(mapItemData, mapItemData.coordinates[0]);
+    MapViewInteractions.centerMap(mapItemData.coordinates[0], mapRef);
+  }
+}  
+
 export default function({ route, navigation }) {
   const params = route.params;
   // console.log("RENDERING MAP WITH ROUTE", route);
@@ -96,6 +104,8 @@ export default function({ route, navigation }) {
   
   const mapRef = useRef(null);
   const markersRef = useRef({});
+
+  const onMapItemClick = getOnMapItemClick(setSelectedMapItem, mapRef);
 
   useEffect(() => {
     // console.log("going to call parse with", mapContextData);
@@ -125,12 +135,6 @@ export default function({ route, navigation }) {
       }
     });
   }
- 
-  const onMapItemClick = (e, mapItemData) => {
-    setSelectedMapItem(mapItemData);
-    // console.log(mapItemData, mapItemData.coordinates[0]);
-    MapViewInteractions.centerMap(mapItemData.coordinates[0], mapRef);
-  }  
 
   const onMenuItemClicked = (allSelectedOptions) => {
     // console.log("onMenuItemClicked", allSelectedOptions);

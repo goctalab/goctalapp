@@ -11,7 +11,7 @@ import * as ROUTES  from '@utils/routeUtils';
 import { getListViewTitle } from '@utils/routeUtils';
 import Icon from 'react-native-vector-icons/Ionicons';
 
-import MapViewComponent from '@components/MapViewComponent';
+import MapViewComponent from '@components/MapView/MapViewComponent';
 
 import { FloraFaunaScreen,
   PointsOfInterestScreen,
