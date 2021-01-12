@@ -67,7 +67,7 @@ export default function DetailViewComponent({ route, navigation }) {
           title={goToMapTitle}
           onPress={() => {  
             navigation.goBack(); // to pop the list view when we are here, better option like reset?
-            console.log("Clicked on go to map view with options", HOME_ROUTE, { selected_marker: filename });
+            // console.log("Clicked on 'go to map view' with options", HOME_ROUTE, { selected_marker: filename });
             navigation.navigate(HOME_ROUTE, { [selectedMarkerParam]: filename } )
           }}
         />

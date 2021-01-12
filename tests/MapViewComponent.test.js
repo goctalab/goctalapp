@@ -5,10 +5,7 @@ import * as MapViewLayers from '@components/MapView/Layers';
 import MapViewComponent, { getOnMapItemClick, parseMapData } from '@components/MapView/MapViewComponent';
 import * as MapContextModule from '@components/MapContextProvider';
 import markers from './mockMarkers.js';
-
-import Marker from 'react-native-maps';
-import MarkerComponent from '@components/MarkerComponent';
-// import { forwardRef } from 'react';
+import navigation from '@react-navigation/native';
 
 jest.mock('react-native-vector-icons/Feather', () => {
   const { View } = require('react-native');
@@ -40,9 +37,6 @@ jest.mock('react-native-vector-icons/FontAwesome', () => {
   }
 });
 
-const navigation = {
-  navigate: jest.fn()
-}
 
 const route = {
   params: {}
@@ -69,71 +63,50 @@ describe("MapViewComponent", () => {
   // describe("layer menu behavior", () => {
   // });
 
-  describe("map and marker behavior", () => {
-    it("calls renderMarkers for every kml point from the context", () => {
-      jest.spyOn(MapViewLayers, 'renderMarkers').mockImplementation(() => {});
-   
-      TestRenderer.act(
-        () => { TestRenderer.create(<MapViewComponent route={{}} navigation={navigation} />) }
-      );
-      const mapData = parseMapData(markers);
-      // last called to wait for context and useEffect to be called
-      expect(MapViewLayers.renderMarkers).toHaveBeenLastCalledWith(
-        mapData.markers,
-        expect.anything(), 
-        null,
-        expect.anything());
+  
+  it("calls renderMarkers for every kml point from the context", () => {
+    jest.spyOn(MapViewLayers, 'renderMarkers').mockImplementation(() => {});
+  
+    TestRenderer.act(
+      () => { TestRenderer.create(<MapViewComponent route={{}} navigation={navigation} />) }
+    );
+    const mapData = parseMapData(markers);
+    // last called to wait for context and useEffect to be called
+    expect(MapViewLayers.renderMarkers).toHaveBeenLastCalledWith(
+      mapData.markers,
+      expect.anything(), 
+      null,
+      expect.anything());
 
-      MapViewLayers.renderMarkers.mockRestore();
-    });
-    
-    it("opens the correct callout when it receives marker params on load", () => {
-      jest.spyOn(MapViewInteractions, 'openMarker').mockImplementation(() => {});
-      jest.spyOn(MapViewLayers, 'renderMarkers').mockImplementation(() => {});
-   
-      const route_marker = {
-        params: { selected_marker: markers[0].filename }
-      }
-      TestRenderer.act(
-        () => { TestRenderer.create(<MapViewComponent route={route_marker} navigation={navigation} />) }
-      );
-      expect(MapViewInteractions.openMarker).toHaveBeenCalled();
-      MapViewInteractions.openMarker.mockRestore();
-      MapViewLayers.renderMarkers.mockRestore();
-    });
-    
-    describe("when a marker is clicked", () => {
-      it("calls the onPress with proper information", () => {
-        const onPress = jest.fn().mockImplementation((e, markerData) => {});
+    MapViewLayers.renderMarkers.mockRestore();
+  });
+  
+  it("opens the correct callout when it receives marker params on map load", () => {
+    jest.spyOn(MapViewInteractions, 'openMarker').mockImplementation(() => {});
+    jest.spyOn(MapViewLayers, 'renderMarkers').mockImplementation(() => {});
+  
+    const route_marker = {
+      params: { selected_marker: markers[0].filename }
+    }
+    TestRenderer.act(
+      () => { TestRenderer.create(<MapViewComponent route={route_marker} navigation={navigation} />) }
+    );
+    expect(MapViewInteractions.openMarker).toHaveBeenCalled();
+    MapViewInteractions.openMarker.mockRestore();
+    MapViewLayers.renderMarkers.mockRestore();
+  });
 
-        let tr; 
-        const e = {};
-        TestRenderer.act(() => {
-          tr = TestRenderer.create(<MarkerComponent 
-          markerData={markers[1]}
-          isSelected={false}
-          onPress={onPress}
-        />)});
+  // openMarker test?
 
-        tr.root.children[0].props.onPress(e);
-        expect(onPress).toHaveBeenCalledWith(expect.anything(), markers[1]);
-      });
-
-      it("sets appropriate marker as selected in onMapItemClick", () => {
-        const setSelectedMarkerState = jest.fn();
-        const onMapItemClickHandler = getOnMapItemClick(setSelectedMarkerState, { current: { animateToRegion: () => {} } });
-        onMapItemClickHandler({}, markers[1]);
-        expect(setSelectedMarkerState).toHaveBeenCalledWith(markers[1]);
-      });
-    });
-
-    describe("when a callout is clicked is opens detail view", () => {
-
-    });
-  });  
+  it("sets appropriate marker as selected in onMapItemClick", () => {
+    const setSelectedMarkerState = jest.fn();
+    const onMapItemClickHandler = getOnMapItemClick(setSelectedMarkerState, { current: { animateToRegion: () => {} } });
+    onMapItemClickHandler({}, markers[1]);
+    expect(setSelectedMarkerState).toHaveBeenCalledWith(markers[1]);
+  });
 });
 
-describe("Layers and rendering", () => {
+describe("Layers function tests", () => {
   describe("renderMarkers", () => {
     it("generates MarkerComponents for every kml point with markerData as props", () => {
       const markerArray = MapViewLayers.renderMarkers(markers, { current: {} }, null, jest.fn());
