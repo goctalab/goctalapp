@@ -3,7 +3,7 @@ import { StyleSheet, Text, View } from 'react-native';
 import { Marker, Callout } from 'react-native-maps';
 import { PLACE_FIELDS } from '../data/dbUtils';
 import { useNavigation } from '@react-navigation/native';
-import { getScreenNameFromSiteItem, getRouteNameFromCategory } from '../utils/routeUtils';
+// import { getScreenNameFromSiteItem, getRouteNameFromCategory } from '../utils/routeUtils';
 import { DETAILS_ROUTE } from '@utils/routeUtils';
 
 const defaultDescription = "need to add a description for this awesome place!";
@@ -34,7 +34,7 @@ export const component = (props, ref) => {
 
   const openDetailView = () => {
     // const screen = getScreenNameFromSiteItem(markerData.placeData); //TODO rename since using sites
-    const route = getRouteNameFromCategory(markerData.placeData[PLACE_FIELDS.category]);
+    // const route = getRouteNameFromCategory(markerData.placeData[PLACE_FIELDS.category]);
     // navigation.navigate( DETAILS_ROUTE, { screen, params: { id: placeData.rowid, title: placeData[PLACE_FIELDS.title], from_map: true }});
     navigation.navigate( DETAILS_ROUTE, { id: placeData.rowid, title: placeData[PLACE_FIELDS.title], from_map: true });
   }
