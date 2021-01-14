@@ -48,6 +48,7 @@ module.exports =  {
   __esModule: true,
   default: MockMapView,
   Marker: MockMarker,
+  Callout: MockMapView,
   // Animated: MockOverlay,
   MAP_TYPES: mockMapTypes,
   PROVIDER_DEFAULT: 'default',
