@@ -37,7 +37,6 @@ jest.mock('react-native-vector-icons/FontAwesome', () => {
   }
 });
 
-
 const route = {
   params: {}
 }
@@ -57,12 +56,6 @@ describe("MapViewComponent", () => {
   afterEach(() => {
     useContextSpy.mockReset();
   } );
-
-  // kml data test
-  // more reason to break this part out into a context or somethin
-  // describe("layer menu behavior", () => {
-  // });
-
   
   it("calls renderMarkers for every kml point from the context", () => {
     jest.spyOn(MapViewLayers, 'renderMarkers').mockImplementation(() => {});
@@ -81,10 +74,10 @@ describe("MapViewComponent", () => {
     MapViewLayers.renderMarkers.mockRestore();
   });
   
-  it("opens the correct callout when it receives marker params on map load", () => {
+  it.only("calls openMarker to show callout when it receives marker params on map load", () => {
     jest.spyOn(MapViewInteractions, 'openMarker').mockImplementation(() => {});
     jest.spyOn(MapViewLayers, 'renderMarkers').mockImplementation(() => {});
-  
+
     const route_marker = {
       params: { selected_marker: markers[0].filename }
     }
@@ -95,8 +88,6 @@ describe("MapViewComponent", () => {
     MapViewInteractions.openMarker.mockRestore();
     MapViewLayers.renderMarkers.mockRestore();
   });
-
-  // openMarker test?
 
   it("sets appropriate marker as selected in onMapItemClick", () => {
     const setSelectedMarkerState = jest.fn();
@@ -110,7 +101,6 @@ describe("Layers function tests", () => {
   describe("renderMarkers", () => {
     it("generates MarkerComponents for every kml point with markerData as props", () => {
       const markerArray = MapViewLayers.renderMarkers(markers, { current: {} }, null, jest.fn());
-      // console.log(MarkerComponent);
       expect(markerArray.length).toBe(markers.length);
       expect(markerArray[0].props.markerData).toEqual(markers[0]);
       expect(markerArray[1].props.markerData).toEqual(markers[1]);
@@ -118,24 +108,9 @@ describe("Layers function tests", () => {
   
     it("sets the correct marker as selected", () => {
       const markerArray = MapViewLayers.renderMarkers(markers, { current: {} }, { rowid: markers[1].rowid }, jest.fn());
-      // console.log(MarkerComponent);
       expect(markerArray[0].props.isSelected).toEqual(false);
       expect(markerArray[1].props.isSelected).toEqual(true);
     });
   });
   describe("renderPolygons", () => {});
 });
-
-/* jest.mock('../src/components/MarkerComponent', () => {
-  const { forwardRef } = require('react');
-  const Mock = jest.fn().mockImplementation(() => console.log("MOCK"));
-
-  const component = Mock;
-  return jest.fn().mockImplementation(() => {
-    return {
-      __esModule: true,
-      default: forwardRef(component), // forwardRef
-      component
-    }
-  })
-}); */

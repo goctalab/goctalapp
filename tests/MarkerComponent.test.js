@@ -8,8 +8,6 @@ import { DETAILS_ROUTE } from '@utils/routeUtils';
 
 jest.unmock('react-native-maps');
 
-// jest.requireActual('react-native-maps');
-
 describe("MarkerComponent", () => {
   it("calls the onPress callback with proper marker info when a marker is clicked", () => {
     const onPress = jest.fn().mockImplementation((e, markerData) => {});
