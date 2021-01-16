@@ -15,7 +15,6 @@ export const renderMarkers = function(markerData=[], markersRef, selectedMapItem
     const filename = data[KML_FIELDS.filename];
     const getIcon = markerAssetsURI[filename] || markerAssetsURI.defaultMarker;
     const icons = getIcon();
-
     return <MarkerComponent
       key={`${i}-${i}`}
       markerData={data}
@@ -33,6 +32,7 @@ export const renderMarkers = function(markerData=[], markersRef, selectedMapItem
 export const renderPolygons = function(polygonData=[], markersRef, selectedMapItem, onMapItemClick) {
   return (polygonData).map((polygonObj, i) => {
 
+    // if its a polygon with place information
     if (Object.keys(polygonObj.placeData).length) {
       // TODO refactor
       return <PolygonCalloutComponent
