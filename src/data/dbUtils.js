@@ -161,7 +161,7 @@ export default {
       () => { console.log('kml transaction completed'); })
   },
 
-  // TODO JOIN
+  // TODO JOIN with mysql
   getAllPlaces: function(callback) {
     return this.db.transaction(async function(tx) {
       await tx.executeSql(

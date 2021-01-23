@@ -136,6 +136,10 @@ export default function({ route, navigation }) {
     });
   }
 
+  const goToGocta = () => {
+    MapViewInteractions.centerMap(MapViewInteractions.getInitialRegion(), mapRef);
+  }
+
   const onMenuItemClicked = (allSelectedOptions) => {
     // console.log("onMenuItemClicked", allSelectedOptions);
     setLayersDeselected(allSelectedOptions);
@@ -145,8 +149,9 @@ export default function({ route, navigation }) {
 
   return (
     <View style={styles.viewContainer} >
+      
       <TouchableOpacity style={styles.logoBtn} 
-        onPress={resetUserLocation}>
+        onPress={goToGocta}>
         <Image 
           style={styles.logo}
           source={require('@assets/img/logo.png')}
