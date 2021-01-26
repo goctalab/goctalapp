@@ -32,8 +32,10 @@ export default function MenuComponent({ menuOptions, onMenuOptionClicked }) {
 
   // console.log("selected options", selectedOptions)
   const optionComponents = menuOptions.map((option) => {
+    const isToggledOff = selectedOptions.includes(option);
     return <MenuOptionComponent 
-            style={[ styles.menuOption, selectedOptions.includes(option) ? styles.selected : styles.deselected ]} 
+            style={[ styles.menuOption, isToggledOff ? styles.deselected : styles.selected ]} 
+            ß// confusing because selected is actually deselected layers
             onClick={(isSelected) => onOptionClicked(option, isSelected)}
             isSelected={selectedOptions.indexOf(option) > -1}
             key={option}
@@ -44,7 +46,7 @@ export default function MenuComponent({ menuOptions, onMenuOptionClicked }) {
     <View style={styles.menuContainer}>
       <View style={[ styles.flexRow, styles.justifyEnd ]}>
         <TouchableOpacity
-          style={[ styles.flexRow, styles.menuControl ]}
+          style={ isMenuOpen ? [ styles.flexRow, styles.menuControlOpen ] : [ styles.flexRow, styles.menuControl ]}
           onPress={onMenuButtonClicked}>
           { isMenuOpen ? closeIcon : layerIcon }
         </TouchableOpacity>
@@ -85,21 +87,31 @@ const styles = StyleSheet.create({
     color: "black",
     justifyContent: "center",
     borderRadius: 8,
-    margin: 10
+    margin: 10,
+  },
+  menuControlOpen: {
+    color: "black",
+    justifyContent: "center",
+    borderRadius: 8,
+    left: -120,
   },
   menuOption: {
     alignItems: 'center',
-    marginVertical: 4,
+    marginVertical: 2,
     backgroundColor: colors["Eggshell"],
     paddingHorizontal: 10,
     paddingVertical: 8,
-    width: 140,
+    width: 160,
+    borderWidth: 1,
+    borderColor: 'transparent'
   },
   deselected: {
-    color: 'black'
+    color: colors["Eggshell"],
+    backgroundColor: 'transparent',
+    borderColor: colors["Eggshell"],
+    borderWidth: 1
   },
   selected: {
-    color: colors["Eggshell"],
-    backgroundColor: 'transparent' // confusing because selected is actually deselected layers
+    backgroundColor: colors["Eggshell"],
   }
 });
