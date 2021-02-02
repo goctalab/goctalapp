@@ -10,8 +10,9 @@ const PolygonCalloutComponent = (props, ref) => {
   const { 
     polygonData,
     fillColor,
+    strokeColor,
     onPress,
-    isSelected
+    isSelected,
   } = props;
 
   const markerRef = useRef(null);
@@ -22,9 +23,16 @@ const PolygonCalloutComponent = (props, ref) => {
 
   // console.log(isSelected, currentFillColor, fillColor);
   useImperativeHandle(ref, () => ({
+    isSelected: markerRef.current.isSelected,
     openCallout: markerRef.current.openCallout,
     coordinate: polygonData.coordinates[0]
   }));
+
+  const onMyPress = (e) => {
+    markerRef.current.openCallout();
+    markerRef.current.isSelected = true;
+    onPress(e, polygonData);
+  }
 
   return (
     <>
@@ -35,6 +43,8 @@ const PolygonCalloutComponent = (props, ref) => {
       // imageIcon={emptyIcon}
       imageIcon={icons.default}
       selectedImageIcon={icons.selected}
+      isSelected={isSelected}
+      onPress={onMyPress}
       // hidden
     />
     <Polygon
@@ -42,12 +52,9 @@ const PolygonCalloutComponent = (props, ref) => {
       coordinates={polygonData.coordinates}
       fillColor={currentFillColor}
       tappable={true}
-      {...props}
+      // {...props}
       // zIndex={1}
-      onPress={(e) => {
-        markerRef.current.openCallout();
-        onPress(e, polygonData);
-      }}
+      onPress={onMyPress}
     />
     </>
   );

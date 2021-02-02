@@ -79,7 +79,7 @@ export const renderPolylines = function(polylinesData=[], markersRef, selectedMa
           markersRef.current[polyline.filename] = ref;
         }}
         strokeColor={mapColors[polyline.filename] || mapColors.paths.strokeColor}
-        strokeWidth={2}
+        strokeWidth={3}
         isSelected={isSelected} // TODO ?
         onPress={onMapItemClick}
       />
@@ -110,10 +110,12 @@ const mapColors = {
     fillColor: 'rgba(106, 153, 78, .3)' // colors["May Green"]
   },
   "PozoBirding.kml": colors["Middle Blue"],
+  "BirdingTrail.kml": colors["May Green"],
+  "RIO.kml": colors["May Green"],
   "Crops.kml": colors["Android Green"],
   "Andenes.kml": colors["Dark Olive Green"],
   paths: {
     strokeColor: 'rgba(242,232,207,.5)',
-    strokeWidth: 3
+    strokeWidth: 1
   }
 }

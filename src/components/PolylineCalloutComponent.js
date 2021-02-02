@@ -10,6 +10,7 @@ const PolylineCalloutComponent = (props, ref) => {
   const { 
     polylineData,
     strokeColor,
+    strokeWidth,
     onPress,
     isSelected
   } = props;
@@ -21,11 +22,17 @@ const PolylineCalloutComponent = (props, ref) => {
   
   const currentStrokeColor = isSelected ? colors["Liver Dogs"] : strokeColor;
 
-  console.log('isSelected', polylineData.filename, isSelected, currentStrokeColor);
+  // console.log('isSelected', polylineData.filename, isSelected, currentStrokeColor);
   useImperativeHandle(ref, () => ({
     openCallout: markerRef.current.openCallout,
     coordinate: polylineData.coordinates[0]
   }));
+
+  const onMyPress = (e) => {
+    markerRef.current.openCallout();
+    markerRef.current.isSelected = true;
+    onPress(e, polylineData);
+  }
  
   return (
     <>
@@ -36,6 +43,7 @@ const PolylineCalloutComponent = (props, ref) => {
       // imageIcon={emptyIcon}
       imageIcon={icons.default}
       selectedImageIcon={icons.selected}
+      isSelected={isSelected}
       onPress={(e) => { 
         onPress(e, polylineData);
       }}
@@ -45,12 +53,10 @@ const PolylineCalloutComponent = (props, ref) => {
       title={polylineData.name}
       coordinates={polylineData.coordinates}
       strokeColor={currentStrokeColor}
+      strokeWidth={strokeWidth}
       tappable={true}
       // {...props}
-      onPress={(e) => {
-        markerRef.current.openCallout();
-        onPress(e, polylineData);
-      }}
+      onPress={onMyPress}
     />
     </>
   );
