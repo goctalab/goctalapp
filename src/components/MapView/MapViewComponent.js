@@ -193,7 +193,7 @@ export default function({ route, navigation }) {
             // zIndex={13} no z index seems to work on apple
           /> } */}
         { isLayerShown(LAYER_TYPES.Paths) && 
-          MapViewLayers.renderPolylines(mapData.polylines) }
+          MapViewLayers.renderPolylines(mapData.polylines, markersRef, selectedMapItem, onMapItemClick) }
         
         { isLayerShown(LAYER_TYPES.Places) && 
           MapViewLayers.renderMarkers(mapData.markers, markersRef, selectedMapItem, onMapItemClick) }

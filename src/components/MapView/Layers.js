@@ -3,7 +3,7 @@ import React from 'react';
 import MapView from 'react-native-maps';
 import MarkerComponent from '@components/MarkerComponent';
 import PolygonCalloutComponent from '@components/PolygonCalloutComponent';
-
+import PolylineCalloutComponent from '@components/PolylineCalloutComponent';
 import { KML_FIELDS } from "@data/dbUtils";
 import markerAssetsURI from '@src/mapMarkerAssetsURI';
 import { colors } from '@utils/styleUtils';
@@ -66,9 +66,26 @@ export const renderPolygons = function(polygonData=[], markersRef, selectedMapIt
   });
 }
 
-export const renderPolylines = function(polylinesData=[]) {
+export const renderPolylines = function(polylinesData=[], markersRef, selectedMapItem, onMapItemClick) {
   // ('polylines', polylinesData);
   return polylinesData.map((polyline, i) => {
+    if (Object.keys(polyline.placeData).length) {
+      const isSelected = isMapItemSelected(polyline[KML_FIELDS.id], selectedMapItem);
+      return <PolylineCalloutComponent
+        key={`${i}-${i}`}
+        polylineData={polyline}
+        ref={(ref) => {
+          // console.log("ref from polygon", ref);
+          markersRef.current[polyline.filename] = ref;
+        }}
+        strokeColor={mapColors[polyline.filename] || mapColors.paths.strokeColor}
+        strokeWidth={2}
+        isSelected={isSelected} // TODO ?
+        onPress={onMapItemClick}
+      />
+        // zIndex={1}
+        // onPress={(e) => console.log(e, e.nativeEvent, "press region")}
+    }
     // const strokeColor = (polyline.filename.indexOf("agrofo") > -1) ?
     //   colors["Lapis Lazuli"] :
     //   mapColors.paths.strokeColor;
