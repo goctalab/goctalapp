@@ -3,7 +3,7 @@ import React from 'react';
 import MapView from 'react-native-maps';
 import MarkerComponent from '@components/MarkerComponent';
 import PolygonCalloutComponent from '@components/PolygonCalloutComponent';
-
+import PolylineCalloutComponent from '@components/PolylineCalloutComponent';
 import { KML_FIELDS } from "@data/dbUtils";
 import markerAssetsURI from '@src/mapMarkerAssetsURI';
 import { colors } from '@utils/styleUtils';
@@ -15,7 +15,6 @@ export const renderMarkers = function(markerData=[], markersRef, selectedMapItem
     const filename = data[KML_FIELDS.filename];
     const getIcon = markerAssetsURI[filename] || markerAssetsURI.defaultMarker;
     const icons = getIcon();
-
     return <MarkerComponent
       key={`${i}-${i}`}
       markerData={data}
@@ -33,6 +32,7 @@ export const renderMarkers = function(markerData=[], markersRef, selectedMapItem
 export const renderPolygons = function(polygonData=[], markersRef, selectedMapItem, onMapItemClick) {
   return (polygonData).map((polygonObj, i) => {
 
+    // if its a polygon with place information
     if (Object.keys(polygonObj.placeData).length) {
       // TODO refactor
       return <PolygonCalloutComponent
@@ -66,9 +66,26 @@ export const renderPolygons = function(polygonData=[], markersRef, selectedMapIt
   });
 }
 
-export const renderPolylines = function(polylinesData=[]) {
+export const renderPolylines = function(polylinesData=[], markersRef, selectedMapItem, onMapItemClick) {
   // ('polylines', polylinesData);
   return polylinesData.map((polyline, i) => {
+    if (Object.keys(polyline.placeData).length) {
+      const isSelected = isMapItemSelected(polyline[KML_FIELDS.id], selectedMapItem);
+      return <PolylineCalloutComponent
+        key={`${i}-${i}`}
+        polylineData={polyline}
+        ref={(ref) => {
+          // console.log("ref from polygon", ref);
+          markersRef.current[polyline.filename] = ref;
+        }}
+        strokeColor={mapColors[polyline.filename] || mapColors.paths.strokeColor}
+        strokeWidth={3}
+        isSelected={isSelected} // TODO ?
+        onPress={onMapItemClick}
+      />
+        // zIndex={1}
+        // onPress={(e) => console.log(e, e.nativeEvent, "press region")}
+    }
     // const strokeColor = (polyline.filename.indexOf("agrofo") > -1) ?
     //   colors["Lapis Lazuli"] :
     //   mapColors.paths.strokeColor;
@@ -93,10 +110,12 @@ const mapColors = {
     fillColor: 'rgba(106, 153, 78, .3)' // colors["May Green"]
   },
   "PozoBirding.kml": colors["Middle Blue"],
+  "BirdingTrail.kml": colors["May Green"],
+  "RIO.kml": colors["May Green"],
   "Crops.kml": colors["Android Green"],
   "Andenes.kml": colors["Dark Olive Green"],
   paths: {
     strokeColor: 'rgba(242,232,207,.5)',
-    strokeWidth: 3
+    strokeWidth: 1
   }
 }

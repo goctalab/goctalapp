@@ -136,6 +136,10 @@ export default function({ route, navigation }) {
     });
   }
 
+  const goToGocta = () => {
+    MapViewInteractions.centerMap(MapViewInteractions.getInitialRegion(), mapRef);
+  }
+
   const onMenuItemClicked = (allSelectedOptions) => {
     // console.log("onMenuItemClicked", allSelectedOptions);
     setLayersDeselected(allSelectedOptions);
@@ -145,8 +149,9 @@ export default function({ route, navigation }) {
 
   return (
     <View style={styles.viewContainer} >
+      
       <TouchableOpacity style={styles.logoBtn} 
-        onPress={resetUserLocation}>
+        onPress={goToGocta}>
         <Image 
           style={styles.logo}
           source={require('@assets/img/logo.png')}
@@ -188,7 +193,7 @@ export default function({ route, navigation }) {
             // zIndex={13} no z index seems to work on apple
           /> } */}
         { isLayerShown(LAYER_TYPES.Paths) && 
-          MapViewLayers.renderPolylines(mapData.polylines) }
+          MapViewLayers.renderPolylines(mapData.polylines, markersRef, selectedMapItem, onMapItemClick) }
         
         { isLayerShown(LAYER_TYPES.Places) && 
           MapViewLayers.renderMarkers(mapData.markers, markersRef, selectedMapItem, onMapItemClick) }

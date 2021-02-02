@@ -67,7 +67,7 @@ export default {
     await ensureDirExists();
 
     return FileSystem.downloadAsync(
-      Expo.Asset.fromModule(require('@assets/db/gocta_test.db')).uri, `${dbDir}/${GOCTA_DB_FILENAME}`)
+      Expo.Asset.fromModule(require('@assets/db/gocta.db')).uri, `${dbDir}/${GOCTA_DB_FILENAME}`)
       .then(() =>{
         this.setDB(GOCTA_DB_FILENAME);
         this.checkForUpdate();
@@ -161,6 +161,7 @@ export default {
       () => { console.log('kml transaction completed'); })
   },
 
+  // TODO JOIN with mysql
   getAllPlaces: function(callback) {
     return this.db.transaction(async function(tx) {
       await tx.executeSql(

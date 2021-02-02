@@ -1,6 +1,16 @@
 import { Asset } from 'expo-asset';
 
 export default {
+  "Deck.kml": () => {
+    const assetResource = require("@assets/img/mapMarkers/deck.png");
+    const defaultIconUri = Asset.fromModule(assetResource).uri;
+    return { default: defaultIconUri, selected: defaultIconUri };
+  },
+  "succulentgarden.kml": () => {
+    const assetResource = require("@assets/img/mapMarkers/suculentas.png");
+    const defaultIconUri = Asset.fromModule(assetResource).uri;
+    return { default: defaultIconUri, selected: defaultIconUri };
+  },
   "alto_glab.kml": () => {
     const assetResource = require("@assets/img/mapMarkers/alto_glab.png");
     const defaultIconUri = Asset.fromModule(assetResource).uri;

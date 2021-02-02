@@ -8,6 +8,27 @@ import { DETAILS_ROUTE } from '@utils/routeUtils';
 
 const defaultDescription = "need to add a description for this awesome place!";
 const READ_MORE_TEXT = "\nRead more"
+// const truncate = (str, max) => (str) ? str.substr(0, Math.min(str.length, max)) : "";
+
+const truncate = (str, max) => {
+  if (!str) {
+    return "";
+  } else if (str.length < max) {
+    return str;
+  }
+  const description = [];
+  const words = str.split(" ");
+  for (let i = 0, total = 0; i < words.length; i++) {
+    if (total < max) {
+      description.push(words[i]);
+      total += words[i].length;
+    } else {
+      description.push("...");
+      break;
+    }
+  }
+  return description.join(" ");
+}
 
 // testing so exporting this way
 const MarkerComponent = (props, ref) => {
@@ -28,7 +49,7 @@ const MarkerComponent = (props, ref) => {
   const coordinate = markerData.coordinates[0];
 
   const openCallout = () => {
-    console.log("open callout", markerData);
+    // console.log("open callout", markerData);
     markerRef.current.showCallout();
   }
 
@@ -39,8 +60,8 @@ const MarkerComponent = (props, ref) => {
     navigation.navigate( DETAILS_ROUTE, { id: placeData.rowid, title: placeData[PLACE_FIELDS.title], from_map: true });
   }
 
-  const truncate = (str) => (str) ? str.substr(0, str.indexOf('.') + 1) :  "";
-  
+  const MAX = 100;
+ 
   useImperativeHandle(ref, () => ({
     openCallout,
     coordinate
@@ -68,7 +89,7 @@ const MarkerComponent = (props, ref) => {
         <View style={styles.callout}>
           <Text style={{ fontFamily: 'Tajawal_500Medium', fontSize: 18, marginBottom: 8 }}>{placeData[PLACE_FIELDS.title]}</Text>
           <Text style={{ fontFamily: 'Raleway_400Regular', fontSize: 14 }}>
-            { truncate(placeData[PLACE_FIELDS.description]) || defaultDescription}
+            { truncate(placeData[PLACE_FIELDS.description], MAX) || defaultDescription}
           </Text>
           <Text style={{ marginVertical: 2, textAlign: 'right', fontFamily: 'Tajawal_500Medium', fontSize: 14 }}>
             { READ_MORE_TEXT }
@@ -89,6 +110,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(255, 255, 255, .75)',
     padding: 12,
     marginHorizontal: 40,
+    marginBottom: 10,
     maxWidth: 250,
     borderRadius: 5,
     borderWidth: 5,

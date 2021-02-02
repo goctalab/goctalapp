@@ -1,66 +1,68 @@
 
-import React, { forwardRef, useImperativeHandle, useRef } from 'react';
+import React, { forwardRef, useImperativeHandle, useRef, useState } from 'react';
 import { StyleSheet } from 'react-native';
-import { Polygon } from 'react-native-maps';
+import { Polyline } from 'react-native-maps';
 import MarkerComponent from '@components/MarkerComponent';
 import markerIcon from '@src/mapMarkerAssetsURI.js';
 import { colors } from '@utils/styleUtils';
 
-const PolygonCalloutComponent = (props, ref) => {
+const PolylineCalloutComponent = (props, ref) => {
   const { 
-    polygonData,
-    fillColor,
+    polylineData,
     strokeColor,
+    strokeWidth,
     onPress,
-    isSelected,
+    isSelected
   } = props;
 
+  // const [ isSelectedState, setIsSelected ] = useState(isSelected);
   const markerRef = useRef(null);
   const emptyIcon = markerIcon.empty();
   const icons = markerIcon.defaultMarker();
   
-  const currentFillColor = isSelected ? colors["Eggshell"] : fillColor;
+  const currentStrokeColor = isSelected ? colors["Liver Dogs"] : strokeColor;
 
-  // console.log(isSelected, currentFillColor, fillColor);
+  // console.log('isSelected', polylineData.filename, isSelected, currentStrokeColor);
   useImperativeHandle(ref, () => ({
-    isSelected: markerRef.current.isSelected,
     openCallout: markerRef.current.openCallout,
-    coordinate: polygonData.coordinates[0]
+    coordinate: polylineData.coordinates[0]
   }));
 
   const onMyPress = (e) => {
     markerRef.current.openCallout();
     markerRef.current.isSelected = true;
-    onPress(e, polygonData);
+    onPress(e, polylineData);
   }
-
+ 
   return (
     <>
     <MarkerComponent
-      markerData={polygonData}
+      markerData={polylineData}
       ref={markerRef}
       ref={(ref) => markerRef.current = ref}
       // imageIcon={emptyIcon}
       imageIcon={icons.default}
       selectedImageIcon={icons.selected}
       isSelected={isSelected}
-      onPress={onMyPress}
+      onPress={(e) => { 
+        onPress(e, polylineData);
+      }}
       // hidden
     />
-    <Polygon
-      title={polygonData.name}
-      coordinates={polygonData.coordinates}
-      fillColor={currentFillColor}
+    <Polyline
+      title={polylineData.name}
+      coordinates={polylineData.coordinates}
+      strokeColor={currentStrokeColor}
+      strokeWidth={strokeWidth}
       tappable={true}
       // {...props}
-      // zIndex={1}
       onPress={onMyPress}
     />
     </>
   );
 }
 
-export default forwardRef(PolygonCalloutComponent);
+export default forwardRef(PolylineCalloutComponent);
 // export default PolygonCalloutComponent;
 
 const styles = StyleSheet.create({
