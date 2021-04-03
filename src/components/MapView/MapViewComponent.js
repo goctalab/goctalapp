@@ -183,8 +183,8 @@ export default function({ route, navigation }) {
         ref={mapRef}
         zIndex={0} // necessary for Android
       >
-        { isLayerShown(LAYER_TYPES.Regions) && 
-          MapViewLayers.renderPolygons(mapData.polygons, markersRef, selectedMapItem, onMapItemClick) } 
+        {/* isLayerShown(LAYER_TYPES.Regions) && 
+          MapViewLayers.renderPolygons(mapData.polygons, markersRef, selectedMapItem, onMapItemClick) */} 
         {/* { true && 
           <MapView.Overlay 
             image={bldgOverlayURI}
@@ -192,11 +192,11 @@ export default function({ route, navigation }) {
             // style={{ position: 'absolute', zIndex: 25 }} // , zIndex: '5'
             // zIndex={13} no z index seems to work on apple
           /> } */}
-        { isLayerShown(LAYER_TYPES.Paths) && 
-          MapViewLayers.renderPolylines(mapData.polylines, markersRef, selectedMapItem, onMapItemClick) }
+        {/* isLayerShown(LAYER_TYPES.Paths) && 
+          MapViewLayers.renderPolylines(mapData.polylines, markersRef, selectedMapItem, onMapItemClick) */}
         
-        { isLayerShown(LAYER_TYPES.Places) && 
-          MapViewLayers.renderMarkers(mapData.markers, markersRef, selectedMapItem, onMapItemClick) }
+        {/* isLayerShown(LAYER_TYPES.Places) && 
+          MapViewLayers.renderMarkers(mapData.markers, markersRef, selectedMapItem, onMapItemClick) */}
         
       </MapView.Animated>
     </View>
