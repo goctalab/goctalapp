@@ -49,6 +49,9 @@ const MarkerComponent = (props, ref) => {
   const defaultIcon = defaultMarkerIcons.default;
   const defaultSelectedIcon = defaultMarkerIcons.selected;
 
+  // const defaultIcon = (markerAssetsURI["taller.kml"]()).default;
+  // const defaultSelectedIcon = (markerAssetsURI["taller.kml"]()).selected;
+
   const placeData = markerData.placeData || {}; // this should always be defined
   const markerRef = useRef(null);
   const coordinate = markerData.coordinates[0];
@@ -79,19 +82,26 @@ const MarkerComponent = (props, ref) => {
     }
     onPress(e, markerData);
   };
-
   return (
     <Marker
       id={markerData.filename}
       pinColor={pinColor}
       coordinate={coordinate}
-      image={ isSelected ? (selectedImageIcon || defaultSelectedIcon) : (imageIcon || defaultIcon) }
+      // image={ isSelected ? (selectedImageIcon || defaultSelectedIcon) : (imageIcon || defaultIcon) }
+      // icon={ imageIcon }
+      // image={require('@assets/img/mapMarkers/snake_eye_marker_dark.png')}
       style={ hidden ? styles.hidden : {} }
       ref={(ref) => markerRef.current = ref }
       onPress={onMyPress}
     >
-      <Callout tooltip onPress={openDetailView}>
-        <View style={styles.callout}>
+      <View>
+        <Image source={ isSelected ? 
+          (selectedImageIcon || defaultSelectedIcon) : ( imageIcon || defaultIcon) }
+          style={imageIcon ? styles.customIcon : styles.defaultIcon }
+        />
+      </View>
+      <Callout tooltip onPress={openDetailView} style={styles.callout}>
+        <View style={styles.calloutContent}>
           <Text style={{ fontFamily: 'Tajawal_500Medium', fontSize: 18, marginBottom: 8 }}>{placeData[PLACE_FIELDS.title]}</Text>
           <Text style={{ fontFamily: 'Raleway_400Regular', fontSize: 14 }}>
             { truncate(placeData[PLACE_FIELDS.description], MAX) || defaultDescription}
@@ -116,16 +126,25 @@ const styles = StyleSheet.create({
     padding: 12,
     marginHorizontal: 40,
     marginBottom: 10,
-    maxWidth: 250,
+    minWidth: 250,
+    maxWidth: 400,
     borderRadius: 5,
     borderWidth: 5,
     // position: 'absolute',
     // zIndex: 20,
     borderColor: 'rgba(255, 255, 255, .25)',
   },
+  customCallout: {
+    marginBottom: -10
+  }, 
+  calloutContent: {
+    width: "100%",
+  },
+  iconView: {},
   customIcon: {
-    width: 60,
-    height: 70
+    transform: [{ scaleX: .5 }, { scaleY: .5 }],
+    alignSelf: 'flex-end',
+    bottom: '-25%'
   },
   defaultIcon: {
     width: 30,
