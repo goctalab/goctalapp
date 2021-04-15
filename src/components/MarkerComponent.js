@@ -1,10 +1,11 @@
 import React, { forwardRef, useImperativeHandle, useRef } from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { Image, StyleSheet, Text, View } from 'react-native';
 import { Marker, Callout } from 'react-native-maps';
 import { PLACE_FIELDS } from '../data/dbUtils';
 import { useNavigation } from '@react-navigation/native';
 // import { getScreenNameFromSiteItem, getRouteNameFromCategory } from '../utils/routeUtils';
 import { DETAILS_ROUTE } from '@utils/routeUtils';
+import markerAssetsURI from '@src/mapMarkerAssetsURI';
 
 const defaultDescription = "need to add a description for this awesome place!";
 const READ_MORE_TEXT = "\nRead more"
@@ -44,6 +45,10 @@ const MarkerComponent = (props, ref) => {
 
   const navigation = useNavigation();
 
+  const defaultMarkerIcons = markerAssetsURI.defaultMarker();
+  const defaultIcon = defaultMarkerIcons.default;
+  const defaultSelectedIcon = defaultMarkerIcons.selected;
+
   const placeData = markerData.placeData || {}; // this should always be defined
   const markerRef = useRef(null);
   const coordinate = markerData.coordinates[0];
@@ -80,7 +85,7 @@ const MarkerComponent = (props, ref) => {
       id={markerData.filename}
       pinColor={pinColor}
       coordinate={coordinate}
-      image={ isSelected ? selectedImageIcon || imageIcon : imageIcon }
+      image={ isSelected ? (selectedImageIcon || defaultSelectedIcon) : (imageIcon || defaultIcon) }
       style={ hidden ? styles.hidden : {} }
       ref={(ref) => markerRef.current = ref }
       onPress={onMyPress}
@@ -117,5 +122,13 @@ const styles = StyleSheet.create({
     // position: 'absolute',
     // zIndex: 20,
     borderColor: 'rgba(255, 255, 255, .25)',
+  },
+  customIcon: {
+    width: 60,
+    height: 70
+  },
+  defaultIcon: {
+    width: 30,
+    height: 20
   }
 });
