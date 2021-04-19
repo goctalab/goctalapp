@@ -1,6 +1,6 @@
 import React from 'react';
 import { StyleSheet, View } from 'react-native';
-import { AppLoading } from 'expo';
+import AppLoading from 'expo-app-loading';
 import { useFonts } from 'expo-font';
 import 'react-native-gesture-handler';
 import { NavigationContainer } from '@react-navigation/native';

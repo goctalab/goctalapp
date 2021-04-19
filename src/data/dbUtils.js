@@ -1,5 +1,6 @@
 import * as FileSystem from 'expo-file-system';
 import * as SQLite from 'expo-sqlite';
+import { Asset } from 'expo-asset';
 // const DB_NAME = process.env.DB_NAME || 'gocta';
 const PLACES_DESCRIPTION_TABLE = process.env.SITES_TABLE || 'sites';
 const KML_TABLE = process.env.KML_TABLE || 'kml ';
@@ -67,7 +68,7 @@ export default {
     await ensureDirExists();
 
     return FileSystem.downloadAsync(
-      Expo.Asset.fromModule(require('@assets/db/gocta.db')).uri, `${dbDir}/${GOCTA_DB_FILENAME}`)
+      Asset.fromModule(require('@assets/db/gocta.db')).uri, `${dbDir}/${GOCTA_DB_FILENAME}`)
       .then(() =>{
         this.setDB(GOCTA_DB_FILENAME);
         this.checkForUpdate();
@@ -150,8 +151,9 @@ export default {
         `SELECT ${ROW_ID}, ${KML_FIELDS.filename}, ${KML_FIELDS.coordinates}, ${KML_FIELDS.type} from ${KML_TABLE} ORDER BY ${ROW_ID} DESC`,
         [], 
         (_tx, { rows }) => { 
+          console.log('kml array len', rows._array.length);
           callback(rows._array);
-          console.table(rows._array);
+          // console.table(rows._array);
         }, 
         (_tx, err) => {
           console.log(`error from getAllKML ${err}`); 

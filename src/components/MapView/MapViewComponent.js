@@ -149,7 +149,6 @@ export default function({ route, navigation }) {
 
   return (
     <View style={styles.viewContainer} >
-      
       <TouchableOpacity style={styles.logoBtn} 
         onPress={goToGocta}>
         <Image 

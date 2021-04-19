@@ -17,7 +17,7 @@ const PolygonCalloutComponent = (props, ref) => {
 
   const markerRef = useRef(null);
   const emptyIcon = markerIcon.empty();
-  const icons = markerIcon.defaultMarker();
+  // const icons = markerIcon.defaultMarker();
   
   const currentFillColor = isSelected ? colors["Eggshell"] : fillColor;
 
@@ -40,9 +40,8 @@ const PolygonCalloutComponent = (props, ref) => {
       markerData={polygonData}
       ref={markerRef}
       ref={(ref) => markerRef.current = ref}
-      // imageIcon={emptyIcon}
-      imageIcon={icons.default}
-      selectedImageIcon={icons.selected}
+      // imageIcon={icons.default}
+      // selectedImageIcon={icons.selected}
       isSelected={isSelected}
       onPress={onMyPress}
       // hidden

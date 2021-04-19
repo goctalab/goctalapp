@@ -18,7 +18,7 @@ const PolylineCalloutComponent = (props, ref) => {
   // const [ isSelectedState, setIsSelected ] = useState(isSelected);
   const markerRef = useRef(null);
   const emptyIcon = markerIcon.empty();
-  const icons = markerIcon.defaultMarker();
+  // const icons = markerIcon.defaultMarker();
   
   const currentStrokeColor = isSelected ? colors["Liver Dogs"] : strokeColor;
 
@@ -41,8 +41,8 @@ const PolylineCalloutComponent = (props, ref) => {
       ref={markerRef}
       ref={(ref) => markerRef.current = ref}
       // imageIcon={emptyIcon}
-      imageIcon={icons.default}
-      selectedImageIcon={icons.selected}
+      // imageIcon={icons.default}
+      // selectedImageIcon={icons.selected}
       isSelected={isSelected}
       onPress={(e) => { 
         onPress(e, polylineData);
