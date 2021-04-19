@@ -1,14 +1,15 @@
 {
   "expo": {
     "name": "Goctalapp",
+    "description": "Interactive map and information for a self guided tour",
     "slug": "goctalapp",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "splash": {
-      "image": "./assets/splash.png",
+      "image": "./assets/img/splash_just_logo.png",
       "resizeMode": "contain",
-      "backgroundColor": "#ffffff"
+      "backgroundColor": "#bc6c25"
     },
     "updates": {
       "fallbackToCacheTimeout": 0
@@ -16,12 +17,25 @@
     "assetBundlePatterns": [
       "**/*"
     ],
+    "packagerOpts": {
+      "config": "metro.config.js"
+    },
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.goctalab.goctalapp",
       "config": {
         "googleMapsApiKey": ""
       }
+    },
+    "android": {
+      "package": "com.goctalab.goctalapp",
+      "versionCode": 6,
+      "config": {
+        "googleMaps": {
+          "apiKey": ""
+        }
+      },
+      "permissions": ["ACCESS_COARSE_LOCATION", "ACCESS_FINE_LOCATION"]
     },
     "web": {
       "favicon": "./assets/favicon.png"
